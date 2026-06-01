@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Ignore requests to the /api folder so the backend works
+  RewriteCond %{REQUEST_URI} !^/api/
+
+  # If an existing asset or directory is requested go to it as it is
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Otherwise forward it to index.html
+  RewriteRule . /index.html [L]
+</IfModule>
