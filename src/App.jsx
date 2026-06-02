@@ -21,6 +21,9 @@ import Reports from './pages/admin/Reports';
 import Advertisements from './pages/admin/Advertisements';
 import BuildSurvey from './pages/admin/BuildSurvey';
 import ManageSurveys from './pages/admin/ManageSurveys';
+import AdminGrievance from './pages/admin/AdminGrievance';
+import CitizenGrievance from './pages/citizen/CitizenGrievance';
+import CitizenTracking from './pages/citizen/CitizenTracking';
 
 
 import Communication from './pages/Communication';
@@ -32,9 +35,13 @@ const pageTitles = {
   '/admin': 'Dashboard',
   '/admin/users': 'Manage Users',
   '/admin/records': 'All Records',
+  '/admin/complaints': 'Grievance Complaints',
+  '/admin/tickets': 'Ticket Desk',
   '/citizen': 'Citizen Dashboard',
   '/citizen/surveys': 'Available Surveys',
   '/citizen/fill-survey': 'Fill Survey',
+  '/citizen/grievances': 'Lodge Complaint',
+  '/citizen/tracking': 'Ticket Tracking',
   '/communication': 'Communication',
   '/awareness': 'Awareness',
   '/profile': 'My Profile',
@@ -125,6 +132,21 @@ export default function App() {
                 <AppLayout><BuildSurvey /></AppLayout>
               </ProtectedRoute>
             } />
+            <Route path="/admin/complaints" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AppLayout><AdminGrievance viewMode="complaints" /></AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/tickets" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AppLayout><AdminGrievance viewMode="tickets" /></AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/ticket-admin" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AppLayout><AdminGrievance viewMode="ticket_admin" /></AppLayout>
+              </ProtectedRoute>
+            } />
 
             {/* Citizen Routes */}
             <Route path="/citizen" element={
@@ -140,6 +162,16 @@ export default function App() {
             <Route path="/citizen/fill-survey/:id" element={
               <ProtectedRoute allowedRoles={['citizen']}>
                 <AppLayout><FillSurvey /></AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/citizen/grievances" element={
+              <ProtectedRoute allowedRoles={['citizen']}>
+                <AppLayout><CitizenGrievance /></AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/citizen/tracking" element={
+              <ProtectedRoute allowedRoles={['citizen']}>
+                <AppLayout><CitizenTracking /></AppLayout>
               </ProtectedRoute>
             } />
 

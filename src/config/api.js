@@ -1,4 +1,10 @@
-export const API_BASE_URL = 'https://ranganadibeta.com/api';
+const defaultUrl = 'https://ranganadibeta.com/api';
+const localUrl = 'http://localhost:8000';
+
+export const getApiBaseUrl = () => {
+  const mode = localStorage.getItem('ronganadi_backend_mode');
+  return mode === 'local' ? localUrl : defaultUrl;
+};
 
 export async function apiFetch(endpoint, options = {}) {
   const token = localStorage.getItem('ronganadi_token');
@@ -21,7 +27,7 @@ export async function apiFetch(endpoint, options = {}) {
     delete config.headers['Content-Type'];
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  const response = await fetch(`${getApiBaseUrl()}${endpoint}`, config);
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {

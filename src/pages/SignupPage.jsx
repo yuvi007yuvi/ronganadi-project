@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Shield, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { API_BASE_URL } from '../config/api';
+import { getApiBaseUrl } from '../config/api';
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ export default function SignupPage() {
     setError('');
     
     try {
-      const response = await fetch(`${API_BASE_URL}/signup.php`, {
+      const response = await fetch(`${getApiBaseUrl()}/signup.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

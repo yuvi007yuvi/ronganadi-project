@@ -1,22 +1,20 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, Smartphone, CheckCircle2, Megaphone, Calendar } from 'lucide-react';
 
-import heroImg from '../../dist/assets/KK3_3210.jpg.jpeg';
-import img1 from '../../dist/assets/WhatsApp Image 2026-05-31 at 4.40.31 PM (1).jpeg';
-import img2 from '../../dist/assets/WhatsApp Image 2026-05-31 at 4.40.31 PM (2).jpeg';
-import img3 from '../../dist/assets/WhatsApp Image 2026-05-31 at 4.40.32 PM.jpeg';
-import img4 from '../../dist/assets/WhatsApp Image 2026-05-31 at 4.40.32 PM (1).jpeg';
-import img5 from '../../dist/assets/WhatsApp Image 2026-05-31 at 4.40.32 PM (2).jpeg';
-import m1 from '../../dist/assets/0L0A7232.jpg.jpeg';
-import m2 from '../../dist/assets/0L0A7318.JPG.jpeg';
-import m3 from '../../dist/assets/0L0A7398.jpg.jpeg';
-import m4 from '../../dist/assets/DSC_4562.jpg.jpeg';
-import m5 from '../../dist/assets/IMG-20260409-WA0117.jpg.jpeg';
-import m6 from '../../dist/assets/IMG_20260506_192807_420.webp';
-import m7 from '../../dist/assets/JSV_3298.jpg.jpeg';
-import m8 from '../../dist/assets/JSV_3654.jpg.jpeg';
-import m9 from '../../dist/assets/KK3_3210.jpg.jpeg';
-import m10 from '../../dist/assets/Picsart_26-05-27_21-42-43-492.jpg.jpeg';
+import heroImg from '../assets/hero_leader.png';
+import img1 from '../assets/community_meeting.png';
+import img2 from '../assets/local_feedback.png';
+import img3 from '../assets/impact_listening.png';
+import m1 from '../assets/community_meeting.png';
+import m2 from '../assets/local_feedback.png';
+import m3 from '../assets/impact_listening.png';
+import m4 from '../assets/hero_leader.png';
+import m5 from '../assets/community_meeting.png';
+import m6 from '../assets/local_feedback.png';
+import m7 from '../assets/impact_listening.png';
+import m8 from '../assets/hero_leader.png';
+import m9 from '../assets/community_meeting.png';
+import m10 from '../assets/local_feedback.png';
 
 const XIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" /></svg>;
 const FacebookIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>;

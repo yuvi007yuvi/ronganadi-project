@@ -15,9 +15,12 @@ export default function LoginPage() {
 
   // Hard redirect used instead in handleSubmit
 
-  const demoCreds = {
-    admin: { email: 'admin@ronganadi.gov.in', password: 'admin123' },
-    citizen: { email: 'citizen@ronganadi.gov.in', password: 'citizen123' },
+  const backendMode = localStorage.getItem('ronganadi_backend_mode') || 'live';
+  
+  const toggleBackendMode = () => {
+    const newMode = backendMode === 'local' ? 'live' : 'local';
+    localStorage.setItem('ronganadi_backend_mode', newMode);
+    window.location.reload();
   };
 
   const handleRoleSwitch = (newRole) => {
@@ -25,6 +28,16 @@ export default function LoginPage() {
     setEmail('');
     setPassword('');
     setError('');
+  };
+
+  const handleAutofill = () => {
+    if (role === 'admin') {
+      setEmail('admin@ronganadi.gov.in');
+      setPassword('admin123');
+    } else {
+      setEmail('9999999999');
+      setPassword('citizen123');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -60,6 +73,37 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
+      {/* Floating Backend Switcher */}
+      <div style={{
+        position: 'absolute',
+        top: 20,
+        right: 20,
+        zIndex: 10
+      }}>
+        <button 
+          onClick={toggleBackendMode}
+          type="button"
+          title="Switch between Live Cloud API and Local Workbench API"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '8px 16px',
+            borderRadius: 20,
+            fontSize: 12,
+            fontWeight: 700,
+            border: 'none',
+            cursor: 'pointer',
+            background: backendMode === 'local' ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)' : 'linear-gradient(135deg, #f97316, #c2410c)',
+            color: 'white',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            transition: 'all 0.3s ease'
+          }}
+        >
+          {backendMode === 'local' ? '💻 Local DB (Workbench)' : '🌐 Cloud API (Live)'}
+        </button>
+      </div>
+
       <div className="login-orbs">
         <div className="orb orb-1" />
         <div className="orb orb-2" />
@@ -123,6 +167,30 @@ export default function LoginPage() {
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <button
+              type="button"
+              onClick={handleAutofill}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--primary)',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                padding: 0,
+                textDecoration: 'underline'
+              }}
+            >
+              Autofill {role === 'admin' ? 'Admin' : 'Citizen'} Demo Credentials
+            </button>
+            {backendMode === 'local' && (
+              <span style={{ fontSize: '11px', color: 'var(--success)', fontWeight: 600 }}>
+                ✓ Local Server Mode
+              </span>
+            )}
           </div>
 
           {error && (
