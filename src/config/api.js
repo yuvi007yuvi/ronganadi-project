@@ -1,4 +1,4 @@
-const defaultUrl = 'https://ranganadibeta.com/api';
+const defaultUrl = import.meta.env.DEV ? '/api' : 'https://ranganadibeta.com/api';
 const localUrl = 'http://localhost:8000';
 
 export const getApiBaseUrl = () => {
