@@ -108,6 +108,12 @@ export default function AdminGrievance({ viewMode }) {
     fetchInitialData();
   }, []);
 
+  useEffect(() => {
+    if (viewMode === 'complaints') setActiveTab('complaints');
+    else if (viewMode === 'ticket_admin') setActiveTab('departments');
+    else setActiveTab('dashboard');
+  }, [viewMode]);
+
   const fetchInitialData = async () => {
     setLoading(true);
     try {
