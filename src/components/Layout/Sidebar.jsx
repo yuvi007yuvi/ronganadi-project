@@ -2,13 +2,18 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, FileText, BarChart3, Megaphone,
   ClipboardList, PlusCircle, Phone, BookOpen, ChevronLeft,
-  ChevronRight, Activity, Shield
+  ChevronRight, Activity, Shield, Search
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const adminNav = [
   { label: 'Overview', items: [
     { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+  ]},
+  { label: 'Grievances', items: [
+    { path: '/admin/complaints', icon: FileText, label: 'Complaints' },
+    { path: '/admin/tickets', icon: Activity, label: 'Ticket Desk' },
+    { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Ticket Admin Module' },
   ]},
   { label: 'Management', items: [
     { path: '/admin/users', icon: Users, label: 'Users' },
@@ -26,6 +31,10 @@ const adminNav = [
 const citizenNav = [
   { label: 'Overview', items: [
     { path: '/citizen', icon: LayoutDashboard, label: 'My Dashboard' },
+  ]},
+  { label: 'Grievances', items: [
+    { path: '/citizen/grievances', icon: PlusCircle, label: 'Lodge Complaint' },
+    { path: '/citizen/tracking', icon: Search, label: 'Ticket Tracking' },
   ]},
   { label: 'Surveys', items: [
     { path: '/citizen/surveys', icon: ClipboardList, label: 'Available Surveys' },

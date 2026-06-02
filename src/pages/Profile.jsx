@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { getApiBaseUrl } from '../config/api';
 import { User, Mail, Shield, MapPin, Phone, Edit2, Save, X, Eye, EyeOff, Camera, Upload } from 'lucide-react';
 
 export default function Profile() {
@@ -35,7 +36,7 @@ export default function Profile() {
 
     try {
       const token = localStorage.getItem('ronganadi_token');
-      const response = await fetch('https://ranganadibeta.com/api/upload_image.php?folder=profiles', {
+      const response = await fetch(`${getApiBaseUrl()}/upload_image.php?folder=profiles`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData

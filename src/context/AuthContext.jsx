@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { adminAccount, defaultSurveyors } from '../data/mockData.js';
+import { getApiBaseUrl } from '../config/api';
 
 const AuthContext = createContext(null);
 
@@ -27,7 +28,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password, role) => {
     try {
-      const response = await fetch('https://ranganadibeta.com/api/auth.php', {
+      const response = await fetch(`${getApiBaseUrl()}/auth.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, role })
@@ -61,7 +62,7 @@ export function AuthProvider({ children }) {
   const updateProfile = async (updates) => {
     try {
       const token = localStorage.getItem('ronganadi_token');
-      const response = await fetch('https://ranganadibeta.com/api/update_profile.php', {
+      const response = await fetch(`${getApiBaseUrl()}/update_profile.php`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
