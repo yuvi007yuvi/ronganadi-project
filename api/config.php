@@ -5,10 +5,19 @@
 //  Configure these values in your Hostinger MySQL database
 // ─────────────────────────────────────────────────────────────
 
-define('DB_HOST', 'localhost');      
-define('DB_NAME', 'u114302256_ronganadibeta');   
-define('DB_USER', 'u114302256_admin');   
-define('DB_PASS', 'Admin@786970');
+if (isset($_SERVER['HTTP_HOST']) && ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1' || strpos($_SERVER['HTTP_HOST'], '192.168.') === 0 || strpos($_SERVER['HTTP_HOST'], 'localhost:') === 0) || php_sapi_name() === 'cli') {
+    // Local Database Credentials (XAMPP/WAMP or local PHP server)
+    define('DB_HOST', 'localhost');      
+    define('DB_NAME', 'u114302256_ronganadibeta');   
+    define('DB_USER', 'root');   
+    define('DB_PASS', 'admin');
+} else {
+    // Live Hostinger Credentials
+    define('DB_HOST', 'localhost');      
+    define('DB_NAME', 'u114302256_ronganadibeta');   
+    define('DB_USER', 'u114302256_admin');   
+    define('DB_PASS', 'Admin@786970');
+}
 
 define('JWT_SECRET', 'change-this-to-a-strong-random-secret-key-2024');
 define('JWT_EXPIRE', 86400); // 24 hours

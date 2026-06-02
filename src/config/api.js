@@ -1,4 +1,12 @@
 export const getApiBaseUrl = () => {
+  // If running locally (localhost or 127.0.0.1), use the local PHP API URL
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    // Assuming local PHP is running on localhost/ronganadi-project/api or similar. 
+    // You can adjust this to your local PHP server URL if it's different.
+    return 'http://localhost/ronganadi-project/api'; 
+  }
+  
+  // Otherwise, use the live Cloud API on Hostinger
   return 'https://ranganadibeta.com/api';
 };
 
