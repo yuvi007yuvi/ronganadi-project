@@ -5,12 +5,14 @@
 //  Configure these values in your Hostinger MySQL database
 // ─────────────────────────────────────────────────────────────
 
-if (isset($_SERVER['HTTP_HOST']) && ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1' || strpos($_SERVER['HTTP_HOST'], '192.168.') === 0) || php_sapi_name() === 'cli') {
+if (isset($_SERVER['HTTP_HOST']) && ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1' || strpos($_SERVER['HTTP_HOST'], '192.168.') === 0 || strpos($_SERVER['HTTP_HOST'], 'localhost:') === 0) || php_sapi_name() === 'cli') {
+    // Local Database Credentials (XAMPP/WAMP or local PHP server)
     define('DB_HOST', 'localhost');      
     define('DB_NAME', 'u114302256_ronganadibeta');   
     define('DB_USER', 'root');   
     define('DB_PASS', 'admin');
 } else {
+    // Live Hostinger Credentials
     define('DB_HOST', 'localhost');      
     define('DB_NAME', 'u114302256_ronganadibeta');   
     define('DB_USER', 'u114302256_admin');   
@@ -44,9 +46,10 @@ function getDB() {
 }
 
 function setCorsHeaders() {
-    $allowed_origins = ['https://ranganadibeta.com', 'http://localhost:5173'];
     $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
-    if (in_array($origin, $allowed_origins)) {
+    
+    // Allow any localhost port or the main domain
+    if ($origin === 'https://ranganadibeta.com' || preg_match('/^http:\/\/localhost:[0-9]+$/', $origin)) {
         header('Access-Control-Allow-Origin: ' . $origin);
     } else {
         header('Access-Control-Allow-Origin: https://ranganadibeta.com');
@@ -55,6 +58,7 @@ function setCorsHeaders() {
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Authorization, x-authorization');
     header('Content-Type: application/json; charset=UTF-8');
+    
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
         exit();

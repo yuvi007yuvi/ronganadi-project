@@ -1,9 +1,7 @@
-const defaultUrl = 'https://ranganadibeta.com/api';
-const localUrl = 'http://localhost:8000';
-
 export const getApiBaseUrl = () => {
-  const mode = localStorage.getItem('ronganadi_backend_mode');
-  return mode === 'local' ? localUrl : defaultUrl;
+  // Since you don't have XAMPP/WAMP, always use the live Hostinger API 
+  // even when testing the React frontend on your local computer.
+  return 'https://ranganadibeta.com/api';
 };
 
 export async function apiFetch(endpoint, options = {}) {
