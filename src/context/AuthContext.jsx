@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { adminAccount, defaultSurveyors } from '../data/mockData.js';
+
 import { getApiBaseUrl } from '../config/api';
 
 const AuthContext = createContext(null);
