@@ -207,10 +207,10 @@ if ($method === 'PUT') {
         $priority = $data['priority'] ?? $original['priority'];
 
         if ($ticketJustGenerated) {
-            // Update database with ticket_generated_at
+            // Update database when ticket is generated
             $stmt = $db->prepare("
                 UPDATE grievance_complaints 
-                SET ticket_id = ?, ticket_generated_at = NOW(), status = ?, progress = ?, assigned_officer_id = ?, department_id = ?, expected_completion_date = ?, priority = ?
+                SET ticket_id = ?, status = ?, progress = ?, assigned_officer_id = ?, department_id = ?, expected_completion_date = ?, priority = ?
                 WHERE id = ?
             ");
             $stmt->execute([

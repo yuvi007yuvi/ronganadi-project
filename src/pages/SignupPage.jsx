@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Shield, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
+import { areas } from '../data/schemes';
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -118,14 +119,17 @@ export default function SignupPage() {
           </div>
           <div className="form-group">
             <label className="form-label">Area / Ward / Village</label>
-            <input
-              type="text"
+            <select
               name="area"
               className="form-control"
-              placeholder="Enter your area"
               value={formData.area}
               onChange={handleChange}
-            />
+            >
+              <option value="">Select your area...</option>
+              {areas.map(area => (
+                <option key={area} value={area}>{area}</option>
+              ))}
+            </select>
           </div>
           <div className="form-group">
             <label className="form-label">Panchayat</label>

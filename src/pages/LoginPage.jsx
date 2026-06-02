@@ -15,14 +15,6 @@ export default function LoginPage() {
 
   // Hard redirect used instead in handleSubmit
 
-  const backendMode = localStorage.getItem('ronganadi_backend_mode') || 'live';
-  
-  const toggleBackendMode = () => {
-    const newMode = backendMode === 'local' ? 'live' : 'local';
-    localStorage.setItem('ronganadi_backend_mode', newMode);
-    window.location.reload();
-  };
-
   const handleRoleSwitch = (newRole) => {
     setRole(newRole);
     setEmail('');
@@ -73,37 +65,6 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      {/* Floating Backend Switcher */}
-      <div style={{
-        position: 'absolute',
-        top: 20,
-        right: 20,
-        zIndex: 10
-      }}>
-        <button 
-          onClick={toggleBackendMode}
-          type="button"
-          title="Switch between Live Cloud API and Local Workbench API"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '8px 16px',
-            borderRadius: 20,
-            fontSize: 12,
-            fontWeight: 700,
-            border: 'none',
-            cursor: 'pointer',
-            background: backendMode === 'local' ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)' : 'linear-gradient(135deg, #f97316, #c2410c)',
-            color: 'white',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            transition: 'all 0.3s ease'
-          }}
-        >
-          {backendMode === 'local' ? '💻 Local DB (Workbench)' : '🌐 Cloud API (Live)'}
-        </button>
-      </div>
-
       <div className="login-orbs">
         <div className="orb orb-1" />
         <div className="orb orb-2" />
@@ -186,11 +147,6 @@ export default function LoginPage() {
             >
               Autofill {role === 'admin' ? 'Admin' : 'Citizen'} Demo Credentials
             </button>
-            {backendMode === 'local' && (
-              <span style={{ fontSize: '11px', color: 'var(--success)', fontWeight: 600 }}>
-                ✓ Local Server Mode
-              </span>
-            )}
           </div>
 
           {error && (

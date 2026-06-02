@@ -117,14 +117,30 @@ export function DataProvider({ children }) {
     const totalCitizens = citizens.length;
     const schemeBeneficiaries = citizens.filter(c => c.schemesAvailed?.length > 0 || (typeof c.schemesAvailed === 'string' && c.schemesAvailed.trim().length > 0)).length;
     const areaWise = {};
-    citizens.forEach(c => {
-      if (c.area) areaWise[c.area] = (areaWise[c.area] || 0) + 1;
+    surveyResponses.forEach(r => {
+      const citizen = citizens.find(c => c.mobile === r.citizen_phone);
+      if (citizen && citizen.area) {
+        areaWise[citizen.area] = (areaWise[citizen.area] || 0) + 1;
+      }
     });
+    const occupations = {};
+    const castes = {};
+    citizens.forEach(c => {
+      if (c.occupation) occupations[c.occupation] = (occupations[c.occupation] || 0) + 1;
+      if (c.casteCategory) castes[c.casteCategory] = (castes[c.casteCategory] || 0) + 1;
+    });
+
+    const activeAnnouncementsCount = announcements.filter(a => a.published).length;
+
     return { 
       totalCitizens, 
       schemeBeneficiaries, 
       areaWise, 
-      customSurveysCount: customSurveys.length 
+      customSurveysCount: customSurveys.length,
+      surveyResponsesCount: surveyResponses.length,
+      occupations,
+      castes,
+      activeAnnouncementsCount
     };
   };
 

@@ -37,14 +37,6 @@ export default function Header({ collapsed, setMobileOpen, pageTitle }) {
 
   const initials = currentUser?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U';
 
-  const backendMode = localStorage.getItem('ronganadi_backend_mode') || 'live';
-  
-  const toggleBackendMode = () => {
-    const newMode = backendMode === 'live' ? 'local' : 'live';
-    localStorage.setItem('ronganadi_backend_mode', newMode);
-    window.location.reload();
-  };
-
   return (
     <header className={`header ${collapsed ? 'collapsed' : ''}`}>
       <div className="header-left">
@@ -60,29 +52,6 @@ export default function Header({ collapsed, setMobileOpen, pageTitle }) {
       </div>
 
       <div className="header-right">
-        {/* Backend Switcher */}
-        <button 
-          onClick={toggleBackendMode}
-          title="Switch between Live Cloud API and Local Workbench API"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '6px 12px',
-            borderRadius: 20,
-            fontSize: 11,
-            fontWeight: 700,
-            border: 'none',
-            cursor: 'pointer',
-            marginRight: 8,
-            background: backendMode === 'local' ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)' : 'linear-gradient(135deg, #f97316, #c2410c)',
-            color: 'white',
-            boxShadow: 'var(--shadow-sm)',
-            transition: 'var(--transition)'
-          }}
-        >
-          {backendMode === 'local' ? '💻 Local DB (Workbench)' : '🌐 Cloud API (Live)'}
-        </button>
 
         <button className="header-icon-btn" title="Notifications">
           <Bell size={16} />
