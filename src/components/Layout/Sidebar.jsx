@@ -12,13 +12,15 @@ const adminNav = [
   ]},
   { label: 'Grievances', items: [
     { path: '/admin/complaints', icon: FileText, label: 'Complaints' },
-    { path: '/admin/tickets', icon: Activity, label: 'Ticket Desk' },
-    { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Ticket Admin Module' },
+    { path: '/admin/tickets', icon: Activity, label: 'Complaints Desk' },
+    { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Complaints Admin Module' },
   ]},
   { label: 'Management', items: [
     { path: '/admin/users', icon: Users, label: 'Users' },
     { path: '/admin/records', icon: FileText, label: 'All Records' },
     { path: '/admin/custom-surveys', icon: ClipboardList, label: 'Custom Surveys' },
+    { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey' },
+    { path: '/migration-reports', icon: BarChart3, label: 'Migrated Reports' },
     { path: '/admin/reports', icon: BarChart3, label: 'Reports' },
     { path: '/admin/advertisements', icon: Megaphone, label: 'Advertisements' },
   ]},
@@ -34,10 +36,11 @@ const citizenNav = [
   ]},
   { label: 'Grievances', items: [
     { path: '/citizen/grievances', icon: PlusCircle, label: 'Lodge Complaint' },
-    { path: '/citizen/tracking', icon: Search, label: 'Ticket Tracking' },
+    { path: '/citizen/tracking', icon: Search, label: 'Complaint Tracking' },
   ]},
   { label: 'Surveys', items: [
     { path: '/citizen/surveys', icon: ClipboardList, label: 'Available Surveys' },
+    { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey' },
   ]},
   { label: 'Modules', items: [
     { path: '/communication', icon: Phone, label: 'Communication' },
@@ -109,7 +112,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
                     {currentUser?.profile_photo ? (
                       <img src={currentUser.profile_photo} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <span style={{ fontSize: 16, fontWeight: 'bold' }}>{currentUser?.name?.charAt(0)}</span>
+                      <span style={{ fontSize: 16, fontWeight: 'bold' }}>{(currentUser?.name || 'G').charAt(0)}</span>
                     )}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>

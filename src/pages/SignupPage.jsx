@@ -5,6 +5,12 @@ import { Shield, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 import { areas } from '../data/schemes';
 
+const PANCHAYATS = [
+  "BAGALIJAN", "DAKHIN LALUK", "DEEJO", "DIKRONG", "DOOLOHAT SONAPUR", 
+  "HARMOTI", "NIZ LALUK", "NOWBOICHA", "PACHIM NOWBOICHA", "PAHUMORA", 
+  "PHULBARI", "RAMPUR BOGIBIL", "SINGRA", "UTTAR LALUK", "YUBANAGAR"
+];
+
 export default function SignupPage() {
   const [formData, setFormData] = useState({
     full_name: '',
@@ -83,7 +89,7 @@ export default function SignupPage() {
           <p>Citizen Registration</p>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ marginTop: 24 }}>
+        <form onSubmit={handleSubmit} autoComplete="off" style={{ marginTop: 24 }}>
           <div className="form-group">
             <label className="form-label">Full Name</label>
             <input
@@ -133,14 +139,17 @@ export default function SignupPage() {
           </div>
           <div className="form-group">
             <label className="form-label">Panchayat</label>
-            <input 
-              type="text"
+            <select
               name="panchayat"
               className="form-control"
-              placeholder="Enter your Panchayat name"
               value={formData.panchayat}
               onChange={handleChange}
-            />
+            >
+              <option value="">Select your Panchayat...</option>
+              {PANCHAYATS.map(p => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
           </div>
           <div className="form-group">
             <label className="form-label">Are you a migrated person from here?</label>

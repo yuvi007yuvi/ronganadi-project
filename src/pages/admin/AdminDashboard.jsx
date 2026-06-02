@@ -6,7 +6,7 @@ import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement,
   ArcElement, Tooltip, Legend, Title
 } from 'chart.js';
-import { Users, FileText, CheckCircle, Activity, TrendingUp, Clock, Megaphone, Briefcase, PieChart, Clipboard, ShieldAlert } from 'lucide-react';
+import { Users, FileText, CheckCircle, Activity, TrendingUp, Clock, Megaphone, Briefcase, PieChart, Clipboard, ShieldAlert, Grid } from 'lucide-react';
 import { allSchemes } from '../../data/schemes.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend, Title);
@@ -122,7 +122,7 @@ export default function AdminDashboard() {
         {/* Comprehensive Modules Overview (8 Small Cards) */}
         <div className="premium-grid" style={{ marginBottom: '32px', gridTemplateColumns: 'repeat(12, 1fr)' }}>
           
-          <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column' }}>
+          <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(239, 246, 255, 0.95), rgba(219, 234, 254, 0.8))', borderColor: 'rgba(191, 219, 254, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
                 <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Citizens</div>
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
             <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Registered users</div>
           </div>
 
-          <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column' }}>
+          <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(238, 242, 255, 0.95), rgba(224, 231, 255, 0.8))', borderColor: 'rgba(199, 210, 254, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
                 <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Survey Responses</div>
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
             <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Completed surveys</div>
           </div>
 
-          <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column' }}>
+          <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(236, 253, 245, 0.95), rgba(209, 250, 229, 0.8))', borderColor: 'rgba(167, 243, 208, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
                 <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Custom Forms</div>
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
             <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Active survey templates</div>
           </div>
 
-          <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column' }}>
+          <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(250, 245, 255, 0.95), rgba(243, 232, 255, 0.8))', borderColor: 'rgba(233, 213, 255, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
                 <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Beneficiaries</div>
@@ -182,10 +182,10 @@ export default function AdminDashboard() {
             <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>{awarenessRate}% awareness rate</div>
           </div>
 
-          <div className="bento-col-3 glass-card stagger-2 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column' }}>
+          <div className="bento-col-3 glass-card stagger-2 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(254, 242, 242, 0.95), rgba(254, 226, 226, 0.8))', borderColor: 'rgba(254, 202, 202, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Complaints (Raw)</div>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Complaint Received</div>
                 <div className="premium-stat-value text-gradient" style={{ backgroundImage: 'linear-gradient(135deg, #ef4444, #b91c1c)', fontSize: '28px', marginTop: '2px' }}>
                   {totalComplaints}
                 </div>
@@ -197,10 +197,10 @@ export default function AdminDashboard() {
             <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Total submissions</div>
           </div>
 
-          <div className="bento-col-3 glass-card stagger-2 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column' }}>
+          <div className="bento-col-3 glass-card stagger-2 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(253, 242, 248, 0.95), rgba(252, 231, 243, 0.8))', borderColor: 'rgba(251, 207, 232, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Tickets Generated</div>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Complaint Approved</div>
                 <div className="premium-stat-value text-gradient" style={{ backgroundImage: 'linear-gradient(135deg, #db2777, #be185d)', fontSize: '28px', marginTop: '2px' }}>
                   {ticketsGenerated}
                 </div>
@@ -209,13 +209,13 @@ export default function AdminDashboard() {
                 <Clipboard size={18} />
               </div>
             </div>
-            <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Official active tickets</div>
+            <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Official active complaints</div>
           </div>
 
-          <div className="bento-col-3 glass-card stagger-2 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column' }}>
+          <div className="bento-col-3 glass-card stagger-2 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(255, 247, 237, 0.95), rgba(255, 237, 213, 0.8))', borderColor: 'rgba(253, 186, 116, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Pending Tickets</div>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Pending Complaints</div>
                 <div className="premium-stat-value text-gradient" style={{ backgroundImage: 'linear-gradient(135deg, #ea580c, #c2410c)', fontSize: '28px', marginTop: '2px' }}>
                   {ticketsPending}
                 </div>
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
             <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Awaiting resolution</div>
           </div>
 
-          <div className="bento-col-3 glass-card stagger-2 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column' }}>
+          <div className="bento-col-3 glass-card stagger-2 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(255, 251, 235, 0.95), rgba(254, 243, 199, 0.8))', borderColor: 'rgba(253, 230, 138, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
                 <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Announcements</div>

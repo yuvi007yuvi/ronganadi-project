@@ -30,18 +30,20 @@ import Communication from './pages/Communication';
 import Awareness from './pages/Awareness';
 
 import Profile from './pages/Profile';
+import MigratedSurveyForm from './pages/public/MigratedSurveyForm';
+import MigrationReports from './pages/public/MigrationReports';
 
 const pageTitles = {
   '/admin': 'Dashboard',
   '/admin/users': 'Manage Users',
   '/admin/records': 'All Records',
   '/admin/complaints': 'Grievance Complaints',
-  '/admin/tickets': 'Ticket Desk',
+  '/admin/tickets': 'Complaints Desk',
   '/citizen': 'Citizen Dashboard',
   '/citizen/surveys': 'Available Surveys',
   '/citizen/fill-survey': 'Fill Survey',
   '/citizen/grievances': 'Lodge Complaint',
-  '/citizen/tracking': 'Ticket Tracking',
+  '/citizen/tracking': 'Complaint Tracking',
   '/communication': 'Communication',
   '/awareness': 'Awareness',
   '/profile': 'My Profile',
@@ -74,6 +76,7 @@ function AppLayout({ children }) {
       <div className={`main-content ${collapsed ? 'collapsed' : ''}`}>
         <Header
           collapsed={collapsed}
+          setCollapsed={setCollapsed}
           setMobileOpen={setMobileOpen}
           pageTitle={title}
         />
@@ -95,6 +98,8 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/migrated-survey" element={<AppLayout><MigratedSurveyForm /></AppLayout>} />
+            <Route path="/migration-reports" element={<AppLayout><MigrationReports /></AppLayout>} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={

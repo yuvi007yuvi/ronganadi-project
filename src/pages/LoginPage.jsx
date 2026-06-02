@@ -96,7 +96,7 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
           <div className="form-group">
             <label className="form-label">{role === 'citizen' ? 'Mobile Number' : 'Email Address'}</label>
             <input
@@ -130,24 +130,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <button
-              type="button"
-              onClick={handleAutofill}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--primary)',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                padding: 0,
-                textDecoration: 'underline'
-              }}
-            >
-              Autofill {role === 'admin' ? 'Admin' : 'Citizen'} Demo Credentials
-            </button>
-          </div>
+
 
           {error && (
             <div style={{ background: 'var(--danger-bg)', color: 'var(--danger)', padding: '10px 14px', borderRadius: 8, fontSize: 13, marginBottom: 12 }}>

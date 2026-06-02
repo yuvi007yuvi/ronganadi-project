@@ -1,8 +1,21 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, MapPin, Phone, FileText } from 'lucide-react';
+import { User, MapPin, Phone, FileText, X } from 'lucide-react';
 
 export default function CitizenDashboard() {
   const { currentUser } = useAuth();
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    const hasSeen = sessionStorage.getItem('dashboard_survey_popup');
+    if (!hasSeen) {
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+        sessionStorage.setItem('dashboard_survey_popup', 'true');
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   return (
     <div className="dashboard animate-fade-in">
@@ -71,6 +84,43 @@ export default function CitizenDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Survey Popup Modal */}
+      {showPopup && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div className="card animate-slideUp" style={{ background: 'white', padding: 40, borderRadius: 16, maxWidth: 500, width: '100%', textAlign: 'center', position: 'relative' }}>
+            <button 
+              onClick={() => setShowPopup(false)}
+              style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-500)' }}
+            >
+              <X size={24} />
+            </button>
+            <div style={{ width: 70, height: 70, background: 'var(--orange-100)', color: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <FileText size={36} />
+            </div>
+            <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', marginBottom: 12 }}>Official Survey Available</h2>
+            <p style={{ color: 'var(--gray-600)', marginBottom: 30, fontSize: 16, lineHeight: 1.5 }}>
+              We are currently collecting important migration and employment data. Your participation helps us serve you better. Would you like to fill out the survey now?
+            </p>
+            <div style={{ display: 'flex', gap: 16, flexDirection: 'column' }}>
+              <button 
+                className="btn btn-primary btn-lg" 
+                style={{ width: '100%', justifyContent: 'center' }}
+                onClick={() => { window.location.href = '/migrated-survey'; }}
+              >
+                Yes, Start Survey Now
+              </button>
+              <button 
+                className="btn btn-outline btn-lg" 
+                style={{ width: '100%', justifyContent: 'center' }}
+                onClick={() => setShowPopup(false)}
+              >
+                Maybe Later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

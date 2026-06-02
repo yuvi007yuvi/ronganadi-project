@@ -16,7 +16,7 @@ const pageTitles = {
   '/awareness': 'Awareness',
 };
 
-export default function Header({ collapsed, setMobileOpen, pageTitle }) {
+export default function Header({ collapsed, setCollapsed, setMobileOpen, pageTitle }) {
   const { currentUser, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -40,12 +40,13 @@ export default function Header({ collapsed, setMobileOpen, pageTitle }) {
   return (
     <header className={`header ${collapsed ? 'collapsed' : ''}`}>
       <div className="header-left">
-        {/* Mobile menu toggle */}
-        <button className="header-icon-btn" style={{ display: 'none' }} id="mobile-menu-btn" onClick={() => setMobileOpen(true)}>
-          <Menu size={18} />
-        </button>
-        <button className="header-icon-btn" style={{ display: 'flex' }} onClick={() => setMobileOpen(prev => !prev)}
-          id="hamburger-btn">
+        <button className="header-icon-btn" onClick={() => {
+          if (window.innerWidth <= 768) {
+            setMobileOpen(true);
+          } else {
+            setCollapsed(prev => !prev);
+          }
+        }}>
           <Menu size={18} />
         </button>
         <h1 className="page-title">{pageTitle}</h1>

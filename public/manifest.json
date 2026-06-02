@@ -1,0 +1,15 @@
+{
+  "short_name": "Ranganadibeta",
+  "name": "Ranganadibeta - Digital Survey Platform",
+  "icons": [
+    {
+      "src": "logo2.jpeg",
+      "type": "image/jpeg",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "theme_color": "#f97316"
+}
