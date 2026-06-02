@@ -6,6 +6,7 @@ import 'providers/auth_provider.dart';
 import 'providers/data_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
+import 'screens/landing_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/citizen_home_screen.dart';
 
@@ -38,6 +39,7 @@ class RongandiApp extends StatelessWidget {
         initialRoute: '/splash',
         routes: {
           '/splash': (_) => const SplashScreen(),
+          '/landing': (_) => const LandingScreen(),
           '/login': (_) => const LoginScreen(),
           '/signup': (_) => const SignupScreen(),
           '/home': (_) => const HomeScreen(),
@@ -85,7 +87,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         Navigator.pushReplacementNamed(context, '/home');
       }
     } else {
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/landing');
     }
   }
 
