@@ -561,18 +561,6 @@ export default function AdminFacilities() {
                         <input type="number" step="any" className="form-control" value={facFormData.longitude} onChange={e => setFacFormData({...facFormData, longitude: parseFloat(e.target.value) || 0})} required style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #cbd5e1', background: '#f8fafc' }} />
                       </div>
                     </div>
-                    
-                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block', fontSize: 13 }}>Or Pin Location on Map</label>
-                    <div style={{ height: 300, width: '100%', borderRadius: 16, overflow: 'hidden', border: '2px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                      <MapContainer center={[facFormData.latitude, facFormData.longitude]} zoom={14} style={{ height: '100%', width: '100%' }}>
-                        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
-                        <MapCenterUpdater position={[facFormData.latitude, facFormData.longitude]} />
-                        <LocationPicker 
-                          position={[facFormData.latitude, facFormData.longitude]} 
-                          setPosition={([lat, lng]) => setFacFormData({...facFormData, latitude: lat, longitude: lng})} 
-                        />
-                      </MapContainer>
-                    </div>
                   </div>
 
                   {getSelectedTypeSchema().length > 0 && (
