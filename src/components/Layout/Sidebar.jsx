@@ -25,6 +25,7 @@ const adminNav = [
     { path: '/admin/map-dashboard', icon: MapPin, label: 'GIS Dashboard' },
     { path: '/admin/facilities', icon: MapPin, label: 'Manage Facilities' },
     { path: '/admin/advertisements', icon: Megaphone, label: 'Advertisements' },
+    { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback' },
   ]},
   { label: 'Modules', items: [
     { path: '/communication', icon: Phone, label: 'Communication' },
@@ -39,6 +40,7 @@ const citizenNav = [
   { label: 'Grievances', items: [
     { path: '/citizen/grievances', icon: PlusCircle, label: 'Lodge Complaint' },
     { path: '/citizen/tracking', icon: Search, label: 'Complaint Tracking' },
+    { path: '/citizen/feedback', icon: MessageSquare, label: 'Give Feedback' },
   ]},
   { label: 'Surveys', items: [
     { path: '/citizen/surveys', icon: ClipboardList, label: 'Available Surveys' },

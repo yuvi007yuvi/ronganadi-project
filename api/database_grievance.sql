@@ -81,4 +81,16 @@ INSERT IGNORE INTO grievance_officers (name, department_id, designation, mobile,
 ('Ravi Verma', 4, 'Sanitation Inspector', '9876543213', 'active'),
 ('Vijay Das', 5, 'Assistant Engineer', '9876543214', 'active');
 
+-- ─── Citizen Feedback Table ───────────────────────────────────
+CREATE TABLE IF NOT EXISTS citizen_feedback (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    citizen_id     INT NOT NULL,
+    category       VARCHAR(100) NOT NULL,
+    rating         INT NOT NULL DEFAULT 5,
+    message        TEXT NOT NULL,
+    status         ENUM('unread', 'reviewed') DEFAULT 'unread',
+    created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (citizen_id) REFERENCES citizens(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 SET FOREIGN_KEY_CHECKS = 1;

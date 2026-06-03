@@ -23,10 +23,12 @@ import BuildSurvey from './pages/admin/BuildSurvey';
 import ManageSurveys from './pages/admin/ManageSurveys';
 import AdminGrievance from './pages/admin/AdminGrievance';
 import AdminFacilities from './pages/admin/AdminFacilities';
+import AdminFeedback from './pages/admin/AdminFeedback';
 import AdminGisDashboard from './pages/admin/AdminGisDashboard';
 import CitizenGrievance from './pages/citizen/CitizenGrievance';
 import CitizenTracking from './pages/citizen/CitizenTracking';
 import CitizenLocator from './pages/citizen/CitizenLocator';
+import CitizenFeedback from './pages/citizen/CitizenFeedback';
 
 
 import Communication from './pages/Communication';
@@ -164,9 +166,11 @@ export default function App() {
               </ProtectedRoute>
             } />
             <Route path="/admin/map-dashboard" element={
-              <ProtectedRoute allowedRoles={['admin']}>
-                <AppLayout><AdminGisDashboard /></AppLayout>
-              </ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminGisDashboard /></AppLayout></ProtectedRoute>
+            } />
+            
+            <Route path="/admin/feedback" element={
+              <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminFeedback /></AppLayout></ProtectedRoute>
             } />
 
             {/* Citizen Routes */}
@@ -198,6 +202,11 @@ export default function App() {
             <Route path="/citizen/locator" element={
               <ProtectedRoute allowedRoles={['citizen']}>
                 <AppLayout><CitizenLocator /></AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/citizen/feedback" element={
+              <ProtectedRoute allowedRoles={['citizen']}>
+                <AppLayout><CitizenFeedback /></AppLayout>
               </ProtectedRoute>
             } />
 
