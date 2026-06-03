@@ -491,7 +491,7 @@ export default function AdminFacilities() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: '1px solid #e2e8f0', paddingBottom: 16 }}>
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <MapPin size={24} color="#3b82f6" />
-                {editingFacId ? 'Edit Facility Location' : 'Map New Facility'}
+                {editingFacId ? 'Edit Facility Location' : 'Add New Facility'}
               </h2>
               <button type="button" onClick={() => setShowFacModal(false)} style={{ background: '#f1f5f9', border: 'none', width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
                 &times;
