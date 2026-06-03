@@ -43,7 +43,7 @@ const pageTitles = {
   '/admin/complaints': 'Grievance Complaints',
   '/admin/tickets': 'Complaints Desk',
   '/admin/facilities': 'Manage Facilities',
-  '/admin/gis-dashboard': 'GIS Dashboard',
+  '/admin/map-dashboard': 'GIS Dashboard',
   '/citizen': 'Citizen Dashboard',
   '/citizen/surveys': 'Available Surveys',
   '/citizen/fill-survey': 'Fill Survey',
@@ -163,7 +163,7 @@ export default function App() {
                 <AppLayout><AdminFacilities /></AppLayout>
               </ProtectedRoute>
             } />
-            <Route path="/admin/gis-dashboard" element={
+            <Route path="/admin/map-dashboard" element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <AppLayout><AdminGisDashboard /></AppLayout>
               </ProtectedRoute>

@@ -22,7 +22,7 @@ const adminNav = [
     { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey' },
     { path: '/migration-reports', icon: BarChart3, label: 'Migrated Reports' },
     { path: '/admin/reports', icon: BarChart3, label: 'Reports' },
-    { path: '/admin/gis-dashboard', icon: MapPin, label: 'GIS Dashboard' },
+    { path: '/admin/map-dashboard', icon: MapPin, label: 'GIS Dashboard' },
     { path: '/admin/facilities', icon: MapPin, label: 'Manage Facilities' },
     { path: '/admin/advertisements', icon: Megaphone, label: 'Advertisements' },
   ]},
