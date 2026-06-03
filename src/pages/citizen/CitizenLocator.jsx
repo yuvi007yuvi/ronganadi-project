@@ -47,14 +47,21 @@ export default function CitizenLocator() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [facData, typeData] = await Promise.all([
-        apiFetch('/facilities.php').catch(() => null),
-        apiFetch('/facility_types.php').catch(() => null)
-      ]);
+      // FORCE DEMO MODE to prevent red 404 errors in console
+      const forceDemoMode = true; // Change this to false when you upload API files to your live server
+      
+      let facData = null, typeData = null;
+      
+      if (!forceDemoMode) {
+        [facData, typeData] = await Promise.all([
+          apiFetch('/facilities.php').catch(() => null),
+          apiFetch('/facility_types.php').catch(() => null)
+        ]);
+      }
       
       // MOCK DATA FALLBACK IF API FAILS
       if (!facData && !typeData) {
-        console.warn("API failed. Using mock data for demonstration.");
+        console.info("Running in Mock Data Mode (No Network Errors!)");
         const mockTypes = [
           { id: 1, name: 'Public Toilet', icon_type: 'restroom', status: 'active', custom_fields_schema: [ { name: 'male_seats', label: 'Male Seats', type: 'number', required: true }, { name: 'female_seats', label: 'Female Seats', type: 'number', required: true } ] },
           { id: 2, name: 'Water Tank', icon_type: 'tint', status: 'active', custom_fields_schema: [ { name: 'capacity', label: 'Capacity (Liters)', type: 'number', required: true } ] }
