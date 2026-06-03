@@ -65,15 +65,29 @@ export default function AdminFacilities() {
       // MOCK DATA FALLBACK IF API FAILS (e.g. 404 or 502)
       if (!facData && !typeData) {
         console.info("Running in Mock Data Mode (No Network Errors!)");
-        const mockTypes = [
-          { id: 1, name: 'Public Toilet', icon_type: 'restroom', status: 'active', custom_fields_schema: [ { name: 'male_seats', label: 'Male Seats', type: 'number', required: true }, { name: 'female_seats', label: 'Female Seats', type: 'number', required: true } ] },
-          { id: 2, name: 'Water Tank', icon_type: 'tint', status: 'active', custom_fields_schema: [ { name: 'capacity', label: 'Capacity (Liters)', type: 'number', required: true } ] }
-        ];
-        const mockFacs = [
-          { id: 1, type_id: 1, type_name: 'Public Toilet', name: 'City Center Toilet', latitude: 27.2415, longitude: 94.1032, address: 'Main Market Road', ward_number: 'Ward 04', status: 'active', custom_fields_data: { male_seats: 4, female_seats: 4 } }
-        ];
-        setFacilities(mockFacs);
-        setFacilityTypes(mockTypes);
+        
+        let savedTypes = localStorage.getItem('demo_types');
+        let savedFacs = localStorage.getItem('demo_facilities');
+        
+        if (!savedTypes) {
+          const mockTypes = [
+            { id: 1, name: 'Public Toilet', icon_type: 'restroom', status: 'active', custom_fields_schema: [ { name: 'male_seats', label: 'Male Seats', type: 'number', required: true }, { name: 'female_seats', label: 'Female Seats', type: 'number', required: true } ] },
+            { id: 2, name: 'Water Tank', icon_type: 'tint', status: 'active', custom_fields_schema: [ { name: 'capacity', label: 'Capacity (Liters)', type: 'number', required: true } ] }
+          ];
+          localStorage.setItem('demo_types', JSON.stringify(mockTypes));
+          savedTypes = JSON.stringify(mockTypes);
+        }
+        
+        if (!savedFacs) {
+          const mockFacs = [
+            { id: 1, type_id: 1, type_name: 'Public Toilet', name: 'City Center Toilet', latitude: 27.2415, longitude: 94.1032, address: 'Main Market Road', ward_number: 'Ward 04', status: 'active', custom_fields_data: { male_seats: 4, female_seats: 4 } }
+          ];
+          localStorage.setItem('demo_facilities', JSON.stringify(mockFacs));
+          savedFacs = JSON.stringify(mockFacs);
+        }
+
+        setFacilities(JSON.parse(savedFacs));
+        setFacilityTypes(JSON.parse(savedTypes));
       } else {
         setFacilities(facData || []);
         setFacilityTypes(typeData || []);
@@ -118,11 +132,14 @@ export default function AdminFacilities() {
           id: editingFacId || Date.now(),
           type_name: typeObj ? typeObj.name : 'Unknown'
         };
+        let updated;
         if (editingFacId) {
-          setFacilities(prev => prev.map(f => f.id === editingFacId ? newFac : f));
+          updated = facilities.map(f => f.id === editingFacId ? newFac : f);
         } else {
-          setFacilities(prev => [newFac, ...prev]);
+          updated = [newFac, ...facilities];
         }
+        setFacilities(updated);
+        localStorage.setItem('demo_facilities', JSON.stringify(updated));
         setShowFacModal(false);
         return;
       }
@@ -143,7 +160,9 @@ export default function AdminFacilities() {
     if (!confirm('Delete this facility?')) return;
     try {
       if (forceDemoMode) {
-        setFacilities(prev => prev.filter(f => f.id !== id));
+        const updated = facilities.filter(f => f.id !== id);
+        setFacilities(updated);
+        localStorage.setItem('demo_facilities', JSON.stringify(updated));
         return;
       }
       await apiFetch(`/facilities.php?id=${id}`, { method: 'DELETE' });
@@ -181,11 +200,14 @@ export default function AdminFacilities() {
       if (forceDemoMode) {
         // MOCK SAVE
         const newType = { ...typeFormData, id: editingTypeId || Date.now() };
+        let updated;
         if (editingTypeId) {
-          setFacilityTypes(prev => prev.map(t => t.id === editingTypeId ? newType : t));
+          updated = facilityTypes.map(t => t.id === editingTypeId ? newType : t);
         } else {
-          setFacilityTypes(prev => [newType, ...prev]);
+          updated = [newType, ...facilityTypes];
         }
+        setFacilityTypes(updated);
+        localStorage.setItem('demo_types', JSON.stringify(updated));
         setShowTypeModal(false);
         return;
       }
@@ -206,7 +228,9 @@ export default function AdminFacilities() {
     if (!confirm('Delete this facility type? Ensure no facilities are using it.')) return;
     try {
       if (forceDemoMode) {
-        setFacilityTypes(prev => prev.filter(t => t.id !== id));
+        const updated = facilityTypes.filter(t => t.id !== id);
+        setFacilityTypes(updated);
+        localStorage.setItem('demo_types', JSON.stringify(updated));
         return;
       }
       await apiFetch(`/facility_types.php?id=${id}`, { method: 'DELETE' });
