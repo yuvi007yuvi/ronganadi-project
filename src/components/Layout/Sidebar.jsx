@@ -10,26 +10,30 @@ const adminNav = [
   { label: 'Overview', items: [
     { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
   ]},
-  { label: 'Grievances', items: [
+  { label: 'Grievance Management', items: [
     { path: '/admin/complaints', icon: FileText, label: 'Complaints' },
     { path: '/admin/tickets', icon: Activity, label: 'Complaints Desk' },
-    { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Complaints Admin Module' },
+    { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Complaints Admin' },
   ]},
-  { label: 'Management', items: [
-    { path: '/admin/users', icon: Users, label: 'Users' },
-    { path: '/admin/records', icon: FileText, label: 'All Records' },
+  { label: 'Surveys & Reports', items: [
     { path: '/admin/custom-surveys', icon: ClipboardList, label: 'Custom Surveys' },
     { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey' },
     { path: '/migration-reports', icon: BarChart3, label: 'Migrated Reports' },
-    { path: '/admin/reports', icon: BarChart3, label: 'Reports' },
+    { path: '/admin/reports', icon: BarChart3, label: 'System Reports' },
+    { path: '/admin/records', icon: FileText, label: 'All Records' },
+  ]},
+  { label: 'GIS & Infrastructure', items: [
     { path: '/admin/map-dashboard', icon: MapPin, label: 'GIS Dashboard' },
     { path: '/admin/facilities', icon: MapPin, label: 'Manage Facilities' },
-    { path: '/admin/advertisements', icon: Megaphone, label: 'Advertisements' },
-    { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback' },
   ]},
-  { label: 'Modules', items: [
+  { label: 'Engagement & Feedback', items: [
+    { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback' },
+    { path: '/admin/advertisements', icon: Megaphone, label: 'Advertisements' },
     { path: '/communication', icon: Phone, label: 'Communication' },
     { path: '/awareness', icon: BookOpen, label: 'Awareness' },
+  ]},
+  { label: 'System Admin', items: [
+    { path: '/admin/users', icon: Users, label: 'User Management' },
   ]},
 ];
 
@@ -37,19 +41,17 @@ const citizenNav = [
   { label: 'Overview', items: [
     { path: '/citizen', icon: LayoutDashboard, label: 'My Dashboard' },
   ]},
-  { label: 'Grievances', items: [
+  { label: 'Grievance Services', items: [
     { path: '/citizen/grievances', icon: PlusCircle, label: 'Lodge Complaint' },
     { path: '/citizen/tracking', icon: Search, label: 'Complaint Tracking' },
-    { path: '/citizen/feedback', icon: MessageSquare, label: 'Give Feedback' },
   ]},
-  { label: 'Surveys', items: [
+  { label: 'City Services', items: [
+    { path: '/citizen/locator', icon: MapPin, label: 'GIS Locator' },
     { path: '/citizen/surveys', icon: ClipboardList, label: 'Available Surveys' },
     { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey' },
   ]},
-  { label: 'Services', items: [
-    { path: '/citizen/locator', icon: MapPin, label: 'GIS Locator' },
-  ]},
-  { label: 'Modules', items: [
+  { label: 'Connect & Engage', items: [
+    { path: '/citizen/feedback', icon: MessageSquare, label: 'Give Feedback' },
     { path: '/communication', icon: Phone, label: 'Communication' },
     { path: '/awareness', icon: BookOpen, label: 'Awareness' },
   ]},
