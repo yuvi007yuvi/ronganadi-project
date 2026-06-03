@@ -486,8 +486,8 @@ export default function AdminFacilities() {
       )}
 
       {showFacModal && (
-        <div className="modal-backdrop" style={{ backdropFilter: 'blur(4px)', background: 'rgba(15, 23, 42, 0.6)' }}>
-          <div className="modal-content animate-fadeIn" style={{ maxWidth: 800, width: '90%', maxHeight: '90vh', overflowY: 'auto', background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255,255,255,0.2)' }}>
+        <div className="modal-overlay" style={{ backdropFilter: 'blur(4px)', background: 'rgba(15, 23, 42, 0.6)' }}>
+          <div className="modal animate-fadeIn" style={{ maxWidth: 800, width: '90%', maxHeight: '90vh', overflowY: 'auto', background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255,255,255,0.2)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: '1px solid #e2e8f0', paddingBottom: 16 }}>
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <MapPin size={24} color="#3b82f6" />
@@ -608,8 +608,8 @@ export default function AdminFacilities() {
       )}
 
       {showTypeModal && (
-        <div className="modal-backdrop" style={{ backdropFilter: 'blur(4px)', background: 'rgba(15, 23, 42, 0.6)' }}>
-          <div className="modal-content animate-fadeIn" style={{ maxWidth: 700, width: '90%', maxHeight: '90vh', overflowY: 'auto', background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255,255,255,0.2)' }}>
+        <div className="modal-overlay" style={{ backdropFilter: 'blur(4px)', background: 'rgba(15, 23, 42, 0.6)' }}>
+          <div className="modal animate-fadeIn" style={{ maxWidth: 700, width: '90%', maxHeight: '90vh', overflowY: 'auto', background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255,255,255,0.2)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: '1px solid #e2e8f0', paddingBottom: 16 }}>
               <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <Layers size={24} color="#8b5cf6" />
