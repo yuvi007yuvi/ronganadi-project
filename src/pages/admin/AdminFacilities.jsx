@@ -497,26 +497,26 @@ export default function AdminFacilities() {
 
       {showFacModal && (
         <div className="modal-overlay" style={{ backdropFilter: 'blur(4px)', background: 'rgba(15, 23, 42, 0.6)' }}>
-          <div className="modal animate-fadeIn" style={{ maxWidth: 800, width: '90%', maxHeight: '90vh', overflowY: 'auto', background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255,255,255,0.2)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: '1px solid #e2e8f0', paddingBottom: 16 }}>
-              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 10 }}>
-                <MapPin size={24} color="#3b82f6" />
+          <div className="modal animate-fadeIn" style={{ maxWidth: 700, width: '90%', maxHeight: '90vh', overflowY: 'auto', background: 'white', borderRadius: 16, padding: 24, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255,255,255,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '1px solid #e2e8f0', paddingBottom: 12 }}>
+              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <MapPin size={20} color="#3b82f6" />
                 {editingFacId ? 'Edit Facility Location' : 'Add New Facility'}
               </h2>
-              <button type="button" onClick={() => setShowFacModal(false)} style={{ background: '#f1f5f9', border: 'none', width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
+              <button type="button" onClick={() => setShowFacModal(false)} style={{ background: '#f1f5f9', border: 'none', width: 30, height: 30, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
                 &times;
               </button>
             </div>
-            <form onSubmit={handleSaveFacility} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            <form onSubmit={handleSaveFacility} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Facility Category / Type <span style={{color: '#ef4444'}}>*</span></label>
+              <div className="form-group" style={{ gridColumn: '1 / -1', marginBottom: 0 }}>
+                <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block' }}>Facility Category / Type <span style={{color: '#ef4444'}}>*</span></label>
                 <select 
                   className="form-control" 
                   value={facFormData.type_id} 
                   onChange={e => setFacFormData({...facFormData, type_id: e.target.value, custom_fields_data: {}})} 
                   required
-                  style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 15 }}
+                  style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 14 }}
                 >
                   <option value="">-- Select Type --</option>
                   {facilityTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -525,63 +525,63 @@ export default function AdminFacilities() {
 
               {facFormData.type_id && (
                 <>
-                  <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                      <div style={{ width: 8, height: 24, background: '#3b82f6', borderRadius: 4 }}></div>
-                      <h3 style={{ fontSize: 16, margin: 0, color: '#1e293b', fontWeight: 600 }}>
+                  <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: 8, marginBottom: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                      <div style={{ width: 6, height: 18, background: '#3b82f6', borderRadius: 3 }}></div>
+                      <h3 style={{ fontSize: 14, margin: 0, color: '#1e293b', fontWeight: 600 }}>
                         Fixed Fields (Required)
                       </h3>
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Facility Name <span style={{color: '#ef4444'}}>*</span></label>
-                    <input type="text" className="form-control" value={facFormData.name} onChange={e => setFacFormData({...facFormData, name: e.target.value})} required style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#f8fafc' }} />
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block', fontSize: 13 }}>Facility Name <span style={{color: '#ef4444'}}>*</span></label>
+                    <input type="text" className="form-control" value={facFormData.name} onChange={e => setFacFormData({...facFormData, name: e.target.value})} required style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 13 }} />
                   </div>
                   
-                  <div className="form-group">
-                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Ward Number <span style={{color: '#ef4444'}}>*</span></label>
-                    <input type="text" className="form-control" value={facFormData.ward_number} onChange={e => setFacFormData({...facFormData, ward_number: e.target.value})} required style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#f8fafc' }} />
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block', fontSize: 13 }}>Ward Number <span style={{color: '#ef4444'}}>*</span></label>
+                    <input type="text" className="form-control" value={facFormData.ward_number} onChange={e => setFacFormData({...facFormData, ward_number: e.target.value})} required style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 13 }} />
                   </div>
 
-                  <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Address <span style={{color: '#ef4444'}}>*</span></label>
-                    <textarea className="form-control" rows="2" value={facFormData.address} onChange={e => setFacFormData({...facFormData, address: e.target.value})} required style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#f8fafc', resize: 'none' }}></textarea>
+                  <div className="form-group" style={{ gridColumn: '1 / -1', marginBottom: 0 }}>
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block', fontSize: 13 }}>Address <span style={{color: '#ef4444'}}>*</span></label>
+                    <textarea className="form-control" rows="2" value={facFormData.address} onChange={e => setFacFormData({...facFormData, address: e.target.value})} required style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', resize: 'none', minHeight: 60, fontSize: 13 }}></textarea>
                   </div>
 
-                  <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Location Coordinates <span style={{color: '#ef4444'}}>*</span></label>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 12 }}>
+                  <div className="form-group" style={{ gridColumn: '1 / -1', marginBottom: 0 }}>
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block', fontSize: 13 }}>Location Coordinates <span style={{color: '#ef4444'}}>*</span></label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>Latitude</label>
-                        <input type="number" step="any" className="form-control" value={facFormData.latitude} onChange={e => setFacFormData({...facFormData, latitude: parseFloat(e.target.value) || 0})} required style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #cbd5e1', background: '#f8fafc' }} />
+                        <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>Latitude</label>
+                        <input type="number" step="any" className="form-control" value={facFormData.latitude} onChange={e => setFacFormData({...facFormData, latitude: parseFloat(e.target.value) || 0})} required style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 13 }} />
                       </div>
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>Longitude</label>
-                        <input type="number" step="any" className="form-control" value={facFormData.longitude} onChange={e => setFacFormData({...facFormData, longitude: parseFloat(e.target.value) || 0})} required style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #cbd5e1', background: '#f8fafc' }} />
+                        <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>Longitude</label>
+                        <input type="number" step="any" className="form-control" value={facFormData.longitude} onChange={e => setFacFormData({...facFormData, longitude: parseFloat(e.target.value) || 0})} required style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 13 }} />
                       </div>
                     </div>
                   </div>
 
                   {getSelectedTypeSchema().length > 0 && (
-                    <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: 20 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                        <div style={{ width: 8, height: 24, background: '#8b5cf6', borderRadius: 4 }}></div>
-                        <h3 style={{ fontSize: 16, margin: 0, color: '#1e293b', fontWeight: 600 }}>
-                          Dynamic Fields (Based on Type)
+                    <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: 12, marginBottom: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                        <div style={{ width: 6, height: 18, background: '#8b5cf6', borderRadius: 3 }}></div>
+                        <h3 style={{ fontSize: 14, margin: 0, color: '#1e293b', fontWeight: 600 }}>
+                          Dynamic Fields
                         </h3>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, background: '#f8fafc', padding: 24, borderRadius: 16, border: '1px solid #e2e8f0' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, background: '#f8fafc', padding: 12, borderRadius: 12, border: '1px solid #e2e8f0' }}>
                         {getSelectedTypeSchema().map((field, idx) => (
-                          <div key={idx} className="form-group">
-                            <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>{field.label} {field.required && <span style={{color: '#ef4444'}}>*</span>}</label>
+                          <div key={idx} className="form-group" style={{ marginBottom: 0 }}>
+                            <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 4, display: 'block', fontSize: 13 }}>{field.label} {field.required && <span style={{color: '#ef4444'}}>*</span>}</label>
                             {field.type === 'boolean' ? (
                               <select 
                                 className="form-control" 
                                 value={facFormData.custom_fields_data[field.name] || ''} 
                                 onChange={e => handleCustomFieldChange(field.name, e.target.value)}
                                 required={field.required}
-                                style={{ padding: '12px 16px', borderRadius: 10, border: '1px solid #cbd5e1', background: 'white' }}
+                                style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: 'white', fontSize: 13 }}
                               >
                                 <option value="">-- Select --</option>
                                 <option value="Yes">Yes</option>
@@ -594,7 +594,7 @@ export default function AdminFacilities() {
                                 value={facFormData.custom_fields_data[field.name] || ''} 
                                 onChange={e => handleCustomFieldChange(field.name, e.target.value)}
                                 required={field.required}
-                                style={{ padding: '12px 16px', borderRadius: 10, border: '1px solid #cbd5e1', background: 'white' }}
+                                style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: 'white', fontSize: 13 }}
                               />
                             )}
                           </div>
@@ -605,9 +605,9 @@ export default function AdminFacilities() {
                 </>
               )}
 
-              <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 24, paddingTop: 20, borderTop: '1px solid #e2e8f0' }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowFacModal(false)} style={{ padding: '10px 24px', borderRadius: 20, fontWeight: 600 }}>Cancel</button>
-                <button type="submit" className="btn btn-primary" style={{ padding: '10px 24px', borderRadius: 20, fontWeight: 600, boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>Save Facility</button>
+              <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 16, paddingTop: 16, borderTop: '1px solid #e2e8f0' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowFacModal(false)} style={{ padding: '8px 20px', borderRadius: 16, fontWeight: 600 }}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ padding: '8px 20px', borderRadius: 16, fontWeight: 600, boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>Save Facility</button>
               </div>
             </form>
           </div>
