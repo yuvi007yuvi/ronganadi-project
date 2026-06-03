@@ -23,6 +23,7 @@ import BuildSurvey from './pages/admin/BuildSurvey';
 import ManageSurveys from './pages/admin/ManageSurveys';
 import AdminGrievance from './pages/admin/AdminGrievance';
 import AdminFacilities from './pages/admin/AdminFacilities';
+import AdminGisDashboard from './pages/admin/AdminGisDashboard';
 import CitizenGrievance from './pages/citizen/CitizenGrievance';
 import CitizenTracking from './pages/citizen/CitizenTracking';
 import CitizenLocator from './pages/citizen/CitizenLocator';
@@ -41,7 +42,8 @@ const pageTitles = {
   '/admin/records': 'All Records',
   '/admin/complaints': 'Grievance Complaints',
   '/admin/tickets': 'Complaints Desk',
-  '/admin/facilities': 'GIS Facilities',
+  '/admin/facilities': 'Manage Facilities',
+  '/admin/gis-dashboard': 'GIS Dashboard',
   '/citizen': 'Citizen Dashboard',
   '/citizen/surveys': 'Available Surveys',
   '/citizen/fill-survey': 'Fill Survey',
@@ -159,6 +161,11 @@ export default function App() {
             <Route path="/admin/facilities" element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <AppLayout><AdminFacilities /></AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/gis-dashboard" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AppLayout><AdminGisDashboard /></AppLayout>
               </ProtectedRoute>
             } />
 
