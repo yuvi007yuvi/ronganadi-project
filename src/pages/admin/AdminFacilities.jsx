@@ -43,7 +43,7 @@ export default function AdminFacilities() {
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [editingTypeId, setEditingTypeId] = useState(null);
   const [typeFormData, setTypeFormData] = useState({
-    name: '', icon_type: 'default', status: 'active', custom_fields_schema: []
+    name: '', icon_type: 'default', icon_url: '', status: 'active', custom_fields_schema: []
   });
 
   useEffect(() => {
@@ -71,8 +71,8 @@ export default function AdminFacilities() {
         
         if (!savedTypes) {
           const mockTypes = [
-            { id: 1, name: 'Public Toilet', icon_type: 'restroom', status: 'active', custom_fields_schema: [ { name: 'male_seats', label: 'Male Seats', type: 'number', required: true }, { name: 'female_seats', label: 'Female Seats', type: 'number', required: true } ] },
-            { id: 2, name: 'Water Tank', icon_type: 'tint', status: 'active', custom_fields_schema: [ { name: 'capacity', label: 'Capacity (Liters)', type: 'number', required: true } ] }
+            { id: 1, name: 'Public Toilet', icon_type: 'restroom', icon_url: '', status: 'active', custom_fields_schema: [ { name: 'male_seats', label: 'Male Seats', type: 'number', required: true }, { name: 'female_seats', label: 'Female Seats', type: 'number', required: true } ] },
+            { id: 2, name: 'Water Tank', icon_type: 'tint', icon_url: '', status: 'active', custom_fields_schema: [ { name: 'capacity', label: 'Capacity (Liters)', type: 'number', required: true } ] }
           ];
           localStorage.setItem('demo_types', JSON.stringify(mockTypes));
           savedTypes = JSON.stringify(mockTypes);
@@ -183,14 +183,30 @@ export default function AdminFacilities() {
     if (type) {
       setEditingTypeId(type.id);
       setTypeFormData({
-        name: type.name, icon_type: type.icon_type || 'default', status: type.status || 'active',
+        name: type.name, icon_type: type.icon_type || 'default', icon_url: type.icon_url || '', status: type.status || 'active',
         custom_fields_schema: type.custom_fields_schema || []
       });
     } else {
       setEditingTypeId(null);
-      setTypeFormData({ name: '', icon_type: 'default', status: 'active', custom_fields_schema: [] });
+      setTypeFormData({ name: '', icon_type: 'default', icon_url: '', status: 'active', custom_fields_schema: [] });
     }
     setShowTypeModal(true);
+  };
+
+  const handleIconUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Icon file must be less than 2MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setTypeFormData(prev => ({ ...prev, icon_url: reader.result }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveType = async (e) => {
@@ -524,6 +540,24 @@ export default function AdminFacilities() {
               <div className="form-group">
                 <label className="form-label">Type Name (e.g. Office, Toilet, Water Tank) *</label>
                 <input type="text" className="form-control" value={typeFormData.name} onChange={e => setTypeFormData({...typeFormData, name: e.target.value})} required />
+              </div>
+
+              <div className="form-group" style={{ display: 'flex', gap: 16, alignItems: 'center', background: 'var(--gray-50)', padding: 16, borderRadius: 12, border: '1px solid var(--gray-200)', marginBottom: 20 }}>
+                {typeFormData.icon_url ? (
+                  <img src={typeFormData.icon_url} alt="Icon Preview" style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 8, background: 'white', border: '1px solid var(--gray-200)' }} />
+                ) : (
+                  <div style={{ width: 48, height: 48, borderRadius: 8, background: 'white', border: '1px dashed var(--gray-400)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gray-400)', fontSize: 12, textAlign: 'center' }}>No Icon</div>
+                )}
+                <div style={{ flex: 1 }}>
+                  <label className="form-label">Custom Map Icon (Optional)</label>
+                  <input type="file" accept="image/*" className="form-control" onChange={handleIconUpload} style={{ padding: 4 }} />
+                  <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--gray-500)' }}>Upload a transparent PNG/SVG for best map results (Max 2MB).</p>
+                </div>
+                {typeFormData.icon_url && (
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => setTypeFormData(prev => ({ ...prev, icon_url: '' }))} style={{ color: 'var(--danger)' }}>
+                    Remove
+                  </button>
+                )}
               </div>
 
               <div style={{ background: 'var(--gray-50)', padding: 16, borderRadius: 12, marginBottom: 20, border: '1px solid var(--gray-200)' }}>

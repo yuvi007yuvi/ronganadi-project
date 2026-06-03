@@ -9,6 +9,7 @@ try {
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
             icon_type VARCHAR(50) DEFAULT 'default',
+            icon_url LONGTEXT,
             custom_fields_schema JSON,
             status ENUM('active', 'inactive') DEFAULT 'active',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -32,6 +33,13 @@ try {
             FOREIGN KEY (type_id) REFERENCES gis_facility_types(id) ON DELETE RESTRICT
         );
     ");
+
+    // Try adding the column if the table already existed before this update
+    try {
+        $db->exec("ALTER TABLE gis_facility_types ADD COLUMN icon_url LONGTEXT");
+    } catch (Exception $e) {
+        // Column probably already exists, ignore
+    }
 
     // Insert some default types if empty
     $stmt = $db->query("SELECT COUNT(*) FROM gis_facility_types");

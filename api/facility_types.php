@@ -31,8 +31,8 @@ if ($method === 'POST') {
     try {
         $stmt = $db->prepare("
             INSERT INTO gis_facility_types 
-            (name, icon_type, custom_fields_schema, status, created_at)
-            VALUES (?, ?, ?, ?, NOW())
+            (name, icon_type, icon_url, custom_fields_schema, status, created_at)
+            VALUES (?, ?, ?, ?, ?, NOW())
         ");
         
         $schemaJson = isset($data['custom_fields_schema']) ? json_encode($data['custom_fields_schema']) : json_encode([]);
@@ -40,6 +40,7 @@ if ($method === 'POST') {
         $stmt->execute([
             $data['name'],
             $data['icon_type'] ?? 'default',
+            $data['icon_url'] ?? null,
             $schemaJson,
             $data['status'] ?? 'active'
         ]);
@@ -60,7 +61,7 @@ if ($method === 'PUT') {
     try {
         $stmt = $db->prepare("
             UPDATE gis_facility_types 
-            SET name = ?, icon_type = ?, custom_fields_schema = ?, status = ?
+            SET name = ?, icon_type = ?, icon_url = ?, custom_fields_schema = ?, status = ?
             WHERE id = ?
         ");
         
@@ -69,6 +70,7 @@ if ($method === 'PUT') {
         $stmt->execute([
             $data['name'],
             $data['icon_type'] ?? 'default',
+            $data['icon_url'] ?? null,
             $schemaJson,
             $data['status'] ?? 'active',
             $id

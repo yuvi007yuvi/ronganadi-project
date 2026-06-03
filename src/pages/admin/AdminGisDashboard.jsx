@@ -9,7 +9,17 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const createCustomIcon = (typeName) => {
+const createCustomIcon = (typeObj) => {
+  if (typeObj && typeObj.icon_url) {
+    return L.icon({
+      iconUrl: typeObj.icon_url,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+      popupAnchor: [0, -16]
+    });
+  }
+
+  const typeName = typeObj ? typeObj.name : 'Unknown';
   const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#6366f1'];
   let hash = 0;
   for (let i = 0; i < (typeName || '').length; i++) {
@@ -203,7 +213,7 @@ export default function AdminGisDashboard() {
             {filteredFacilities.map(fac => {
               const typeDetails = facilityTypes.find(t => t.id == fac.type_id) || {};
               return (
-                <Marker key={fac.id} position={[fac.latitude, fac.longitude]} icon={createCustomIcon(fac.type_name)}>
+                <Marker key={fac.id} position={[fac.latitude, fac.longitude]} icon={createCustomIcon(typeDetails)}>
                   <Popup className="facility-popup">
                     <div style={{ minWidth: 260, padding: '4px 0' }}>
                       <div style={{ borderBottom: '1px solid #e5e7eb', paddingBottom: 10, marginBottom: 12 }}>
