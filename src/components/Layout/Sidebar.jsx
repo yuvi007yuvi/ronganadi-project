@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, FileText, BarChart3, Megaphone,
   ClipboardList, PlusCircle, Phone, BookOpen, ChevronLeft,
-  ChevronRight, Activity, Shield, Search, MapPin
+  ChevronRight, Activity, Shield, Search, MapPin, MessageSquare
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
