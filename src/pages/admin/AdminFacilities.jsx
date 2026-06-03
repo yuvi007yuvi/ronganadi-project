@@ -4,7 +4,7 @@ import {
   Plus, Trash2, Edit, MapPin, Search, Server, 
   Layers, ShieldAlert, Activity, Navigation, Settings
 } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -23,6 +23,16 @@ const LocationPicker = ({ position, setPosition }) => {
   });
 
   return position ? <Marker position={position} /> : null;
+};
+
+const MapCenterUpdater = ({ position }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (position && position[0] && position[1]) {
+      map.setView(position);
+    }
+  }, [position, map]);
+  return null;
 };
 
 const forceDemoMode = true; // Change this to false when you upload API files to your live server
@@ -540,19 +550,28 @@ export default function AdminFacilities() {
                   </div>
 
                   <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Pin Location on Map <span style={{color: '#ef4444'}}>*</span></label>
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Location Coordinates <span style={{color: '#ef4444'}}>*</span></label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 12 }}>
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>Latitude</label>
+                        <input type="number" step="any" className="form-control" value={facFormData.latitude} onChange={e => setFacFormData({...facFormData, latitude: parseFloat(e.target.value) || 0})} required style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #cbd5e1', background: '#f8fafc' }} />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>Longitude</label>
+                        <input type="number" step="any" className="form-control" value={facFormData.longitude} onChange={e => setFacFormData({...facFormData, longitude: parseFloat(e.target.value) || 0})} required style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #cbd5e1', background: '#f8fafc' }} />
+                      </div>
+                    </div>
+                    
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block', fontSize: 13 }}>Or Pin Location on Map</label>
                     <div style={{ height: 300, width: '100%', borderRadius: 16, overflow: 'hidden', border: '2px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
                       <MapContainer center={[facFormData.latitude, facFormData.longitude]} zoom={14} style={{ height: '100%', width: '100%' }}>
                         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+                        <MapCenterUpdater position={[facFormData.latitude, facFormData.longitude]} />
                         <LocationPicker 
                           position={[facFormData.latitude, facFormData.longitude]} 
                           setPosition={([lat, lng]) => setFacFormData({...facFormData, latitude: lat, longitude: lng})} 
                         />
                       </MapContainer>
-                    </div>
-                    <div style={{ fontSize: 13, color: '#64748b', marginTop: 12, display: 'flex', gap: 16, background: '#f8fafc', padding: '8px 12px', borderRadius: 8, display: 'inline-flex' }}>
-                      <span><strong>Lat:</strong> {facFormData.latitude.toFixed(6)}</span>
-                      <span><strong>Lng:</strong> {facFormData.longitude.toFixed(6)}</span>
                     </div>
                   </div>
 
