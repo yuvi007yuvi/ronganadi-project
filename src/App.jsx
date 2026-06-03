@@ -22,8 +22,10 @@ import Advertisements from './pages/admin/Advertisements';
 import BuildSurvey from './pages/admin/BuildSurvey';
 import ManageSurveys from './pages/admin/ManageSurveys';
 import AdminGrievance from './pages/admin/AdminGrievance';
+import AdminFacilities from './pages/admin/AdminFacilities';
 import CitizenGrievance from './pages/citizen/CitizenGrievance';
 import CitizenTracking from './pages/citizen/CitizenTracking';
+import CitizenLocator from './pages/citizen/CitizenLocator';
 
 
 import Communication from './pages/Communication';
@@ -39,11 +41,13 @@ const pageTitles = {
   '/admin/records': 'All Records',
   '/admin/complaints': 'Grievance Complaints',
   '/admin/tickets': 'Complaints Desk',
+  '/admin/facilities': 'GIS Facilities',
   '/citizen': 'Citizen Dashboard',
   '/citizen/surveys': 'Available Surveys',
   '/citizen/fill-survey': 'Fill Survey',
   '/citizen/grievances': 'Lodge Complaint',
   '/citizen/tracking': 'Complaint Tracking',
+  '/citizen/locator': 'GIS Facility Locator',
   '/communication': 'Communication',
   '/awareness': 'Awareness',
   '/profile': 'My Profile',
@@ -152,6 +156,11 @@ export default function App() {
                 <AppLayout><AdminGrievance viewMode="ticket_admin" /></AppLayout>
               </ProtectedRoute>
             } />
+            <Route path="/admin/facilities" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AppLayout><AdminFacilities /></AppLayout>
+              </ProtectedRoute>
+            } />
 
             {/* Citizen Routes */}
             <Route path="/citizen" element={
@@ -177,6 +186,11 @@ export default function App() {
             <Route path="/citizen/tracking" element={
               <ProtectedRoute allowedRoles={['citizen']}>
                 <AppLayout><CitizenTracking /></AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/citizen/locator" element={
+              <ProtectedRoute allowedRoles={['citizen']}>
+                <AppLayout><CitizenLocator /></AppLayout>
               </ProtectedRoute>
             } />
 
