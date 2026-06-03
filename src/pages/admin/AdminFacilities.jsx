@@ -281,36 +281,42 @@ export default function AdminFacilities() {
 
   return (
     <div className="animate-fadeIn" style={{ maxWidth: 1200, margin: '0 auto', paddingBottom: 60 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28 }}>
+      <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', borderRadius: 16, padding: '32px', marginBottom: 32, color: 'white', boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.4)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: 'var(--gray-900)' }}>
+          <h1 style={{ margin: 0, fontSize: 32, fontWeight: 800, letterSpacing: '-0.5px' }}>
             Dynamic GIS Facilities
           </h1>
-          <p style={{ margin: 0, color: 'var(--gray-500)' }}>
-            Manage map locations and define custom facility structures
+          <p style={{ margin: '8px 0 0 0', color: 'rgba(255,255,255,0.8)', fontSize: 15 }}>
+            Manage map locations and define custom facility structures with ease.
           </p>
         </div>
         
-        <div style={{ display: 'flex', background: 'var(--gray-100)', borderRadius: 12, padding: 4 }}>
-          {['facilities', 'types'].map(tab => (
+        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)', borderRadius: 12, padding: 6, border: '1px solid rgba(255,255,255,0.2)' }}>
+          {[
+            { id: 'facilities', label: 'Manage Locations', icon: <MapPin size={16} /> },
+            { id: 'types', label: 'Facility Types', icon: <Layers size={16} /> }
+          ].map(tab => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
               style={{
                 border: 'none',
-                background: activeTab === tab ? 'white' : 'none',
-                color: activeTab === tab ? 'var(--primary)' : 'var(--gray-600)',
-                padding: '8px 16px',
+                background: activeTab === tab.id ? 'white' : 'transparent',
+                color: activeTab === tab.id ? '#1e3a8a' : 'white',
+                padding: '10px 20px',
                 borderRadius: 8,
                 fontSize: 14,
                 fontWeight: 600,
                 cursor: 'pointer',
-                boxShadow: activeTab === tab ? '0 4px 10px rgba(0,0,0,0.05)' : 'none',
-                transition: 'all 0.2s',
-                textTransform: 'capitalize'
+                boxShadow: activeTab === tab.id ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8
               }}
             >
-              {tab === 'types' ? 'Facility Types' : 'Manage Locations'}
+              {tab.icon}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -321,102 +327,158 @@ export default function AdminFacilities() {
       ) : (
         <>
           {activeTab === 'facilities' && (
-            <div className="card animate-fadeIn" style={{ padding: 24 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h3 style={{ margin: 0, fontSize: 18 }}>Mapped Facilities</h3>
-                <button className="btn btn-primary" onClick={() => openFacModal()}>
-                  <MapPin size={16} /> Add Facility
+            <div className="animate-fadeIn">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                <h3 style={{ margin: 0, fontSize: 20, color: 'var(--gray-800)' }}>Mapped Facilities</h3>
+                <button className="btn btn-primary" onClick={() => openFacModal()} style={{ borderRadius: 20, padding: '10px 24px', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>
+                  <MapPin size={16} /> Add New Facility
                 </button>
               </div>
 
-              <div className="table-wrapper" style={{ overflowX: 'auto', background: 'white', borderRadius: 12, border: '1px solid var(--gray-200)' }}>
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Name & Info</th>
-                      <th>Category</th>
-                      <th>Location</th>
-                      <th>Ward</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {facilities.map(fac => (
-                      <tr key={fac.id}>
-                        <td>
-                          <div style={{ fontWeight: 600 }}>{fac.name}</div>
-                          <div style={{ fontSize: 12, color: 'var(--gray-500)' }}>{fac.address}</div>
-                        </td>
-                        <td>
-                          <span className="pill pill-blue">{fac.type_name}</span>
-                        </td>
-                        <td>
-                          <div style={{ fontSize: 12, color: 'var(--gray-500)' }}>
-                            Lat: {fac.latitude.toFixed(4)}<br/>Lng: {fac.longitude.toFixed(4)}
-                          </div>
-                        </td>
-                        <td>{fac.ward_number}</td>
-                        <td>
-                          <div style={{ display: 'flex', gap: 8 }}>
-                            <button className="btn btn-secondary btn-sm" onClick={() => openFacModal(fac)}>
-                              <Edit size={14} /> Edit
-                            </button>
-                            <button className="btn btn-secondary btn-sm" onClick={() => handleDeleteFacility(fac.id)} style={{ color: 'var(--danger)', borderColor: '#fee2e2' }}>
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </td>
+              <div style={{ background: 'white', borderRadius: 16, border: '1px solid var(--gray-200)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', overflow: 'hidden' }}>
+                <div className="table-wrapper" style={{ overflowX: 'auto' }}>
+                  <table className="data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                        <th style={{ padding: '16px 20px', color: '#64748b', fontWeight: 600, textAlign: 'left' }}>Facility Name & Info</th>
+                        <th style={{ padding: '16px 20px', color: '#64748b', fontWeight: 600, textAlign: 'left' }}>Category</th>
+                        <th style={{ padding: '16px 20px', color: '#64748b', fontWeight: 600, textAlign: 'left' }}>Coordinates</th>
+                        <th style={{ padding: '16px 20px', color: '#64748b', fontWeight: 600, textAlign: 'left' }}>Ward</th>
+                        <th style={{ padding: '16px 20px', color: '#64748b', fontWeight: 600, textAlign: 'right' }}>Actions</th>
                       </tr>
-                    ))}
-                    {facilities.length === 0 && (
-                      <tr><td colSpan="5" style={{ textAlign: 'center', padding: 20 }}>No facilities mapped yet.</td></tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {facilities.map(fac => (
+                        <tr key={fac.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                          <td style={{ padding: '16px 20px' }}>
+                            <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 15 }}>{fac.name}</div>
+                            <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>{fac.address}</div>
+                          </td>
+                          <td style={{ padding: '16px 20px' }}>
+                            <span style={{ background: '#eff6ff', color: '#2563eb', padding: '6px 12px', borderRadius: 20, fontSize: 12, fontWeight: 600, border: '1px solid #bfdbfe' }}>
+                              {fac.type_name}
+                            </span>
+                          </td>
+                          <td style={{ padding: '16px 20px' }}>
+                            <div style={{ fontSize: 13, color: '#475569', fontFamily: 'monospace', background: '#f1f5f9', padding: '6px 10px', borderRadius: 6, display: 'inline-block' }}>
+                              {fac.latitude.toFixed(4)}, {fac.longitude.toFixed(4)}
+                            </div>
+                          </td>
+                          <td style={{ padding: '16px 20px', color: '#334155', fontWeight: 500 }}>{fac.ward_number}</td>
+                          <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                              <button className="btn btn-secondary btn-sm" onClick={() => openFacModal(fac)} style={{ padding: 8, borderRadius: 8 }}>
+                                <Edit size={16} />
+                              </button>
+                              <button className="btn btn-secondary btn-sm" onClick={() => handleDeleteFacility(fac.id)} style={{ padding: 8, borderRadius: 8, color: '#ef4444', backgroundColor: '#fef2f2', borderColor: '#fecaca' }}>
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {facilities.length === 0 && (
+                        <tr>
+                          <td colSpan="5" style={{ textAlign: 'center', padding: '60px 20px' }}>
+                            <div style={{ width: 64, height: 64, background: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#94a3b8' }}>
+                              <MapPin size={32} />
+                            </div>
+                            <h3 style={{ margin: '0 0 8px', color: '#334155' }}>No facilities mapped yet</h3>
+                            <p style={{ margin: 0, color: '#64748b' }}>Click "Add New Facility" to get started.</p>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
 
           {activeTab === 'types' && (
-            <div className="card animate-fadeIn" style={{ padding: 24 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div className="animate-fadeIn">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: 18 }}>Dynamic Facility Types</h3>
-                  <p style={{ margin: 0, fontSize: 13, color: 'var(--gray-500)' }}>Define categories and their custom data fields.</p>
+                  <h3 style={{ margin: 0, fontSize: 20, color: 'var(--gray-800)' }}>Dynamic Facility Types</h3>
+                  <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--gray-500)' }}>Create new categories with custom data fields for the map.</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => openTypeModal()}>
+                <button className="btn btn-primary" onClick={() => openTypeModal()} style={{ borderRadius: 20, padding: '10px 24px', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>
                   <Layers size={16} /> Add New Type
                 </button>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
                 {facilityTypes.map(type => (
-                  <div key={type.id} style={{ border: '1px solid var(--gray-200)', borderRadius: 12, padding: 16, background: '#fafbff' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                      <div>
-                        <h4 style={{ margin: '0 0 4px', fontSize: 16, color: 'var(--gray-900)' }}>{type.name}</h4>
-                        <span className={`pill ${type.status === 'active' ? 'pill-green' : 'pill-gray'}`} style={{ fontSize: 11 }}>{type.status}</span>
+                  <div key={type.id} style={{ 
+                    background: 'white', 
+                    borderRadius: 16, 
+                    padding: 24, 
+                    border: '1px solid var(--gray-200)',
+                    boxShadow: '0 4px 15px -3px rgba(0,0,0,0.05)',
+                    transition: 'transform 0.2s, boxShadow 0.2s',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }} onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 25px -5px rgba(0,0,0,0.1)'; }} onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 15px -3px rgba(0,0,0,0.05)'; }}>
+                    
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)' }}></div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        {type.icon_url ? (
+                          <img src={type.icon_url} alt="icon" style={{ width: 40, height: 40, objectFit: 'contain', background: '#f8fafc', borderRadius: 10, padding: 4, border: '1px solid #e2e8f0' }} />
+                        ) : (
+                          <div style={{ width: 40, height: 40, background: '#eff6ff', color: '#3b82f6', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 18 }}>
+                            {(type.name || 'F').charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <h4 style={{ margin: '0 0 4px', fontSize: 18, color: '#0f172a', fontWeight: 700 }}>{type.name}</h4>
+                          <span style={{ background: type.status === 'active' ? '#dcfce7' : '#f1f5f9', color: type.status === 'active' ? '#166534' : '#64748b', padding: '4px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>
+                            {type.status}
+                          </span>
+                        </div>
                       </div>
+                      
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <button className="btn btn-secondary btn-sm" onClick={() => openTypeModal(type)} style={{ padding: 6 }}>
-                          <Edit size={14} />
+                        <button className="btn btn-secondary btn-sm" onClick={() => openTypeModal(type)} style={{ padding: 8, borderRadius: 8, border: 'none', background: '#f1f5f9' }}>
+                          <Edit size={16} color="#475569" />
                         </button>
-                        <button className="btn btn-secondary btn-sm" onClick={() => handleDeleteType(type.id)} style={{ padding: 6, color: 'var(--danger)' }}>
-                          <Trash2 size={14} />
+                        <button className="btn btn-secondary btn-sm" onClick={() => handleDeleteType(type.id)} style={{ padding: 8, borderRadius: 8, border: 'none', background: '#fef2f2' }}>
+                          <Trash2 size={16} color="#ef4444" />
                         </button>
                       </div>
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--gray-600)', background: 'white', padding: 10, borderRadius: 8, border: '1px solid var(--gray-200)' }}>
-                      <strong>Custom Fields ({type.custom_fields_schema?.length || 0}):</strong>
-                      <ul style={{ margin: '8px 0 0', paddingLeft: 20 }}>
-                        {type.custom_fields_schema?.map((f, i) => (
-                          <li key={i}>{f.label} ({f.type}) {f.required ? '*' : ''}</li>
-                        ))}
-                        {(!type.custom_fields_schema || type.custom_fields_schema.length === 0) && <li>No custom fields.</li>}
-                      </ul>
+
+                    <div style={{ background: '#f8fafc', borderRadius: 12, padding: 16, border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Settings size={14} /> Custom Fields ({type.custom_fields_schema?.length || 0})
+                      </div>
+                      
+                      {(!type.custom_fields_schema || type.custom_fields_schema.length === 0) ? (
+                        <div style={{ fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>No custom fields defined.</div>
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                          {type.custom_fields_schema.map((f, i) => (
+                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white', padding: '8px 12px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                              <span style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>{f.label} {f.required && <span style={{ color: '#ef4444' }}>*</span>}</span>
+                              <span style={{ fontSize: 11, background: '#f1f5f9', color: '#64748b', padding: '2px 6px', borderRadius: 4, fontFamily: 'monospace' }}>{f.type}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
+                
+                {facilityTypes.length === 0 && (
+                  <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', background: 'white', borderRadius: 16, border: '1px dashed #cbd5e1' }}>
+                    <div style={{ width: 64, height: 64, background: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#94a3b8' }}>
+                      <Layers size={32} />
+                    </div>
+                    <h3 style={{ margin: '0 0 8px', color: '#334155' }}>No Facility Types</h3>
+                    <p style={{ margin: 0, color: '#64748b' }}>Create a type (like 'Hospital') to start mapping.</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
