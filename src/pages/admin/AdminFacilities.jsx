@@ -486,20 +486,27 @@ export default function AdminFacilities() {
       )}
 
       {showFacModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content" style={{ maxWidth: 800, width: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2 style={{ marginTop: 0, marginBottom: 20, fontSize: 20 }}>
-              {editingFacId ? 'Edit Facility Location' : 'Map New Facility'}
-            </h2>
-            <form onSubmit={handleSaveFacility} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="modal-backdrop" style={{ backdropFilter: 'blur(4px)', background: 'rgba(15, 23, 42, 0.6)' }}>
+          <div className="modal-content animate-fadeIn" style={{ maxWidth: 800, width: '90%', maxHeight: '90vh', overflowY: 'auto', background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255,255,255,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: '1px solid #e2e8f0', paddingBottom: 16 }}>
+              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <MapPin size={24} color="#3b82f6" />
+                {editingFacId ? 'Edit Facility Location' : 'Map New Facility'}
+              </h2>
+              <button type="button" onClick={() => setShowFacModal(false)} style={{ background: '#f1f5f9', border: 'none', width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
+                &times;
+              </button>
+            </div>
+            <form onSubmit={handleSaveFacility} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
               
               <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                <label className="form-label">Facility Category / Type *</label>
+                <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Facility Category / Type <span style={{color: '#ef4444'}}>*</span></label>
                 <select 
                   className="form-control" 
                   value={facFormData.type_id} 
                   onChange={e => setFacFormData({...facFormData, type_id: e.target.value, custom_fields_data: {}})} 
                   required
+                  style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 15 }}
                 >
                   <option value="">-- Select Type --</option>
                   {facilityTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -508,30 +515,33 @@ export default function AdminFacilities() {
 
               {facFormData.type_id && (
                 <>
-                  <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                    <h3 style={{ fontSize: 15, borderBottom: '1px solid var(--gray-200)', paddingBottom: 8, marginBottom: 0, color: 'var(--primary)' }}>
-                      Fixed Fields (Required)
-                    </h3>
+                  <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                      <div style={{ width: 8, height: 24, background: '#3b82f6', borderRadius: 4 }}></div>
+                      <h3 style={{ fontSize: 16, margin: 0, color: '#1e293b', fontWeight: 600 }}>
+                        Fixed Fields (Required)
+                      </h3>
+                    </div>
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Facility Name *</label>
-                    <input type="text" className="form-control" value={facFormData.name} onChange={e => setFacFormData({...facFormData, name: e.target.value})} required />
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Facility Name <span style={{color: '#ef4444'}}>*</span></label>
+                    <input type="text" className="form-control" value={facFormData.name} onChange={e => setFacFormData({...facFormData, name: e.target.value})} required style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#f8fafc' }} />
                   </div>
                   
                   <div className="form-group">
-                    <label className="form-label">Ward Number *</label>
-                    <input type="text" className="form-control" value={facFormData.ward_number} onChange={e => setFacFormData({...facFormData, ward_number: e.target.value})} required />
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Ward Number <span style={{color: '#ef4444'}}>*</span></label>
+                    <input type="text" className="form-control" value={facFormData.ward_number} onChange={e => setFacFormData({...facFormData, ward_number: e.target.value})} required style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#f8fafc' }} />
                   </div>
 
                   <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                    <label className="form-label">Address *</label>
-                    <textarea className="form-control" rows="2" value={facFormData.address} onChange={e => setFacFormData({...facFormData, address: e.target.value})} required></textarea>
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Address <span style={{color: '#ef4444'}}>*</span></label>
+                    <textarea className="form-control" rows="2" value={facFormData.address} onChange={e => setFacFormData({...facFormData, address: e.target.value})} required style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#f8fafc', resize: 'none' }}></textarea>
                   </div>
 
                   <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                    <label className="form-label">Pin Location on Map *</label>
-                    <div style={{ height: 300, width: '100%', borderRadius: 12, overflow: 'hidden', border: '1.5px solid var(--gray-200)' }}>
+                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Pin Location on Map <span style={{color: '#ef4444'}}>*</span></label>
+                    <div style={{ height: 300, width: '100%', borderRadius: 16, overflow: 'hidden', border: '2px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
                       <MapContainer center={[facFormData.latitude, facFormData.longitude]} zoom={14} style={{ height: '100%', width: '100%' }}>
                         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
                         <LocationPicker 
@@ -540,26 +550,31 @@ export default function AdminFacilities() {
                         />
                       </MapContainer>
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 8 }}>
-                      Lat: {facFormData.latitude}, Lng: {facFormData.longitude}
+                    <div style={{ fontSize: 13, color: '#64748b', marginTop: 12, display: 'flex', gap: 16, background: '#f8fafc', padding: '8px 12px', borderRadius: 8, display: 'inline-flex' }}>
+                      <span><strong>Lat:</strong> {facFormData.latitude.toFixed(6)}</span>
+                      <span><strong>Lng:</strong> {facFormData.longitude.toFixed(6)}</span>
                     </div>
                   </div>
 
                   {getSelectedTypeSchema().length > 0 && (
-                    <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                      <h3 style={{ fontSize: 15, borderBottom: '1px solid var(--gray-200)', paddingBottom: 8, marginBottom: 12, color: 'var(--primary)', marginTop: 12 }}>
-                        Dynamic Fields (Based on Type)
-                      </h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                    <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: 20 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                        <div style={{ width: 8, height: 24, background: '#8b5cf6', borderRadius: 4 }}></div>
+                        <h3 style={{ fontSize: 16, margin: 0, color: '#1e293b', fontWeight: 600 }}>
+                          Dynamic Fields (Based on Type)
+                        </h3>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, background: '#f8fafc', padding: 24, borderRadius: 16, border: '1px solid #e2e8f0' }}>
                         {getSelectedTypeSchema().map((field, idx) => (
                           <div key={idx} className="form-group">
-                            <label className="form-label">{field.label} {field.required && '*'}</label>
+                            <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>{field.label} {field.required && <span style={{color: '#ef4444'}}>*</span>}</label>
                             {field.type === 'boolean' ? (
                               <select 
                                 className="form-control" 
                                 value={facFormData.custom_fields_data[field.name] || ''} 
                                 onChange={e => handleCustomFieldChange(field.name, e.target.value)}
                                 required={field.required}
+                                style={{ padding: '12px 16px', borderRadius: 10, border: '1px solid #cbd5e1', background: 'white' }}
                               >
                                 <option value="">-- Select --</option>
                                 <option value="Yes">Yes</option>
@@ -572,6 +587,7 @@ export default function AdminFacilities() {
                                 value={facFormData.custom_fields_data[field.name] || ''} 
                                 onChange={e => handleCustomFieldChange(field.name, e.target.value)}
                                 required={field.required}
+                                style={{ padding: '12px 16px', borderRadius: 10, border: '1px solid #cbd5e1', background: 'white' }}
                               />
                             )}
                           </div>
@@ -582,9 +598,9 @@ export default function AdminFacilities() {
                 </>
               )}
 
-              <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 16 }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowFacModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Save Facility</button>
+              <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 24, paddingTop: 20, borderTop: '1px solid #e2e8f0' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowFacModal(false)} style={{ padding: '10px 24px', borderRadius: 20, fontWeight: 600 }}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ padding: '10px 24px', borderRadius: 20, fontWeight: 600, boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>Save Facility</button>
               </div>
             </form>
           </div>
@@ -592,57 +608,71 @@ export default function AdminFacilities() {
       )}
 
       {showTypeModal && (
-        <div className="modal-backdrop">
-          <div className="modal-content" style={{ maxWidth: 700, width: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2 style={{ marginTop: 0, marginBottom: 20, fontSize: 20 }}>
-              {editingTypeId ? 'Edit Facility Type' : 'Create Facility Type'}
-            </h2>
+        <div className="modal-backdrop" style={{ backdropFilter: 'blur(4px)', background: 'rgba(15, 23, 42, 0.6)' }}>
+          <div className="modal-content animate-fadeIn" style={{ maxWidth: 700, width: '90%', maxHeight: '90vh', overflowY: 'auto', background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255,255,255,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: '1px solid #e2e8f0', paddingBottom: 16 }}>
+              <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Layers size={24} color="#8b5cf6" />
+                {editingTypeId ? 'Edit Facility Type' : 'Create Facility Type'}
+              </h2>
+              <button type="button" onClick={() => setShowTypeModal(false)} style={{ background: '#f1f5f9', border: 'none', width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
+                &times;
+              </button>
+            </div>
             <form onSubmit={handleSaveType}>
               
-              <div className="form-group">
-                <label className="form-label">Type Name (e.g. Office, Toilet, Water Tank) *</label>
-                <input type="text" className="form-control" value={typeFormData.name} onChange={e => setTypeFormData({...typeFormData, name: e.target.value})} required />
+              <div className="form-group" style={{ marginBottom: 20 }}>
+                <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Type Name (e.g. Office, Toilet, Water Tank) <span style={{color: '#ef4444'}}>*</span></label>
+                <input type="text" className="form-control" value={typeFormData.name} onChange={e => setTypeFormData({...typeFormData, name: e.target.value})} required style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 16 }} />
               </div>
 
-              <div className="form-group" style={{ display: 'flex', gap: 16, alignItems: 'center', background: 'var(--gray-50)', padding: 16, borderRadius: 12, border: '1px solid var(--gray-200)', marginBottom: 20 }}>
+              <div className="form-group" style={{ display: 'flex', gap: 20, alignItems: 'center', background: '#f8fafc', padding: 20, borderRadius: 16, border: '1px solid #e2e8f0', marginBottom: 24 }}>
                 {typeFormData.icon_url ? (
-                  <img src={typeFormData.icon_url} alt="Icon Preview" style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 8, background: 'white', border: '1px solid var(--gray-200)' }} />
+                  <div style={{ padding: 8, background: 'white', borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <img src={typeFormData.icon_url} alt="Icon Preview" style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 4 }} />
+                  </div>
                 ) : (
-                  <div style={{ width: 48, height: 48, borderRadius: 8, background: 'white', border: '1px dashed var(--gray-400)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gray-400)', fontSize: 12, textAlign: 'center' }}>No Icon</div>
+                  <div style={{ width: 66, height: 66, borderRadius: 12, background: 'white', border: '2px dashed #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: 12, textAlign: 'center', flexDirection: 'column', gap: 4 }}>
+                    <MapPin size={20} />
+                    <span>No Icon</span>
+                  </div>
                 )}
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Custom Map Icon (Optional)</label>
-                  <input type="file" accept="image/*" className="form-control" onChange={handleIconUpload} style={{ padding: 4 }} />
-                  <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--gray-500)' }}>Upload a transparent PNG/SVG for best map results (Max 2MB).</p>
+                  <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Custom Map Icon (Optional)</label>
+                  <input type="file" accept="image/*" className="form-control" onChange={handleIconUpload} style={{ padding: 8, background: 'white', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 14 }} />
+                  <p style={{ margin: '6px 0 0', fontSize: 12, color: '#64748b' }}>Upload a transparent PNG/SVG for best map results (Max 2MB).</p>
                 </div>
                 {typeFormData.icon_url && (
-                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => setTypeFormData(prev => ({ ...prev, icon_url: '' }))} style={{ color: 'var(--danger)' }}>
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => setTypeFormData(prev => ({ ...prev, icon_url: '' }))} style={{ color: '#ef4444', backgroundColor: '#fef2f2', borderColor: '#fecaca', padding: '8px 16px', borderRadius: 8, fontWeight: 600 }}>
                     Remove
                   </button>
                 )}
               </div>
 
-              <div style={{ background: 'var(--gray-50)', padding: 16, borderRadius: 12, marginBottom: 20, border: '1px solid var(--gray-200)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <h4 style={{ margin: 0, fontSize: 15 }}>Custom Dynamic Fields</h4>
-                  <button type="button" className="btn btn-secondary btn-sm" onClick={addTypeSchemaField}>
+              <div style={{ background: '#f8fafc', padding: 24, borderRadius: 16, marginBottom: 24, border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 8, height: 24, background: '#8b5cf6', borderRadius: 4 }}></div>
+                    <h4 style={{ margin: 0, fontSize: 16, color: '#1e293b', fontWeight: 600 }}>Custom Dynamic Fields</h4>
+                  </div>
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={addTypeSchemaField} style={{ background: 'white', borderRadius: 20, padding: '6px 16px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600, color: '#3b82f6' }}>
                     <Plus size={14} /> Add Field
                   </button>
                 </div>
                 
                 {typeFormData.custom_fields_schema.map((field, idx) => (
-                  <div key={idx} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 12, background: 'white', padding: 12, borderRadius: 8, border: '1px solid var(--gray-200)' }}>
+                  <div key={idx} style={{ display: 'flex', gap: 16, alignItems: 'flex-start', marginBottom: 16, background: 'white', padding: 16, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
                     <div style={{ flex: 1 }}>
-                      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray-500)', display: 'block', marginBottom: 4 }}>Field Name (Key) *</label>
-                      <input type="text" className="form-control" placeholder="e.g. doctor_name" value={field.name} onChange={e => updateTypeSchemaField(idx, 'name', e.target.value)} required style={{ padding: '6px 10px', fontSize: 13 }} />
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 6 }}>Field Name (Key) <span style={{color: '#ef4444'}}>*</span></label>
+                      <input type="text" className="form-control" placeholder="e.g. doctor_name" value={field.name} onChange={e => updateTypeSchemaField(idx, 'name', e.target.value)} required style={{ padding: '8px 12px', fontSize: 14, borderRadius: 8, border: '1px solid #cbd5e1' }} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray-500)', display: 'block', marginBottom: 4 }}>Display Label *</label>
-                      <input type="text" className="form-control" placeholder="e.g. Doctor Name" value={field.label} onChange={e => updateTypeSchemaField(idx, 'label', e.target.value)} required style={{ padding: '6px 10px', fontSize: 13 }} />
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 6 }}>Display Label <span style={{color: '#ef4444'}}>*</span></label>
+                      <input type="text" className="form-control" placeholder="e.g. Doctor Name" value={field.label} onChange={e => updateTypeSchemaField(idx, 'label', e.target.value)} required style={{ padding: '8px 12px', fontSize: 14, borderRadius: 8, border: '1px solid #cbd5e1' }} />
                     </div>
-                    <div style={{ width: 100 }}>
-                      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray-500)', display: 'block', marginBottom: 4 }}>Type</label>
-                      <select className="form-control" value={field.type} onChange={e => updateTypeSchemaField(idx, 'type', e.target.value)} style={{ padding: '6px 10px', fontSize: 13 }}>
+                    <div style={{ width: 110 }}>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 6 }}>Type</label>
+                      <select className="form-control" value={field.type} onChange={e => updateTypeSchemaField(idx, 'type', e.target.value)} style={{ padding: '8px 12px', fontSize: 14, borderRadius: 8, border: '1px solid #cbd5e1' }}>
                         <option value="text">Text</option>
                         <option value="number">Number</option>
                         <option value="time">Time</option>
@@ -650,22 +680,24 @@ export default function AdminFacilities() {
                       </select>
                     </div>
                     <div style={{ width: 70, textAlign: 'center' }}>
-                      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray-500)', display: 'block', marginBottom: 4 }}>Required</label>
-                      <input type="checkbox" checked={field.required} onChange={e => updateTypeSchemaField(idx, 'required', e.target.checked)} style={{ marginTop: 8 }} />
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 6 }}>Required</label>
+                      <input type="checkbox" checked={field.required} onChange={e => updateTypeSchemaField(idx, 'required', e.target.checked)} style={{ marginTop: 10, transform: 'scale(1.2)' }} />
                     </div>
-                    <button type="button" onClick={() => removeTypeSchemaField(idx)} style={{ background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '24px 0 0 0' }}>
+                    <button type="button" onClick={() => removeTypeSchemaField(idx)} style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#ef4444', cursor: 'pointer', padding: 8, borderRadius: 8, marginTop: 26, display: 'flex' }}>
                       <Trash2 size={16} />
                     </button>
                   </div>
                 ))}
                 {typeFormData.custom_fields_schema.length === 0 && (
-                  <div style={{ fontSize: 13, color: 'var(--gray-500)', textAlign: 'center', padding: 12 }}>No custom fields defined.</div>
+                  <div style={{ fontSize: 14, color: '#94a3b8', textAlign: 'center', padding: '24px 12px', background: 'white', borderRadius: 12, border: '1px dashed #cbd5e1' }}>
+                    No custom fields defined yet.
+                  </div>
                 )}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowTypeModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Save Type</button>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, paddingTop: 20, borderTop: '1px solid #e2e8f0' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowTypeModal(false)} style={{ padding: '10px 24px', borderRadius: 20, fontWeight: 600 }}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ padding: '10px 24px', borderRadius: 20, fontWeight: 600, boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)', background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)', border: 'none' }}>Save Type</button>
               </div>
             </form>
           </div>
