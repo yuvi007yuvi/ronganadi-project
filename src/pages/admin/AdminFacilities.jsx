@@ -25,6 +25,8 @@ const LocationPicker = ({ position, setPosition }) => {
   return position ? <Marker position={position} /> : null;
 };
 
+const forceDemoMode = true; // Change this to false when you upload API files to your live server
+
 export default function AdminFacilities() {
   const [activeTab, setActiveTab] = useState('facilities'); // 'facilities', 'types'
   const [facilities, setFacilities] = useState([]);
@@ -51,9 +53,6 @@ export default function AdminFacilities() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // FORCE DEMO MODE to prevent red 404 errors in console
-      const forceDemoMode = true; // Change this to false when you upload API files to your live server
-      
       let facData = null, typeData = null;
       
       if (!forceDemoMode) {
@@ -111,6 +110,23 @@ export default function AdminFacilities() {
       return;
     }
     try {
+      if (forceDemoMode) {
+        // MOCK SAVE
+        const typeObj = facilityTypes.find(t => t.id == facFormData.type_id);
+        const newFac = {
+          ...facFormData,
+          id: editingFacId || Date.now(),
+          type_name: typeObj ? typeObj.name : 'Unknown'
+        };
+        if (editingFacId) {
+          setFacilities(prev => prev.map(f => f.id === editingFacId ? newFac : f));
+        } else {
+          setFacilities(prev => [newFac, ...prev]);
+        }
+        setShowFacModal(false);
+        return;
+      }
+
       if (editingFacId) {
         await apiFetch(`/facilities.php?id=${editingFacId}`, { method: 'PUT', body: facFormData });
       } else {
@@ -126,6 +142,10 @@ export default function AdminFacilities() {
   const handleDeleteFacility = async (id) => {
     if (!confirm('Delete this facility?')) return;
     try {
+      if (forceDemoMode) {
+        setFacilities(prev => prev.filter(f => f.id !== id));
+        return;
+      }
       await apiFetch(`/facilities.php?id=${id}`, { method: 'DELETE' });
       fetchData();
     } catch (err) {
@@ -158,6 +178,18 @@ export default function AdminFacilities() {
     e.preventDefault();
     if (!typeFormData.name) return;
     try {
+      if (forceDemoMode) {
+        // MOCK SAVE
+        const newType = { ...typeFormData, id: editingTypeId || Date.now() };
+        if (editingTypeId) {
+          setFacilityTypes(prev => prev.map(t => t.id === editingTypeId ? newType : t));
+        } else {
+          setFacilityTypes(prev => [newType, ...prev]);
+        }
+        setShowTypeModal(false);
+        return;
+      }
+
       if (editingTypeId) {
         await apiFetch(`/facility_types.php?id=${editingTypeId}`, { method: 'PUT', body: typeFormData });
       } else {
@@ -173,6 +205,10 @@ export default function AdminFacilities() {
   const handleDeleteType = async (id) => {
     if (!confirm('Delete this facility type? Ensure no facilities are using it.')) return;
     try {
+      if (forceDemoMode) {
+        setFacilityTypes(prev => prev.filter(t => t.id !== id));
+        return;
+      }
       await apiFetch(`/facility_types.php?id=${id}`, { method: 'DELETE' });
       fetchData();
     } catch (err) {
