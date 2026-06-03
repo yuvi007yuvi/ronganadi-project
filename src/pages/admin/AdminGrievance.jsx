@@ -1182,7 +1182,7 @@ export default function AdminGrievance({ viewMode }) {
                   </thead>
                   <tbody>
                     {complaintTypes.map(ct => {
-                      const dept = departments.find(d => d.id === ct.department_id);
+                      const dept = departments.find(d => String(d.id) === String(ct.department_id));
                       return (
                         <tr key={ct.id}>
                           <td style={{ fontWeight: 600 }}>{ct.name}</td>
