@@ -69,10 +69,6 @@ export default function CitizenLocator() {
   const [userLocation, setUserLocation] = useState(null);
   const [filterType, setFilterType] = useState('all');
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -126,7 +122,7 @@ export default function CitizenLocator() {
 
   const handleLocateMe = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      console.warn("Geolocation is not supported by your browser");
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -134,11 +130,16 @@ export default function CitizenLocator() {
         setUserLocation([position.coords.latitude, position.coords.longitude]);
       },
       (error) => {
-        alert("Unable to fetch location. Please ensure location services are enabled.");
+        console.warn("Unable to fetch location automatically. User might have denied permission.", error);
       },
       { enableHighAccuracy: true }
     );
   };
+
+  useEffect(() => {
+    fetchData();
+    handleLocateMe(); // Automatically get location on load
+  }, []);
 
   const filteredFacilities = filterType === 'all' 
     ? facilities 
