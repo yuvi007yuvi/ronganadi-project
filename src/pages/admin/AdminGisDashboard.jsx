@@ -9,12 +9,31 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+const createCustomIcon = (typeName) => {
+  const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#6366f1'];
+  let hash = 0;
+  for (let i = 0; i < (typeName || '').length; i++) {
+    hash = typeName.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const color = colors[Math.abs(hash) % colors.length];
+  const initial = (typeName || 'F').charAt(0).toUpperCase();
+
+  return L.divIcon({
+    className: 'custom-facility-icon',
+    html: `<div style="
+      background-color: ${color};
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 15px; font-family: 'Inter', sans-serif;
+    ">${initial}</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16]
+  });
+};
 
 const forceDemoMode = true; // Change this to false when API files are on live server
 
@@ -184,7 +203,7 @@ export default function AdminGisDashboard() {
             {filteredFacilities.map(fac => {
               const typeDetails = facilityTypes.find(t => t.id == fac.type_id) || {};
               return (
-                <Marker key={fac.id} position={[fac.latitude, fac.longitude]}>
+                <Marker key={fac.id} position={[fac.latitude, fac.longitude]} icon={createCustomIcon(fac.type_name)}>
                   <Popup className="facility-popup">
                     <div style={{ minWidth: 260, padding: '4px 0' }}>
                       <div style={{ borderBottom: '1px solid #e5e7eb', paddingBottom: 10, marginBottom: 12 }}>
