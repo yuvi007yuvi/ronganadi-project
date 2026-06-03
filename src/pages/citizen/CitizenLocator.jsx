@@ -264,21 +264,44 @@ export default function CitizenLocator() {
                       )}
                     </div>
 
-                    <a 
-                      href={`https://maps.google.com/?daddr=${lat},${lng}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ 
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, 
-                        width: '100%', padding: '10px 0', background: '#2563eb', color: 'white', 
-                        borderRadius: 8, textDecoration: 'none', fontWeight: 700, fontSize: 14,
-                        transition: 'background 0.2s'
-                      }}
-                      onMouseEnter={e => e.target.style.background = '#1d4ed8'}
-                      onMouseLeave={e => e.target.style.background = '#2563eb'}
-                    >
-                      <Navigation size={16} /> Get Directions
-                    </a>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Get Directions</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
+                        <a 
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '8px 0', background: '#f1f5f9', color: '#334155', borderRadius: 8, textDecoration: 'none', fontWeight: 600, fontSize: 11, transition: 'all 0.2s' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#334155'; }}
+                        >
+                          <span style={{ fontSize: 18 }}>🚗</span>
+                          Car
+                        </a>
+                        <a 
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=two-wheeler`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '8px 0', background: '#f1f5f9', color: '#334155', borderRadius: 8, textDecoration: 'none', fontWeight: 600, fontSize: 11, transition: 'all 0.2s' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#334155'; }}
+                        >
+                          <span style={{ fontSize: 18 }}>🏍️</span>
+                          Bike
+                        </a>
+                        <a 
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '8px 0', background: '#f1f5f9', color: '#334155', borderRadius: 8, textDecoration: 'none', fontWeight: 600, fontSize: 11, transition: 'all 0.2s' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#334155'; }}
+                        >
+                          <span style={{ fontSize: 18 }}>🚶</span>
+                          Walk
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </Popup>
               </Marker>
