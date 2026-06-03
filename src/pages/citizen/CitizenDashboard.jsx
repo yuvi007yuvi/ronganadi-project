@@ -74,12 +74,15 @@ export default function CitizenDashboard() {
             Your survey responses and interactions with the government will be displayed here soon.
           </p>
           <div style={{ display: 'flex', gap: '12px', flexDirection: 'column' }}>
+            <a href="/citizen/locator" className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#2563eb', color: 'white', border: 'none', boxShadow: '0 4px 10px rgba(37, 99, 235, 0.3)' }}>
+              <MapPin size={18} /> Find Nearby Facilities & Navigation
+            </a>
             <a href="/citizen/surveys" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               <FileText size={16} /> Join the Movement
             </a>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button className="btn btn-primary" style={{ flex: 1 }}>Update Details</button>
-              <button className="btn" style={{ flex: 1, background: 'white', color: 'var(--primary-dark)' }}>View Schemes</button>
+              <button className="btn" style={{ flex: 1, background: 'white', color: 'var(--primary-dark)', border: '1px solid var(--primary)' }}>Update Details</button>
+              <button className="btn" style={{ flex: 1, background: 'white', color: 'var(--primary-dark)', border: '1px solid var(--primary)' }}>View Schemes</button>
             </div>
           </div>
         </div>

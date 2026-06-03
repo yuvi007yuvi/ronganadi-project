@@ -209,9 +209,14 @@ export default function CitizenLocator() {
 
           {filteredFacilities.map(fac => {
             const typeDetails = facilityTypes.find(t => t.id == fac.type_id) || {};
-            const distance = userLocation ? getDistance(userLocation[0], userLocation[1], fac.latitude, fac.longitude) : null;
+            const lat = Number(fac.latitude);
+            const lng = Number(fac.longitude);
+            
+            if (isNaN(lat) || isNaN(lng) || lat === 0) return null;
+
+            const distance = userLocation ? getDistance(userLocation[0], userLocation[1], lat, lng) : null;
             return (
-              <Marker key={fac.id} position={[fac.latitude, fac.longitude]} icon={createCustomIcon(typeDetails)}>
+              <Marker key={fac.id} position={[lat, lng]} icon={createCustomIcon(typeDetails)}>
                 <Popup className="facility-popup">
                   <div style={{ minWidth: 260, padding: '4px 0' }}>
                     
@@ -259,7 +264,7 @@ export default function CitizenLocator() {
                     </div>
 
                     <a 
-                      href={`https://maps.google.com/?daddr=${fac.latitude},${fac.longitude}`}
+                      href={`https://maps.google.com/?daddr=${lat},${lng}`}
                       target="_blank"
                       rel="noreferrer"
                       style={{ 

@@ -554,11 +554,11 @@ export default function AdminFacilities() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                       <div>
                         <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>Latitude</label>
-                        <input type="number" step="any" className="form-control" value={facFormData.latitude} onChange={e => setFacFormData({...facFormData, latitude: parseFloat(e.target.value) || 0})} required style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 13 }} />
+                        <input type="number" step="any" className="form-control" value={facFormData.latitude} onChange={e => setFacFormData({...facFormData, latitude: e.target.value})} required style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 13 }} />
                       </div>
                       <div>
                         <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>Longitude</label>
-                        <input type="number" step="any" className="form-control" value={facFormData.longitude} onChange={e => setFacFormData({...facFormData, longitude: parseFloat(e.target.value) || 0})} required style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 13 }} />
+                        <input type="number" step="any" className="form-control" value={facFormData.longitude} onChange={e => setFacFormData({...facFormData, longitude: e.target.value})} required style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', fontSize: 13 }} />
                       </div>
                     </div>
                   </div>
