@@ -13,7 +13,6 @@ const adminNav = [
   { label: 'Grievance Management', items: [
     { path: '/admin/complaints', icon: FileText, label: 'Complaints' },
     { path: '/admin/tickets', icon: Activity, label: 'Complaints Desk' },
-    { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Complaints Admin' },
   ]},
   { label: 'Surveys & Reports', items: [
     { path: '/admin/custom-surveys', icon: ClipboardList, label: 'Custom Surveys' },
@@ -24,7 +23,6 @@ const adminNav = [
   ]},
   { label: 'GIS & Infrastructure', items: [
     { path: '/admin/map-dashboard', icon: MapPin, label: 'GIS Dashboard' },
-    { path: '/admin/facilities', icon: MapPin, label: 'Manage Facilities' },
   ]},
   { label: 'Engagement & Feedback', items: [
     { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback' },
@@ -34,6 +32,8 @@ const adminNav = [
   ]},
   { label: 'System Admin', items: [
     { path: '/admin/users', icon: Users, label: 'User Management' },
+    { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Complaints Admin' },
+    { path: '/admin/facilities', icon: MapPin, label: 'GIS Manage' },
   ]},
 ];
 
