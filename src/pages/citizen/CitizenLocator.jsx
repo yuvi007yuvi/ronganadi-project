@@ -24,20 +24,20 @@ const createCustomIcon = (typeObj) => {
   const color = colors[Math.abs(hash) % colors.length];
   const initial = (typeName || 'F').charAt(0).toUpperCase();
 
+  const svgIcon = `
+    <svg width="36" height="48" viewBox="0 0 36 48" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));">
+      <path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 30 18 30s18-16.5 18-30C36 8.06 27.94 0 18 0z" fill="${color}" stroke="white" stroke-width="2"/>
+      <circle cx="18" cy="18" r="12" fill="white" />
+      <text x="18" y="23" font-family="Inter, sans-serif" font-size="14" font-weight="bold" fill="${color}" text-anchor="middle">${initial}</text>
+    </svg>
+  `;
+
   return L.divIcon({
     className: 'custom-facility-icon',
-    html: `<div style="
-      background-color: ${color};
-      width: 32px; height: 32px;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      border: 3px solid white;
-      box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-      display: flex; align-items: center; justify-content: center;
-    "><div style="transform: rotate(45deg); color: white; font-weight: 800; font-size: 15px; font-family: 'Inter', sans-serif;">${initial}</div></div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32]
+    html: svgIcon,
+    iconSize: [36, 48],
+    iconAnchor: [18, 48],
+    popupAnchor: [0, -48]
   });
 };
 
