@@ -14,8 +14,8 @@ const createCustomIcon = (typeObj) => {
     return L.icon({
       iconUrl: typeObj.icon_url,
       iconSize: [32, 32],
-      iconAnchor: [16, 16],
-      popupAnchor: [0, -16]
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32]
     });
   }
 
@@ -33,15 +33,15 @@ const createCustomIcon = (typeObj) => {
     html: `<div style="
       background-color: ${color};
       width: 32px; height: 32px;
-      border-radius: 50%;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
       border: 3px solid white;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
       display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 800; font-size: 15px; font-family: 'Inter', sans-serif;
-    ">${initial}</div>`,
+    "><div style="transform: rotate(45deg); color: white; font-weight: 800; font-size: 15px; font-family: 'Inter', sans-serif;">${initial}</div></div>`,
     iconSize: [32, 32],
-    iconAnchor: [16, 16],
-    popupAnchor: [0, -16]
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
   });
 };
 
