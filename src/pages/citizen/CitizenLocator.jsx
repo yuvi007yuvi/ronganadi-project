@@ -120,25 +120,41 @@ export default function CitizenLocator() {
     }
   };
 
-  const handleLocateMe = () => {
+  const [initialCenter, setInitialCenter] = useState(null);
+
+  const handleLocateMe = (isManual = false) => {
     if (!navigator.geolocation) {
-      console.warn("Geolocation is not supported by your browser");
+      if (!isManual && !initialCenter) setInitialCenter([27.2415, 94.1032]);
+      if (isManual) alert("Geolocation is not supported by your browser");
       return;
     }
+    
+    let timer;
+    if (!isManual) {
+      timer = setTimeout(() => {
+        setInitialCenter(prev => prev || [27.2415, 94.1032]);
+      }, 3000);
+    }
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
+        if (timer) clearTimeout(timer);
+        const coords = [position.coords.latitude, position.coords.longitude];
+        setUserLocation(coords);
+        setInitialCenter(coords);
       },
       (error) => {
-        console.warn("Unable to fetch location automatically. User might have denied permission.", error);
+        if (timer) clearTimeout(timer);
+        setInitialCenter(prev => prev || [27.2415, 94.1032]);
+        if (isManual) alert("Unable to fetch location. Please check your permissions.");
       },
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: true, timeout: 5000 }
     );
   };
 
   useEffect(() => {
     fetchData();
-    handleLocateMe(); // Automatically get location on load
+    handleLocateMe(false); // Automatically get location on load
   }, []);
 
   const filteredFacilities = filterType === 'all' 
@@ -182,12 +198,14 @@ export default function CitizenLocator() {
       </div>
 
       <div style={{ flex: 1, borderRadius: 16, overflow: 'hidden', border: '1px solid var(--gray-200)', position: 'relative', boxShadow: 'var(--shadow-md)' }}>
-        {loading && (
+        {(loading || !initialCenter) && (
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--primary)' }}>
-            Loading Map & Facilities...
+            {!initialCenter ? 'Determining your location...' : 'Loading Map & Facilities...'}
           </div>
         )}
-        <MapContainer center={[27.2415, 94.1032]} zoom={13} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+        
+        {initialCenter && (
+        <MapContainer center={initialCenter} zoom={14} style={{ height: '100%', width: '100%', zIndex: 0 }}>
           <TileLayer 
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -308,6 +326,7 @@ export default function CitizenLocator() {
             );
           })}
         </MapContainer>
+        )}
       </div>
 
       <style>{`

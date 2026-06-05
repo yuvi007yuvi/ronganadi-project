@@ -52,9 +52,30 @@ export default function AdminGisDashboard() {
   const [facilityTypes, setFacilityTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState('all');
+  const [initialCenter, setInitialCenter] = useState(null);
 
   useEffect(() => {
     fetchData();
+
+    if (navigator.geolocation) {
+      let timer = setTimeout(() => {
+        setInitialCenter(prev => prev || [27.2415, 94.1032]);
+      }, 3000);
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          clearTimeout(timer);
+          setInitialCenter([pos.coords.latitude, pos.coords.longitude]);
+        },
+        (err) => {
+          clearTimeout(timer);
+          setInitialCenter(prev => prev || [27.2415, 94.1032]);
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    } else {
+      setInitialCenter([27.2415, 94.1032]);
+    }
   }, []);
 
   const fetchData = async () => {
@@ -199,12 +220,13 @@ export default function AdminGisDashboard() {
         </div>
 
         <div style={{ flex: 1, position: 'relative' }}>
-          {loading && (
+          {(loading || !initialCenter) && (
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--primary)' }}>
-              Loading Dashboard Data...
+              {!initialCenter ? 'Determining your location...' : 'Loading Dashboard Data...'}
             </div>
           )}
-          <MapContainer center={[27.2415, 94.1032]} zoom={13} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+          {initialCenter && (
+          <MapContainer center={initialCenter} zoom={13} style={{ height: '100%', width: '100%', zIndex: 0 }}>
             <TileLayer 
               url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
               attribution='&copy; OpenStreetMap'
@@ -261,6 +283,7 @@ export default function AdminGisDashboard() {
               );
             })}
           </MapContainer>
+          )}
         </div>
       </div>
 
