@@ -13,8 +13,9 @@ const pageTitles = {
   '/surveyor': 'My Dashboard',
   '/surveyor/add': 'New Survey',
   '/surveyor/records': 'My Records',
+  '/citizen/locator': 'Nearby Finder',
   '/communication': 'Communication',
-  '/awareness': 'Awareness',
+  '/profile': 'My Profile'
 };
 
 export default function Header({ collapsed, setCollapsed, setMobileOpen, pageTitle }) {

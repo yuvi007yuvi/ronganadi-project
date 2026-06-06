@@ -33,7 +33,6 @@ import CitizenFeedback from './pages/citizen/CitizenFeedback';
 
 
 import Communication from './pages/Communication';
-import Awareness from './pages/Awareness';
 
 import Profile from './pages/Profile';
 import MigratedSurveyForm from './pages/public/MigratedSurveyForm';
@@ -56,7 +55,6 @@ const pageTitles = {
   '/citizen/tracking': 'Complaint Tracking',
   '/citizen/locator': 'Nearby Finder',
   '/communication': 'Communication',
-  '/awareness': 'Awareness',
   '/profile': 'My Profile',
 };
 
@@ -216,13 +214,8 @@ export default function App() {
 
             {/* Shared Routes */}
             <Route path="/communication" element={
-              <ProtectedRoute allowedRoles={['admin', 'citizen']}>
+              <ProtectedRoute allowedRoles={['admin', 'surveyor', 'citizen']}>
                 <AppLayout><Communication /></AppLayout>
-              </ProtectedRoute>
-            } />
-            <Route path="/awareness" element={
-              <ProtectedRoute allowedRoles={['admin', 'citizen']}>
-                <AppLayout><Awareness /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/profile" element={

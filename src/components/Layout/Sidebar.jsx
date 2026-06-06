@@ -28,7 +28,6 @@ const adminNav = [
     { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback' },
     { path: '/admin/advertisements', icon: Megaphone, label: 'Advertisements' },
     { path: '/communication', icon: Phone, label: 'Communication' },
-    { path: '/awareness', icon: BookOpen, label: 'Awareness' },
   ]},
   { label: 'System Admin', items: [
     { path: '/admin/users', icon: Users, label: 'User Management' },
@@ -54,7 +53,6 @@ const citizenNav = [
   { label: 'Connect & Engage', items: [
     { path: '/citizen/feedback', icon: MessageSquare, label: 'Give Feedback' },
     { path: '/communication', icon: Phone, label: 'Communication' },
-    { path: '/awareness', icon: BookOpen, label: 'Awareness' },
   ]},
 ];
 
