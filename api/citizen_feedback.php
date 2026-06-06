@@ -27,7 +27,7 @@ try {
 if ($method === 'GET') {
     if ($user['role'] === 'admin') {
         $stmt = $db->query("
-            SELECT f.*, c.name as citizen_name, c.mobile as citizen_mobile 
+            SELECT f.*, c.full_name as citizen_name, c.mobile as citizen_mobile
             FROM citizen_feedback f
             JOIN citizens c ON f.citizen_id = c.id
             ORDER BY f.created_at DESC

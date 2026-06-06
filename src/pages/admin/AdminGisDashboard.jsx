@@ -113,10 +113,10 @@ export default function AdminGisDashboard() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div>
             <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: 'var(--gray-900)' }}>
-              GIS Map Dashboard
+              Nearby Finder Dashboard
             </h1>
             <p style={{ margin: 0, fontSize: 13, color: 'var(--gray-500)' }}>
-              Bird's-eye view of all registered facilities and infrastructure
+              Bird's-eye view of all nearby registered facilities and infrastructure
             </p>
           </div>
           <Link to="/admin/facilities" className="btn btn-primary" style={{ padding: '8px 16px', gap: 8, textDecoration: 'none' }}>

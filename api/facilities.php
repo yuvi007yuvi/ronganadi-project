@@ -52,6 +52,24 @@ if ($method === 'POST') {
         
         $customFieldsJson = isset($data['custom_fields_data']) ? json_encode($data['custom_fields_data']) : null;
         
+        $photo_url = $data['photo_url'] ?? null;
+        if ($photo_url && strpos($photo_url, 'data:image') === 0) {
+            list($type, $icon_data) = explode(';', $photo_url);
+            list(, $icon_data)      = explode(',', $icon_data);
+            $decoded = base64_decode($icon_data);
+            
+            $ext = 'png';
+            if (strpos($type, 'jpeg') !== false || strpos($type, 'jpg') !== false) $ext = 'jpg';
+            else if (strpos($type, 'svg') !== false) $ext = 'svg';
+            
+            $upload_dir = __DIR__ . '/../public/uploads/facilities/';
+            if (!is_dir($upload_dir)) @mkdir($upload_dir, 0777, true);
+            
+            $filename = 'photo_' . time() . '_' . uniqid() . '.' . $ext;
+            file_put_contents($upload_dir . $filename, $decoded);
+            $photo_url = '/uploads/facilities/' . $filename;
+        }
+
         $stmt->execute([
             $data['type_id'],
             $data['name'],
@@ -61,7 +79,7 @@ if ($method === 'POST') {
             $data['ward_number'],
             $data['zone_number'] ?? null,
             $data['status'] ?? 'active',
-            $data['photo_url'] ?? null,
+            $photo_url,
             $customFieldsJson
         ]);
         
@@ -87,6 +105,24 @@ if ($method === 'PUT') {
         
         $customFieldsJson = isset($data['custom_fields_data']) ? json_encode($data['custom_fields_data']) : null;
         
+        $photo_url = $data['photo_url'] ?? null;
+        if ($photo_url && strpos($photo_url, 'data:image') === 0) {
+            list($type, $icon_data) = explode(';', $photo_url);
+            list(, $icon_data)      = explode(',', $icon_data);
+            $decoded = base64_decode($icon_data);
+            
+            $ext = 'png';
+            if (strpos($type, 'jpeg') !== false || strpos($type, 'jpg') !== false) $ext = 'jpg';
+            else if (strpos($type, 'svg') !== false) $ext = 'svg';
+            
+            $upload_dir = __DIR__ . '/../public/uploads/facilities/';
+            if (!is_dir($upload_dir)) @mkdir($upload_dir, 0777, true);
+            
+            $filename = 'photo_' . time() . '_' . uniqid() . '.' . $ext;
+            file_put_contents($upload_dir . $filename, $decoded);
+            $photo_url = '/uploads/facilities/' . $filename;
+        }
+
         $stmt->execute([
             $data['type_id'],
             $data['name'],
@@ -96,7 +132,7 @@ if ($method === 'PUT') {
             $data['ward_number'],
             $data['zone_number'] ?? null,
             $data['status'] ?? 'active',
-            $data['photo_url'] ?? null,
+            $photo_url,
             $customFieldsJson,
             $id
         ]);

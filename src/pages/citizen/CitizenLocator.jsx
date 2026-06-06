@@ -62,6 +62,25 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
   return (R * c).toFixed(1);
 };
 
+const BoundsControl = ({ facilities }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (facilities && facilities.length > 0) {
+      const validCoords = facilities
+        .filter(f => !isNaN(f.latitude) && !isNaN(f.longitude) && f.latitude != 0)
+        .map(f => [f.latitude, f.longitude]);
+      
+      if (validCoords.length > 0) {
+        const bounds = L.latLngBounds(validCoords);
+        if (bounds.isValid()) {
+          map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+        }
+      }
+    }
+  }, [facilities, map]);
+  return null;
+};
+
 export default function CitizenLocator() {
   const [facilities, setFacilities] = useState([]);
   const [facilityTypes, setFacilityTypes] = useState([]);
@@ -132,7 +151,7 @@ export default function CitizenLocator() {
       <div className="card" style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, zIndex: 10 }}>
         <div>
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--gray-900)' }}>
-            GIS Facility Locator
+            Nearby Finder
           </h1>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--gray-500)' }}>
             Find nearby public utilities and municipal offices
@@ -179,6 +198,10 @@ export default function CitizenLocator() {
           
           {userLocation && (
             <LocateControl position={userLocation} />
+          )}
+
+          {filteredFacilities && filteredFacilities.length > 0 && (
+            <BoundsControl facilities={filteredFacilities} />
           )}
 
           {userLocation && (

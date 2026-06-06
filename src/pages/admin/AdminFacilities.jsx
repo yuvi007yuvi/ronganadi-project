@@ -213,7 +213,7 @@ export default function AdminFacilities() {
       <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', borderRadius: 16, padding: '32px', marginBottom: 32, color: 'white', boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.4)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
         <div>
           <h1 style={{ margin: 0, fontSize: 32, fontWeight: 800, letterSpacing: '-0.5px' }}>
-            Dynamic GIS Facilities
+            Manage Nearby Finder
           </h1>
           <p style={{ margin: '8px 0 0 0', color: 'rgba(255,255,255,0.8)', fontSize: 15 }}>
             Manage map locations and define custom facility structures with ease.

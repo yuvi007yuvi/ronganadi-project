@@ -21,8 +21,8 @@ const adminNav = [
     { path: '/admin/reports', icon: BarChart3, label: 'System Reports' },
     { path: '/admin/records', icon: FileText, label: 'All Records' },
   ]},
-  { label: 'GIS & Infrastructure', items: [
-    { path: '/admin/map-dashboard', icon: MapPin, label: 'GIS Dashboard' },
+  { label: 'Nearby Finder', items: [
+    { path: '/admin/map-dashboard', icon: MapPin, label: 'Nearby Dashboard' },
   ]},
   { label: 'Engagement & Feedback', items: [
     { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback' },
@@ -33,7 +33,7 @@ const adminNav = [
   { label: 'System Admin', items: [
     { path: '/admin/users', icon: Users, label: 'User Management' },
     { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Complaints Admin' },
-    { path: '/admin/facilities', icon: MapPin, label: 'GIS Manage' },
+    { path: '/admin/facilities', icon: MapPin, label: 'Manage Nearby' },
   ]},
 ];
 
@@ -46,7 +46,7 @@ const citizenNav = [
     { path: '/citizen/tracking', icon: Search, label: 'Complaint Tracking' },
   ]},
   { label: 'City Services', items: [
-    { path: '/citizen/locator', icon: MapPin, label: 'GIS Locator' },
+    { path: '/citizen/locator', icon: MapPin, label: 'Nearby Finder' },
     { path: '/citizen/surveys', icon: ClipboardList, label: 'Available Surveys' },
     { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey' },
   ]},

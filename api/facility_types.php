@@ -36,11 +36,28 @@ if ($method === 'POST') {
         ");
         
         $schemaJson = isset($data['custom_fields_schema']) ? json_encode($data['custom_fields_schema']) : json_encode([]);
-        
+        $icon_url = $data['icon_url'] ?? null;
+        if ($icon_url && strpos($icon_url, 'data:image') === 0) {
+            list($type, $icon_data) = explode(';', $icon_url);
+            list(, $icon_data)      = explode(',', $icon_data);
+            $decoded = base64_decode($icon_data);
+            
+            $ext = 'png';
+            if (strpos($type, 'jpeg') !== false || strpos($type, 'jpg') !== false) $ext = 'jpg';
+            else if (strpos($type, 'svg') !== false) $ext = 'svg';
+            
+            $upload_dir = __DIR__ . '/../public/uploads/icons/';
+            if (!is_dir($upload_dir)) @mkdir($upload_dir, 0777, true);
+            
+            $filename = 'icon_' . time() . '_' . uniqid() . '.' . $ext;
+            file_put_contents($upload_dir . $filename, $decoded);
+            $icon_url = '/uploads/icons/' . $filename;
+        }
+
         $stmt->execute([
             $data['name'],
             $data['icon_type'] ?? 'default',
-            $data['icon_url'] ?? null,
+            $icon_url,
             $schemaJson,
             $data['status'] ?? 'active'
         ]);
@@ -66,11 +83,28 @@ if ($method === 'PUT') {
         ");
         
         $schemaJson = isset($data['custom_fields_schema']) ? json_encode($data['custom_fields_schema']) : json_encode([]);
-        
+        $icon_url = $data['icon_url'] ?? null;
+        if ($icon_url && strpos($icon_url, 'data:image') === 0) {
+            list($type, $icon_data) = explode(';', $icon_url);
+            list(, $icon_data)      = explode(',', $icon_data);
+            $decoded = base64_decode($icon_data);
+            
+            $ext = 'png';
+            if (strpos($type, 'jpeg') !== false || strpos($type, 'jpg') !== false) $ext = 'jpg';
+            else if (strpos($type, 'svg') !== false) $ext = 'svg';
+            
+            $upload_dir = __DIR__ . '/../public/uploads/icons/';
+            if (!is_dir($upload_dir)) @mkdir($upload_dir, 0777, true);
+            
+            $filename = 'icon_' . time() . '_' . uniqid() . '.' . $ext;
+            file_put_contents($upload_dir . $filename, $decoded);
+            $icon_url = '/uploads/icons/' . $filename;
+        }
+
         $stmt->execute([
             $data['name'],
             $data['icon_type'] ?? 'default',
-            $data['icon_url'] ?? null,
+            $icon_url,
             $schemaJson,
             $data['status'] ?? 'active',
             $id
