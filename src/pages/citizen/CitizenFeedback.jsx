@@ -32,27 +32,10 @@ export default function CitizenFeedback() {
     setError('');
 
     try {
-      const forceDemoMode = true; // Change to false after uploading API
-      
-      if (forceDemoMode) {
-        let saved = localStorage.getItem('demo_feedbacks');
-        let feedbacks = saved ? JSON.parse(saved) : [];
-        feedbacks.unshift({
-          id: Date.now(),
-          citizen_name: 'Demo Citizen',
-          category: formData.category,
-          rating: formData.rating,
-          message: formData.message,
-          status: 'unread',
-          created_at: new Date().toISOString()
-        });
-        localStorage.setItem('demo_feedbacks', JSON.stringify(feedbacks));
-      } else {
-        await apiFetch('/citizen_feedback.php', {
-          method: 'POST',
-          body: formData
-        });
-      }
+      await apiFetch('/citizen_feedback.php', {
+        method: 'POST',
+        body: formData
+      });
 
       setSuccess(true);
       setFormData({ category: 'General Experience', rating: 5, message: '' });

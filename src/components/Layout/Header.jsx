@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Bell, Menu, LogOut, User, Settings, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import packageJson from '../../../package.json';
 
 const pageTitles = {
   '/admin': 'Dashboard',
@@ -49,7 +50,12 @@ export default function Header({ collapsed, setCollapsed, setMobileOpen, pageTit
         }}>
           <Menu size={18} />
         </button>
-        <h1 className="page-title">{pageTitle}</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h1 className="page-title">{pageTitle}</h1>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--primary)', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '2px 8px', borderRadius: '12px', letterSpacing: '0.5px' }}>
+            v{packageJson.version}
+          </span>
+        </div>
       </div>
 
       <div className="header-right">

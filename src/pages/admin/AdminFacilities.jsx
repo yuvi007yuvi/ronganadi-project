@@ -35,8 +35,6 @@ const MapCenterUpdater = ({ position }) => {
   return null;
 };
 
-const forceDemoMode = true; // Change this to false when you upload API files to your live server
-
 export default function AdminFacilities() {
   const [activeTab, setActiveTab] = useState('facilities'); // 'facilities', 'types'
   const [facilities, setFacilities] = useState([]);
@@ -63,45 +61,13 @@ export default function AdminFacilities() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      let facData = null, typeData = null;
+      const [facData, typeData] = await Promise.all([
+        apiFetch('/facilities.php').catch(() => null),
+        apiFetch('/facility_types.php').catch(() => null)
+      ]);
       
-      if (!forceDemoMode) {
-        [facData, typeData] = await Promise.all([
-          apiFetch('/facilities.php').catch(() => null),
-          apiFetch('/facility_types.php').catch(() => null)
-        ]);
-      }
-      
-      // MOCK DATA FALLBACK IF API FAILS (e.g. 404 or 502)
-      if (!facData && !typeData) {
-        console.info("Running in Mock Data Mode (No Network Errors!)");
-        
-        let savedTypes = localStorage.getItem('demo_types');
-        let savedFacs = localStorage.getItem('demo_facilities');
-        
-        if (!savedTypes) {
-          const mockTypes = [
-            { id: 1, name: 'Public Toilet', icon_type: 'restroom', icon_url: '', status: 'active', custom_fields_schema: [ { name: 'male_seats', label: 'Male Seats', type: 'number', required: true }, { name: 'female_seats', label: 'Female Seats', type: 'number', required: true } ] },
-            { id: 2, name: 'Water Tank', icon_type: 'tint', icon_url: '', status: 'active', custom_fields_schema: [ { name: 'capacity', label: 'Capacity (Liters)', type: 'number', required: true } ] }
-          ];
-          localStorage.setItem('demo_types', JSON.stringify(mockTypes));
-          savedTypes = JSON.stringify(mockTypes);
-        }
-        
-        if (!savedFacs) {
-          const mockFacs = [
-            { id: 1, type_id: 1, type_name: 'Public Toilet', name: 'City Center Toilet', latitude: 27.2415, longitude: 94.1032, address: 'Main Market Road', ward_number: 'Ward 04', status: 'active', custom_fields_data: { male_seats: 4, female_seats: 4 } }
-          ];
-          localStorage.setItem('demo_facilities', JSON.stringify(mockFacs));
-          savedFacs = JSON.stringify(mockFacs);
-        }
-
-        setFacilities(JSON.parse(savedFacs));
-        setFacilityTypes(JSON.parse(savedTypes));
-      } else {
-        setFacilities(facData || []);
-        setFacilityTypes(typeData || []);
-      }
+      setFacilities(facData || []);
+      setFacilityTypes(typeData || []);
     } catch (e) {
       console.error(e);
     } finally {
@@ -134,26 +100,6 @@ export default function AdminFacilities() {
       return;
     }
     try {
-      if (forceDemoMode) {
-        // MOCK SAVE
-        const typeObj = facilityTypes.find(t => t.id == facFormData.type_id);
-        const newFac = {
-          ...facFormData,
-          id: editingFacId || Date.now(),
-          type_name: typeObj ? typeObj.name : 'Unknown'
-        };
-        let updated;
-        if (editingFacId) {
-          updated = facilities.map(f => f.id === editingFacId ? newFac : f);
-        } else {
-          updated = [newFac, ...facilities];
-        }
-        setFacilities(updated);
-        localStorage.setItem('demo_facilities', JSON.stringify(updated));
-        setShowFacModal(false);
-        return;
-      }
-
       if (editingFacId) {
         await apiFetch(`/facilities.php?id=${editingFacId}`, { method: 'PUT', body: facFormData });
       } else {
@@ -169,12 +115,6 @@ export default function AdminFacilities() {
   const handleDeleteFacility = async (id) => {
     if (!confirm('Delete this facility?')) return;
     try {
-      if (forceDemoMode) {
-        const updated = facilities.filter(f => f.id !== id);
-        setFacilities(updated);
-        localStorage.setItem('demo_facilities', JSON.stringify(updated));
-        return;
-      }
       await apiFetch(`/facilities.php?id=${id}`, { method: 'DELETE' });
       fetchData();
     } catch (err) {
@@ -223,21 +163,6 @@ export default function AdminFacilities() {
     e.preventDefault();
     if (!typeFormData.name) return;
     try {
-      if (forceDemoMode) {
-        // MOCK SAVE
-        const newType = { ...typeFormData, id: editingTypeId || Date.now() };
-        let updated;
-        if (editingTypeId) {
-          updated = facilityTypes.map(t => t.id === editingTypeId ? newType : t);
-        } else {
-          updated = [newType, ...facilityTypes];
-        }
-        setFacilityTypes(updated);
-        localStorage.setItem('demo_types', JSON.stringify(updated));
-        setShowTypeModal(false);
-        return;
-      }
-
       if (editingTypeId) {
         await apiFetch(`/facility_types.php?id=${editingTypeId}`, { method: 'PUT', body: typeFormData });
       } else {
@@ -253,12 +178,6 @@ export default function AdminFacilities() {
   const handleDeleteType = async (id) => {
     if (!confirm('Delete this facility type? Ensure no facilities are using it.')) return;
     try {
-      if (forceDemoMode) {
-        const updated = facilityTypes.filter(t => t.id !== id);
-        setFacilityTypes(updated);
-        localStorage.setItem('demo_types', JSON.stringify(updated));
-        return;
-      }
       await apiFetch(`/facility_types.php?id=${id}`, { method: 'DELETE' });
       fetchData();
     } catch (err) {

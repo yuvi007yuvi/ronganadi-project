@@ -72,47 +72,13 @@ export default function CitizenLocator() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // FORCE DEMO MODE to prevent red 404 errors in console
-      const forceDemoMode = true; // Change this to false when you upload API files to your live server
+      const [facData, typeData] = await Promise.all([
+        apiFetch('/facilities.php').catch(() => null),
+        apiFetch('/facility_types.php').catch(() => null)
+      ]);
       
-      let facData = null, typeData = null;
-      
-      if (!forceDemoMode) {
-        [facData, typeData] = await Promise.all([
-          apiFetch('/facilities.php').catch(() => null),
-          apiFetch('/facility_types.php').catch(() => null)
-        ]);
-      }
-      
-      // MOCK DATA FALLBACK IF API FAILS
-      if (!facData && !typeData) {
-        console.info("Running in Mock Data Mode (No Network Errors!)");
-        
-        let savedTypes = localStorage.getItem('demo_types');
-        let savedFacs = localStorage.getItem('demo_facilities');
-        
-        if (!savedTypes) {
-          const mockTypes = [
-            { id: 1, name: 'Public Toilet', icon_type: 'restroom', status: 'active', custom_fields_schema: [ { name: 'male_seats', label: 'Male Seats', type: 'number', required: true }, { name: 'female_seats', label: 'Female Seats', type: 'number', required: true } ] },
-            { id: 2, name: 'Water Tank', icon_type: 'tint', status: 'active', custom_fields_schema: [ { name: 'capacity', label: 'Capacity (Liters)', type: 'number', required: true } ] },
-            { id: 3, name: 'Municipal Office', icon_type: 'building', status: 'active', custom_fields_schema: [ { name: 'department', label: 'Department', type: 'text', required: true }, { name: 'officer_name', label: 'Officer Name', type: 'text', required: true } ] }
-          ];
-          savedTypes = JSON.stringify(mockTypes);
-        }
-        
-        if (!savedFacs) {
-          const mockFacs = [
-            { id: 1, type_id: 1, type_name: 'Public Toilet', name: 'City Center Toilet', latitude: 27.2415, longitude: 94.1032, address: 'Main Market Road', ward_number: 'Ward 04', status: 'active', custom_fields_data: { male_seats: 4, female_seats: 4 } }
-          ];
-          savedFacs = JSON.stringify(mockFacs);
-        }
-
-        setFacilities(JSON.parse(savedFacs));
-        setFacilityTypes(JSON.parse(savedTypes));
-      } else {
-        setFacilities(facData || []);
-        setFacilityTypes(typeData || []);
-      }
+      setFacilities(facData || []);
+      setFacilityTypes(typeData || []);
     } catch (e) {
       console.error(e);
     } finally {
