@@ -95,18 +95,22 @@ if ($method === 'POST' && $action === 'assign_role') {
 
 // 5. Get Users with Roles
 if ($method === 'GET' && $action === 'get_users_roles') {
-    $stmt = $db->query("
-        SELECT a.id, a.name, a.email, a.designation, r.id as role_id, r.name as role_name, 'admin' as user_type 
-        FROM admins a 
-        LEFT JOIN rbac_admin_roles ar ON a.id = ar.admin_id
-        LEFT JOIN rbac_roles r ON ar.role_id = r.id
-        UNION ALL
-        SELECT s.id, s.name, s.email, 'Surveyor' as designation, r.id as role_id, r.name as role_name, 'surveyor' as user_type 
-        FROM surveyors s
-        LEFT JOIN rbac_surveyor_roles sr ON s.id = sr.surveyor_id
-        LEFT JOIN rbac_roles r ON sr.role_id = r.id
-    ");
-    jsonResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
+    try {
+        $stmt = $db->query("
+            SELECT a.id, a.name, a.email, a.designation, r.id as role_id, r.name as role_name, 'admin' as user_type 
+            FROM admins a 
+            LEFT JOIN rbac_admin_roles ar ON a.id = ar.admin_id
+            LEFT JOIN rbac_roles r ON ar.role_id = r.id
+            UNION ALL
+            SELECT s.id, s.name, s.email, 'Surveyor' as designation, r.id as role_id, r.name as role_name, 'surveyor' as user_type 
+            FROM surveyors s
+            LEFT JOIN rbac_surveyor_roles sr ON s.id = sr.surveyor_id
+            LEFT JOIN rbac_roles r ON sr.role_id = r.id
+        ");
+        jsonResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
+    } catch (Exception $e) {
+        jsonError(400, 'Database error: ' . $e->getMessage());
+    }
 }
 
 jsonError(400, 'Invalid request');
