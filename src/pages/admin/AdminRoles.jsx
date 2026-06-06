@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../../config/api';
 import Modal from '../../components/Modal';
-import { Shield, Users, Plus, Edit2, CheckCircle2 } from 'lucide-react';
+import { Shield, Users, Plus, Edit2, Trash2, CheckCircle2 } from 'lucide-react';
 
 export default function AdminRoles() {
   const [activeTab, setActiveTab] = useState('roles');
@@ -13,7 +13,15 @@ export default function AdminRoles() {
   const [error, setError] = useState(null);
   
   const [createRoleModal, setCreateRoleModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentRoleId, setCurrentRoleId] = useState(null);
   const [formData, setFormData] = useState({ name: '', description: '', permissions: [] });
+  
+  const [adminModal, setAdminModal] = useState(false);
+  const [editAdminMode, setEditAdminMode] = useState(false);
+  const [currentAdminId, setCurrentAdminId] = useState(null);
+  const [adminFormData, setAdminFormData] = useState({ name: '', email: '', password: '', designation: '' });
+
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -54,25 +62,112 @@ export default function AdminRoles() {
     
     setSubmitting(true);
     try {
-      await apiFetch('/rbac.php?action=create_role', {
-        method: 'POST',
-        body: formData
-      });
+      if (editMode) {
+        await apiFetch('/rbac.php?action=update_role', {
+          method: 'POST',
+          body: { ...formData, id: currentRoleId }
+        });
+      } else {
+        await apiFetch('/rbac.php?action=create_role', {
+          method: 'POST',
+          body: formData
+        });
+      }
       setCreateRoleModal(false);
+      setEditMode(false);
+      setCurrentRoleId(null);
       setFormData({ name: '', description: '', permissions: [] });
       await fetchData();
     } catch (err) {
-      alert("Failed to create role");
+      alert(editMode ? "Failed to update role" : "Failed to create role");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const assignAdminRole = async (userId, userType, roleId) => {
+  const openEditModal = (role) => {
+    setFormData({
+      name: role.name,
+      description: role.description,
+      permissions: role.permissions?.map(p => p.id) || []
+    });
+    setEditMode(true);
+    setCurrentRoleId(role.id);
+    setCreateRoleModal(true);
+  };
+
+  const handleDeleteRole = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this role? This cannot be undone.")) return;
+    try {
+      await apiFetch('/rbac.php?action=delete_role', {
+        method: 'POST',
+        body: { id }
+      });
+      await fetchData();
+    } catch (err) {
+      alert("Failed to delete role");
+    }
+  };
+
+  const handleCreateAdmin = async (e) => {
+    e.preventDefault();
+    if (!adminFormData.name || !adminFormData.email || (!editAdminMode && !adminFormData.password)) return;
+    
+    setSubmitting(true);
+    try {
+      if (editAdminMode) {
+        await apiFetch('/rbac.php?action=update_admin', {
+          method: 'POST',
+          body: { ...adminFormData, id: currentAdminId }
+        });
+      } else {
+        await apiFetch('/rbac.php?action=create_admin', {
+          method: 'POST',
+          body: adminFormData
+        });
+      }
+      setAdminModal(false);
+      setEditAdminMode(false);
+      setCurrentAdminId(null);
+      setAdminFormData({ name: '', email: '', password: '', designation: '' });
+      await fetchData();
+    } catch (err) {
+      alert(editAdminMode ? "Failed to update admin" : "Failed to create admin");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const openEditAdminModal = (admin) => {
+    setAdminFormData({
+      name: admin.name,
+      email: admin.email,
+      password: '',
+      designation: admin.designation || ''
+    });
+    setEditAdminMode(true);
+    setCurrentAdminId(admin.id);
+    setAdminModal(true);
+  };
+
+  const handleDeleteAdmin = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this Admin?")) return;
+    try {
+      await apiFetch('/rbac.php?action=delete_admin', {
+        method: 'POST',
+        body: { id }
+      });
+      await fetchData();
+    } catch (err) {
+      alert("Failed to delete admin. (System Admin cannot be deleted)");
+    }
+  };
+
+  const assignAdminRole = async (userId, roleId) => {
     try {
       await apiFetch('/rbac.php?action=assign_role', {
         method: 'POST',
-        body: { user_id: userId, user_type: userType, role_id: roleId }
+        body: { user_id: userId, role_id: roleId }
       });
       await fetchData();
     } catch (err) {
@@ -131,8 +226,22 @@ export default function AdminRoles() {
                 {roles.map(role => (
                   <div key={role.id} style={{ border: '1px solid var(--gray-200)', borderRadius: 12, padding: 20, background: role.is_system ? '#f8fafc' : 'white' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                      <h4 style={{ margin: 0, fontSize: 16, color: 'var(--gray-900)' }}>{role.name}</h4>
-                      {role.is_system == 1 && <span style={{ fontSize: 10, background: '#e2e8f0', padding: '2px 8px', borderRadius: 10, fontWeight: 700 }}>SYSTEM</span>}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <h4 style={{ margin: 0, fontSize: 16, color: 'var(--gray-900)' }}>{role.name}</h4>
+                        {role.is_system == 1 && <span style={{ fontSize: 10, background: '#e2e8f0', padding: '2px 8px', borderRadius: 10, fontWeight: 700 }}>SYSTEM</span>}
+                      </div>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        {role.is_system != 1 && (
+                          <>
+                            <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4 }} onClick={() => openEditModal(role)} title="Edit Role">
+                              <Edit2 size={16} color="var(--gray-500)" />
+                            </button>
+                            <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4 }} onClick={() => handleDeleteRole(role.id)} title="Delete Role">
+                              <Trash2 size={16} color="#ef4444" />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
                     <p style={{ margin: '0 0 16px 0', fontSize: 13, color: 'var(--gray-500)', minHeight: 40 }}>{role.description}</p>
                     
@@ -153,28 +262,33 @@ export default function AdminRoles() {
 
           {activeTab === 'assignments' && (
             <div>
-              <h3 style={{ margin: '0 0 20px 0' }}>Assign Roles to System Users</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+                <h3 style={{ margin: 0 }}>Assign Roles to Admins</h3>
+                <button className="btn btn-primary" onClick={() => {
+                  setAdminModal(true);
+                  setEditAdminMode(false);
+                  setCurrentAdminId(null);
+                  setAdminFormData({ name: '', email: '', password: '', designation: '' });
+                }} style={{ padding: '8px 16px', gap: 6 }}>
+                  <Plus size={16} /> Add Admin
+                </button>
+              </div>
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>User Name</th>
+                    <th>Admin Name</th>
                     <th>Email</th>
-                    <th>User Type</th>
                     <th>Designation</th>
                     <th>Current Role</th>
                     <th>Assign New Role</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {admins.map(admin => (
-                    <tr key={`${admin.user_type}-${admin.id}`}>
+                    <tr key={admin.id}>
                       <td style={{ fontWeight: 600 }}>{admin.name}</td>
                       <td>{admin.email}</td>
-                      <td>
-                        <span style={{ fontSize: 11, background: '#f3f4f6', padding: '4px 8px', borderRadius: 4, textTransform: 'capitalize' }}>
-                          {admin.user_type}
-                        </span>
-                      </td>
                       <td>{admin.designation || '-'}</td>
                       <td>
                         {admin.role_name ? (
@@ -190,13 +304,25 @@ export default function AdminRoles() {
                           className="form-control" 
                           style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
                           value={admin.role_id || ''}
-                          onChange={(e) => assignAdminRole(admin.id, admin.user_type, e.target.value)}
+                          onChange={(e) => assignAdminRole(admin.id, e.target.value)}
                         >
                           <option value="">-- Select Role --</option>
                           {roles.map(r => (
                             <option key={r.id} value={r.id}>{r.name}</option>
                           ))}
                         </select>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4 }} onClick={() => openEditAdminModal(admin)} title="Edit Admin">
+                            <Edit2 size={16} color="var(--gray-500)" />
+                          </button>
+                          {admin.id !== 1 && (
+                            <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4 }} onClick={() => handleDeleteAdmin(admin.id)} title="Delete Admin">
+                              <Trash2 size={16} color="#ef4444" />
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -207,7 +333,7 @@ export default function AdminRoles() {
         </div>
       </div>
 
-      <Modal isOpen={createRoleModal} onClose={() => setCreateRoleModal(false)} title="Create Custom Role" width={600}>
+      <Modal isOpen={createRoleModal} onClose={() => { setCreateRoleModal(false); setEditMode(false); setCurrentRoleId(null); setFormData({ name: '', description: '', permissions: [] }); }} title={editMode ? "Edit Custom Role" : "Create Custom Role"} width={600}>
         <form onSubmit={handleCreateRole}>
           <div className="form-group">
             <label className="form-label">Role Name</label>
@@ -239,9 +365,37 @@ export default function AdminRoles() {
           </div>
           
           <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 24 }}>
-            <button type="button" className="btn btn-secondary" onClick={() => setCreateRoleModal(false)}>Cancel</button>
+            <button type="button" className="btn btn-secondary" onClick={() => { setCreateRoleModal(false); setEditMode(false); setCurrentRoleId(null); setFormData({ name: '', description: '', permissions: [] }); }}>Cancel</button>
             <button type="submit" className="btn btn-primary" disabled={submitting || !formData.name}>
-              {submitting ? 'Creating...' : 'Create Role'}
+              {submitting ? (editMode ? 'Updating...' : 'Creating...') : (editMode ? 'Update Role' : 'Create Role')}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal isOpen={adminModal} onClose={() => { setAdminModal(false); setEditAdminMode(false); setCurrentAdminId(null); setAdminFormData({ name: '', email: '', password: '', designation: '' }); }} title={editAdminMode ? "Edit Admin" : "Add Admin"} width={500}>
+        <form onSubmit={handleCreateAdmin}>
+          <div className="form-group">
+            <label className="form-label">Name</label>
+            <input className="form-control" value={adminFormData.name} onChange={e => setAdminFormData({...adminFormData, name: e.target.value})} required placeholder="Admin Name" />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Email</label>
+            <input type="email" className="form-control" value={adminFormData.email} onChange={e => setAdminFormData({...adminFormData, email: e.target.value})} required placeholder="admin@ronganadi.gov.in" />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Password {editAdminMode && <span style={{fontSize: 11, color: '#9ca3af'}}>(Leave blank to keep current)</span>}</label>
+            <input type="password" className="form-control" value={adminFormData.password} onChange={e => setAdminFormData({...adminFormData, password: e.target.value})} required={!editAdminMode} placeholder={editAdminMode ? "Enter new password..." : "Password"} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Designation</label>
+            <input className="form-control" value={adminFormData.designation} onChange={e => setAdminFormData({...adminFormData, designation: e.target.value})} placeholder="e.g. District Coordinator" />
+          </div>
+          
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 24 }}>
+            <button type="button" className="btn btn-secondary" onClick={() => { setAdminModal(false); setEditAdminMode(false); setCurrentAdminId(null); setAdminFormData({ name: '', email: '', password: '', designation: '' }); }}>Cancel</button>
+            <button type="submit" className="btn btn-primary" disabled={submitting || !adminFormData.name || !adminFormData.email}>
+              {submitting ? (editAdminMode ? 'Updating...' : 'Adding...') : (editAdminMode ? 'Update Admin' : 'Add Admin')}
             </button>
           </div>
         </form>

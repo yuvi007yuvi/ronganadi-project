@@ -71,45 +71,151 @@ if ($method === 'POST' && $action === 'create_role') {
     }
 }
 
-// 4. Assign Role
+// 4. Update Role
+if ($method === 'POST' && $action === 'update_role') {
+    $id = $input['id'] ?? null;
+    $name = $input['name'] ?? null;
+    $desc = $input['description'] ?? '';
+    $perms = $input['permissions'] ?? [];
+    
+    if (!$id || !$name) jsonError(400, 'Missing required fields');
+    
+    try {
+        $db->beginTransaction();
+        
+        $stmt = $db->prepare("UPDATE rbac_roles SET name = ?, description = ? WHERE id = ? AND is_system = 0");
+        $stmt->execute([$name, $desc, $id]);
+        
+        $stmt = $db->prepare("DELETE FROM rbac_role_permissions WHERE role_id = ?");
+        $stmt->execute([$id]);
+        
+        if (!empty($perms)) {
+            $stmt = $db->prepare("INSERT INTO rbac_role_permissions (role_id, permission_id) VALUES (?, ?)");
+            foreach ($perms as $perm_id) {
+                $stmt->execute([$id, $perm_id]);
+            }
+        }
+        
+        $db->commit();
+        jsonResponse(['success' => true]);
+    } catch (Exception $e) {
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
+        jsonError(500, 'Failed to update role');
+    }
+}
+
+// 5. Delete Role
+if ($method === 'POST' && $action === 'delete_role') {
+    $id = $input['id'] ?? null;
+    if (!$id) jsonError(400, 'Role ID required');
+    try {
+        $stmt = $db->prepare("DELETE FROM rbac_roles WHERE id = ? AND is_system = 0");
+        $stmt->execute([$id]);
+        jsonResponse(['success' => true]);
+    } catch (Exception $e) {
+        jsonError(500, 'Failed to delete role');
+    }
+}
+
+// 6. Assign Role
 if ($method === 'POST' && $action === 'assign_role') {
     $user_id = $input['user_id'] ?? null;
     $role_id = $input['role_id'] ?? null;
-    $user_type = $input['user_type'] ?? 'admin';
     
     if (!$user_id || !$role_id) jsonError(400, 'User ID and Role ID required');
     
     try {
-        if ($user_type === 'admin') {
-            $stmt = $db->prepare("REPLACE INTO rbac_admin_roles (admin_id, role_id) VALUES (?, ?)");
-            $stmt->execute([$user_id, $role_id]);
-        } else {
-            $stmt = $db->prepare("REPLACE INTO rbac_surveyor_roles (surveyor_id, role_id) VALUES (?, ?)");
-            $stmt->execute([$user_id, $role_id]);
-        }
+        $db->beginTransaction();
+        // Delete old roles
+        $stmt = $db->prepare("DELETE FROM rbac_admin_roles WHERE admin_id = ?");
+        $stmt->execute([$user_id]);
+        
+        // Insert new role
+        $stmt = $db->prepare("INSERT INTO rbac_admin_roles (admin_id, role_id) VALUES (?, ?)");
+        $stmt->execute([$user_id, $role_id]);
+        
+        $db->commit();
         jsonResponse(['success' => true]);
     } catch (Exception $e) {
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
         jsonError(500, 'Failed to assign role');
     }
 }
 
-// 5. Get Users with Roles
+// 7. Get Users with Roles
 if ($method === 'GET' && $action === 'get_users_roles') {
     try {
         $stmt = $db->query("
-            SELECT a.id, a.name, a.email, a.designation, r.id as role_id, r.name as role_name, 'admin' as user_type 
+            SELECT a.id, a.name, a.email, a.designation, r.id as role_id, r.name as role_name 
             FROM admins a 
             LEFT JOIN rbac_admin_roles ar ON a.id = ar.admin_id
             LEFT JOIN rbac_roles r ON ar.role_id = r.id
-            UNION ALL
-            SELECT s.id, s.name, s.email, 'Surveyor' as designation, r.id as role_id, r.name as role_name, 'surveyor' as user_type 
-            FROM surveyors s
-            LEFT JOIN rbac_surveyor_roles sr ON s.id = sr.surveyor_id
-            LEFT JOIN rbac_roles r ON sr.role_id = r.id
+            GROUP BY a.id
         ");
         jsonResponse($stmt->fetchAll(PDO::FETCH_ASSOC));
     } catch (Exception $e) {
         jsonError(400, 'Database error: ' . $e->getMessage());
+    }
+}
+
+// 8. Create Admin
+if ($method === 'POST' && $action === 'create_admin') {
+    $name = $input['name'] ?? null;
+    $email = $input['email'] ?? null;
+    $pass = $input['password'] ?? null;
+    $designation = $input['designation'] ?? null;
+    if (!$name || !$email || !$pass) jsonError(400, 'Name, email and password required');
+    
+    try {
+        $stmt = $db->prepare("INSERT INTO admins (name, email, password_hash, designation) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$name, $email, password_hash($pass, PASSWORD_DEFAULT), $designation]);
+        jsonResponse(['success' => true]);
+    } catch (Exception $e) {
+        jsonError(500, 'Failed to create admin');
+    }
+}
+
+// 9. Update Admin
+if ($method === 'POST' && $action === 'update_admin') {
+    $id = $input['id'] ?? null;
+    $name = $input['name'] ?? null;
+    $email = $input['email'] ?? null;
+    $pass = $input['password'] ?? null;
+    $designation = $input['designation'] ?? null;
+    
+    if (!$id || !$name || !$email) jsonError(400, 'Required fields missing');
+    
+    try {
+        if ($pass) {
+            $stmt = $db->prepare("UPDATE admins SET name=?, email=?, designation=?, password_hash=? WHERE id=?");
+            $stmt->execute([$name, $email, $designation, password_hash($pass, PASSWORD_DEFAULT), $id]);
+        } else {
+            $stmt = $db->prepare("UPDATE admins SET name=?, email=?, designation=? WHERE id=?");
+            $stmt->execute([$name, $email, $designation, $id]);
+        }
+        jsonResponse(['success' => true]);
+    } catch (Exception $e) {
+        jsonError(500, 'Failed to update admin');
+    }
+}
+
+// 10. Delete Admin
+if ($method === 'POST' && $action === 'delete_admin') {
+    $id = $input['id'] ?? null;
+    if (!$id) jsonError(400, 'Admin ID required');
+    try {
+        // Prevent deleting the main super admin (admin_id = 1) just to be safe
+        if ($id == 1) jsonError(403, 'Cannot delete main super admin');
+        
+        $stmt = $db->prepare("DELETE FROM admins WHERE id = ?");
+        $stmt->execute([$id]);
+        jsonResponse(['success' => true]);
+    } catch (Exception $e) {
+        jsonError(500, 'Failed to delete admin');
     }
 }
 

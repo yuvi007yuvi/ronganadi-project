@@ -41,13 +41,13 @@ const createCustomIcon = (typeObj) => {
   });
 };
 
-const LocateControl = ({ position }) => {
+const LocateControl = ({ position, zoom = 15 }) => {
   const map = useMap();
   useEffect(() => {
     if (position) {
-      map.flyTo(position, 15, { duration: 1.5 });
+      map.flyTo(position, zoom, { duration: 1.5 });
     }
-  }, [position, map]);
+  }, [position, map, zoom]);
   return null;
 };
 
@@ -62,7 +62,7 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
   return (R * c).toFixed(1);
 };
 
-const BoundsControl = ({ facilities }) => {
+const BoundsControl = ({ facilities, trigger }) => {
   const map = useMap();
   useEffect(() => {
     if (facilities && facilities.length > 0) {
@@ -77,7 +77,7 @@ const BoundsControl = ({ facilities }) => {
         }
       }
     }
-  }, [facilities, map]);
+  }, [facilities, trigger, map]);
   return null;
 };
 
@@ -106,6 +106,8 @@ export default function CitizenLocator() {
   };
 
   const [initialCenter, setInitialCenter] = useState(null);
+  const [focusPosition, setFocusPosition] = useState(null);
+  const [resetBoundsCounter, setResetBoundsCounter] = useState(0);
 
   const handleLocateMe = (isManual = false) => {
     if (!navigator.geolocation) {
@@ -146,6 +148,14 @@ export default function CitizenLocator() {
     ? facilities 
     : facilities.filter(f => f.type_id == filterType);
 
+  const processedFacilities = filteredFacilities.map(fac => {
+    const lat = Number(fac.latitude);
+    const lng = Number(fac.longitude);
+    const isValid = !isNaN(lat) && !isNaN(lng) && lat !== 0;
+    const distanceVal = isValid && userLocation ? parseFloat(getDistance(userLocation[0], userLocation[1], lat, lng)) : Infinity;
+    return { ...fac, lat, lng, isValid, distanceVal };
+  }).filter(fac => fac.isValid).sort((a, b) => a.distanceVal - b.distanceVal);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 100px)', marginTop: '-10px', gap: 16 }}>
       <div className="card" style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, zIndex: 10 }}>
@@ -182,7 +192,35 @@ export default function CitizenLocator() {
         </div>
       </div>
 
-      <div style={{ flex: 1, borderRadius: 16, overflow: 'hidden', border: '1px solid var(--gray-200)', position: 'relative', boxShadow: 'var(--shadow-md)' }}>
+      <div style={{ display: 'flex', flex: 1, gap: 16, minHeight: 0, paddingBottom: 16 }}>
+        
+        <div style={{ width: 350, display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto', paddingRight: 8 }} className="custom-scrollbar">
+          <button className="btn btn-secondary" onClick={() => { setFocusPosition(null); setResetBoundsCounter(c => c + 1); }} style={{ width: '100%', padding: '12px', justifyContent: 'center', background: 'white', border: '1px solid var(--gray-200)' }}>
+            Show All Facilities
+          </button>
+          
+          {processedFacilities.map(fac => (
+            <div key={fac.id} className="card" style={{ padding: 16, cursor: 'pointer', transition: 'all 0.2s', border: focusPosition && focusPosition[0] === fac.lat && focusPosition[1] === fac.lng ? '2px solid var(--primary)' : '1px solid transparent' }} onClick={() => setFocusPosition([fac.lat, fac.lng])}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                 <h4 style={{ margin: 0, fontSize: 15, color: 'var(--gray-900)' }}>{fac.name}</h4>
+                 {fac.distanceVal !== Infinity && <span style={{ fontSize: 11, fontWeight: 700, color: '#059669', background: '#dcfce7', padding: '2px 6px', borderRadius: 6, whiteSpace: 'nowrap', marginLeft: 8 }}>{fac.distanceVal} km</span>}
+              </div>
+              <p style={{ margin: '0 0 12px 0', fontSize: 12, color: 'var(--gray-500)', display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                <MapPin size={14} style={{ flexShrink: 0, marginTop: 2 }} /> {fac.address}
+              </p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                 <a href={`https://www.google.com/maps/dir/?api=1&destination=${fac.lat},${fac.lng}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '6px 12px', fontSize: 12, flex: 1, justifyContent: 'center', textDecoration: 'none' }} onClick={e => e.stopPropagation()}>
+                   Get Directions
+                 </a>
+              </div>
+            </div>
+          ))}
+          {processedFacilities.length === 0 && !loading && (
+            <div style={{ textAlign: 'center', padding: 32, color: 'var(--gray-500)' }}>No facilities found.</div>
+          )}
+        </div>
+
+        <div style={{ flex: 1, borderRadius: 16, overflow: 'hidden', border: '1px solid var(--gray-200)', position: 'relative', boxShadow: 'var(--shadow-md)' }}>
         {(loading || !initialCenter) && (
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--primary)' }}>
             {!initialCenter ? 'Determining your location...' : 'Loading Map & Facilities...'}
@@ -196,12 +234,16 @@ export default function CitizenLocator() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
           
-          {userLocation && (
-            <LocateControl position={userLocation} />
+          {userLocation && !focusPosition && (
+            <LocateControl position={userLocation} zoom={14} />
           )}
 
-          {filteredFacilities && filteredFacilities.length > 0 && (
-            <BoundsControl facilities={filteredFacilities} />
+          {focusPosition && (
+            <LocateControl position={focusPosition} zoom={18} />
+          )}
+
+          {filteredFacilities && filteredFacilities.length > 0 && !focusPosition && (
+            <BoundsControl facilities={filteredFacilities} trigger={resetBoundsCounter} />
           )}
 
           {userLocation && (
@@ -318,7 +360,23 @@ export default function CitizenLocator() {
         )}
       </div>
 
+      </div>
+
       <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f5f9; 
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #cbd5e1; 
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8; 
+        }
         .facility-popup .leaflet-popup-content-wrapper {
           border-radius: 16px;
           box-shadow: 0 10px 25px rgba(0,0,0,0.15);
