@@ -23,6 +23,7 @@ import BuildSurvey from './pages/admin/BuildSurvey';
 import ManageSurveys from './pages/admin/ManageSurveys';
 import AdminGrievance from './pages/admin/AdminGrievance';
 import AdminFacilities from './pages/admin/AdminFacilities';
+import AdminRoles from './pages/admin/AdminRoles';
 import AdminFeedback from './pages/admin/AdminFeedback';
 import AdminGisDashboard from './pages/admin/AdminGisDashboard';
 import CitizenGrievance from './pages/citizen/CitizenGrievance';
@@ -44,6 +45,8 @@ const pageTitles = {
   '/admin/records': 'All Records',
   '/admin/complaints': 'Grievance Complaints',
   '/admin/tickets': 'Complaints Desk',
+  '/admin/ticket-admin': 'Grievance Admin',
+  '/admin/roles': 'Roles & Permissions',
   '/admin/facilities': 'Manage Facilities',
   '/admin/map-dashboard': 'Nearby Dashboard',
   '/citizen': 'Citizen Dashboard',
@@ -161,9 +164,10 @@ export default function App() {
               </ProtectedRoute>
             } />
             <Route path="/admin/facilities" element={
-              <ProtectedRoute allowedRoles={['admin']}>
-                <AppLayout><AdminFacilities /></AppLayout>
-              </ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminFacilities /></AppLayout></ProtectedRoute>
+            } />
+            <Route path="/admin/roles" element={
+              <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminRoles /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/map-dashboard" element={
               <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminGisDashboard /></AppLayout></ProtectedRoute>

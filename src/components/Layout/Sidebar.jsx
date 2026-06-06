@@ -33,6 +33,7 @@ const adminNav = [
   { label: 'System Admin', items: [
     { path: '/admin/users', icon: Users, label: 'User Management' },
     { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Complaints Admin' },
+    { path: '/admin/roles', icon: Users, label: 'Roles & Permissions' },
     { path: '/admin/facilities', icon: MapPin, label: 'Manage Nearby' },
   ]},
 ];
