@@ -1,0 +1,34 @@
+### Public Features (No Login Required)
+- Home Page: The landing page of the application.
+- Login & Signup: User authentication portals.
+- Migrated Survey Form: Access to migrated survey forms for the public.
+- Migration Reports: Viewing reports related to migration.
+
+### Admin Features
+- Admin Dashboard: The main overview panel for administrators.
+- Manage Users: Module to add, edit, or manage user accounts.
+- View All Records: Centralized view for system-wide data records.
+- Reports: Analytics and reporting module.
+- Advertisements: Management of application advertisements or notices.
+- Manage Custom Surveys: Dashboard to view and manage dynamic surveys.
+- Build Survey: Tool for creating new custom surveys.
+- Grievance Complaints: Module to view complaints lodged by citizens.
+- Complaints Desk (Tickets): System to track and handle support/grievance tickets.
+- Grievance Admin: Advanced administrative controls for handling grievances.
+- Manage Facilities: Module to manage nearby facilities (like hospitals, schools, etc.).
+- Roles & Permissions: Fine-grained access control management.
+- Nearby Map Dashboard (GIS Dashboard): Geographical view and management of facilities/data.
+- Admin Feedback: Dashboard to view and analyze feedback submitted by users.
+
+### Citizen Features
+- Citizen Dashboard: The main landing panel for logged-in citizens.
+- Available Surveys: List of surveys the citizen is eligible to fill out.
+- Fill Survey: Interface for citizens to submit responses to available surveys.
+- Lodge Complaint (Grievances): Portal for citizens to submit grievances.
+- Complaint Tracking: Interface to track the status of submitted complaints.
+- Nearby Finder (Locator): Tool to locate nearby facilities or points of interest.
+- Citizen Feedback: Portal to submit general feedback about the platform.
+
+### Shared Features (Available to Multiple Roles)
+- Communication (Admin, Citizen, Surveyor): Messaging or announcement module.
+- My Profile (Admin, Citizen): User account settings and profile management.

@@ -3,17 +3,31 @@ require_once __DIR__ . '/config.php';
 setCorsHeaders();
 
 $method = $_SERVER['REQUEST_METHOD'];
-$user = requireAuth();
 $db = getDB();
 
 if ($method === 'GET') {
-    $where = $user['role'] === 'admin' ? '' : 'WHERE published = 1';
+    $isAdmin = false;
+    $auth = $_SERVER['HTTP_X_AUTHORIZATION'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    if (!$auth && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) $auth = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+    if (!$auth && function_exists('apache_request_headers')) {
+        $requestHeaders = apache_request_headers();
+        $auth = $requestHeaders['X-Authorization'] ?? $requestHeaders['Authorization'] ?? $requestHeaders['authorization'] ?? '';
+    }
+    if ($auth && preg_match('/Bearer\s+(.+)/', $auth, $m)) {
+        $payload = verifyJWT($m[1]);
+        if ($payload && isset($payload['role']) && $payload['role'] === 'admin') {
+            $isAdmin = true;
+        }
+    }
+
+    $where = $isAdmin ? '' : 'WHERE published = 1';
     $stmt = $db->query("SELECT * FROM announcements $where ORDER BY created_at DESC");
     jsonResponse($stmt->fetchAll());
 }
 
+$user = requireAdmin();
+
 if ($method === 'POST') {
-    requireAdmin();
     $data = getInput();
     if (empty($data['title']) || empty($data['content'])) jsonError(400, 'Title and content required');
     $stmt = $db->prepare('
@@ -32,7 +46,6 @@ if ($method === 'POST') {
 }
 
 if ($method === 'PUT') {
-    requireAdmin();
     $id = intval($_GET['id'] ?? 0);
     $data = getInput();
     if (isset($data['published'])) {
@@ -45,7 +58,6 @@ if ($method === 'PUT') {
 }
 
 if ($method === 'DELETE') {
-    requireAdmin();
     $id = intval($_GET['id'] ?? 0);
     $db->prepare('DELETE FROM announcements WHERE id = ?')->execute([$id]);
     jsonResponse(['message' => 'Deleted']);
