@@ -135,9 +135,6 @@ export default function HomePage() {
               <Link to="/migrated-survey" className="btn" style={{ backgroundColor: 'white', color: '#ea580c', padding: '18px 40px', fontSize: '18px', borderRadius: '40px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', border: '2px solid white', display: 'inline-flex', alignItems: 'center', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
                 Migrated Survey
               </Link>
-              <Link to="/migration-reports" className="btn" style={{ backgroundColor: 'transparent', color: 'white', padding: '18px 40px', fontSize: '18px', borderRadius: '40px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', border: '2px solid rgba(255,255,255,0.4)', display: 'inline-flex', alignItems: 'center' }}>
-                View Reports
-              </Link>
             </div>
           </div>
 
