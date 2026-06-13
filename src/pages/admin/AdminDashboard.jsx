@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 import { apiFetch } from '../../config/api';
 import { Bar, Pie, Doughnut } from 'react-chartjs-2';
@@ -6,7 +7,7 @@ import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement,
   ArcElement, Tooltip, Legend, Title
 } from 'chart.js';
-import { Users, FileText, CheckCircle, Activity, TrendingUp, Clock, Megaphone, Briefcase, PieChart, Clipboard, ShieldAlert, Grid } from 'lucide-react';
+import { Users, FileText, CheckCircle, Activity, TrendingUp, Clock, Megaphone, Briefcase, PieChart, Clipboard, ShieldAlert, Grid, Shield, MapPin } from 'lucide-react';
 import { allSchemes } from '../../data/schemes.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend, Title);

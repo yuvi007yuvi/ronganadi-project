@@ -26,6 +26,7 @@ import AdminFacilities from './pages/admin/AdminFacilities';
 import AdminRoles from './pages/admin/AdminRoles';
 import AdminFeedback from './pages/admin/AdminFeedback';
 import AdminGisDashboard from './pages/admin/AdminGisDashboard';
+import SystemAdmin from './pages/admin/SystemAdmin';
 import CitizenGrievance from './pages/citizen/CitizenGrievance';
 import CitizenTracking from './pages/citizen/CitizenTracking';
 import CitizenLocator from './pages/citizen/CitizenLocator';
@@ -47,6 +48,7 @@ const pageTitles = {
   '/admin/ticket-admin': 'Grievance Admin',
   '/admin/roles': 'Roles & Permissions',
   '/admin/facilities': 'Manage Facilities',
+  '/admin/system': 'System Administration',
   '/admin/map-dashboard': 'Nearby Dashboard',
   '/citizen': 'Citizen Dashboard',
   '/citizen/surveys': 'Available Surveys',
@@ -166,6 +168,9 @@ export default function App() {
             } />
             <Route path="/admin/roles" element={
               <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminRoles /></AppLayout></ProtectedRoute>
+            } />
+            <Route path="/admin/system" element={
+              <ProtectedRoute allowedRoles={['admin']}><AppLayout><SystemAdmin /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/map-dashboard" element={
               <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminGisDashboard /></AppLayout></ProtectedRoute>

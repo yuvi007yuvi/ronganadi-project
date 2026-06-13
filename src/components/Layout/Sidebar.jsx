@@ -30,10 +30,7 @@ const adminNav = [
     { path: '/communication', icon: Phone, label: 'Communication' },
   ]},
   { label: 'System Admin', items: [
-    { path: '/admin/users', icon: Users, label: 'User Management' },
-    { path: '/admin/ticket-admin', icon: ClipboardList, label: 'Complaints Admin' },
-    { path: '/admin/roles', icon: Users, label: 'Roles & Permissions' },
-    { path: '/admin/facilities', icon: MapPin, label: 'Manage Nearby' },
+    { path: '/admin/system', icon: Users, label: 'Admin' },
   ]},
 ];
 

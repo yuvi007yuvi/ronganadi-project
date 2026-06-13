@@ -87,6 +87,7 @@ export default function CitizenLocator() {
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState(null);
   const [filterType, setFilterType] = useState('all');
+  const [showList, setShowList] = useState(true);
 
   const fetchData = async () => {
     setLoading(true);
@@ -167,15 +168,14 @@ export default function CitizenLocator() {
             Find nearby public utilities and municipal offices
           </p>
         </div>
-        
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <div style={{ position: 'relative' }}>
+        <div className="locator-header-actions" style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: '1 1 auto' }}>
             <Filter size={16} color="var(--gray-500)" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
             <select 
               value={filterType} 
               onChange={e => setFilterType(e.target.value)}
               style={{ 
-                padding: '10px 16px 10px 36px', borderRadius: 10, border: '1.5px solid var(--gray-200)', 
+                width: '100%', padding: '10px 16px 10px 36px', borderRadius: 10, border: '1.5px solid var(--gray-200)', 
                 fontSize: 14, fontWeight: 600, color: 'var(--gray-700)', cursor: 'pointer', outline: 'none', background: 'white'
               }}
             >
@@ -186,20 +186,20 @@ export default function CitizenLocator() {
             </select>
           </div>
           
-          <button onClick={handleLocateMe} className="btn btn-primary" style={{ padding: '10px 20px', gap: 8 }}>
+          <button onClick={handleLocateMe} className="btn btn-primary" style={{ padding: '10px 20px', gap: 8, whiteSpace: 'nowrap', flex: '1 1 auto', justifyContent: 'center' }}>
             <Navigation size={18} /> Locate Me
+          </button>
+
+          <button onClick={() => { setShowList(!showList); setFocusPosition(null); setResetBoundsCounter(c => c + 1); }} className="btn btn-secondary" style={{ padding: '10px 20px', whiteSpace: 'nowrap', border: '1px solid var(--gray-200)', background: 'white', flex: '1 1 auto', justifyContent: 'center' }}>
+            {showList ? 'Hide Facilities' : 'Show All Facilities'}
           </button>
         </div>
       </div>
 
-      <div style={{ display: 'flex', flex: 1, gap: 16, minHeight: 0, paddingBottom: 16 }}>
-        
-        <div style={{ width: 350, display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto', paddingRight: 8 }} className="custom-scrollbar">
-          <button className="btn btn-secondary" onClick={() => { setFocusPosition(null); setResetBoundsCounter(c => c + 1); }} style={{ width: '100%', padding: '12px', justifyContent: 'center', background: 'white', border: '1px solid var(--gray-200)' }}>
-            Show All Facilities
-          </button>
-          
-          {processedFacilities.map(fac => (
+      <div className="locator-main-container" style={{ display: 'flex', flex: 1, gap: 16, minHeight: 0, paddingBottom: 16 }}>
+        {showList && (
+          <div className="locator-sidebar custom-scrollbar" style={{ width: 350, display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto', paddingRight: 8 }}>
+            {processedFacilities.map(fac => (
             <div key={fac.id} className="card" style={{ padding: 16, cursor: 'pointer', transition: 'all 0.2s', border: focusPosition && focusPosition[0] === fac.lat && focusPosition[1] === fac.lng ? '2px solid var(--primary)' : '1px solid transparent' }} onClick={() => setFocusPosition([fac.lat, fac.lng])}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                  <h4 style={{ margin: 0, fontSize: 15, color: 'var(--gray-900)' }}>{fac.name}</h4>
@@ -214,13 +214,14 @@ export default function CitizenLocator() {
                  </a>
               </div>
             </div>
-          ))}
-          {processedFacilities.length === 0 && !loading && (
-            <div style={{ textAlign: 'center', padding: 32, color: 'var(--gray-500)' }}>No facilities found.</div>
-          )}
-        </div>
+            ))}
+            {processedFacilities.length === 0 && !loading && (
+              <div style={{ textAlign: 'center', padding: 32, color: 'var(--gray-500)' }}>No facilities found.</div>
+            )}
+          </div>
+        )}
 
-        <div style={{ flex: 1, borderRadius: 16, overflow: 'hidden', border: '1px solid var(--gray-200)', position: 'relative', boxShadow: 'var(--shadow-md)' }}>
+        <div className="locator-map-container" style={{ flex: 1, borderRadius: 16, overflow: 'hidden', border: '1px solid var(--gray-200)', position: 'relative', boxShadow: 'var(--shadow-md)' }}>
         {(loading || !initialCenter) && (
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--primary)' }}>
             {!initialCenter ? 'Determining your location...' : 'Loading Map & Facilities...'}
@@ -383,6 +384,26 @@ export default function CitizenLocator() {
         }
         .facility-popup .leaflet-popup-content {
           margin: 14px 16px;
+        }
+        @media (max-width: 768px) {
+          .locator-main-container {
+            flex-direction: column-reverse !important;
+            overflow-y: auto;
+            min-height: unset !important;
+          }
+          .locator-sidebar {
+            width: 100% !important;
+            max-height: none !important;
+            overflow-y: visible !important;
+            padding-right: 0 !important;
+          }
+          .locator-map-container {
+            min-height: 400px;
+            flex: none !important;
+          }
+          .locator-header-actions {
+            width: 100%;
+          }
         }
       `}</style>
     </div>
