@@ -115,7 +115,7 @@ export default function App() {
             {/* Admin Routes */}
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_main_dashboard">
-                <AppLayout><SystemAdmin /></AppLayout>
+                <AppLayout><AdminDashboard /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/users" element={
