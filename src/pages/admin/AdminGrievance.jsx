@@ -6,6 +6,7 @@ import {
   Clock, ShieldAlert, Award, Grid, MapPin, Phone, RefreshCw,
   MessageSquare, Send, Bell, FileText, Building2
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export const getProgressForStatus = (status) => {
   switch (status) {
@@ -30,6 +31,7 @@ export const getColorForProgress = (progress) => {
 };
 
 export default function AdminGrievance({ viewMode }) {
+  const { currentUser, isSuperAdmin, hasCustomRole } = useAuth();
   const [complaints, setComplaints] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [officers, setOfficers] = useState([]);
@@ -103,6 +105,20 @@ export default function AdminGrievance({ viewMode }) {
   const [officerMobile, setOfficerMobile] = useState('');
   const [officerStatus, setOfficerStatus] = useState('active');
   const [editingOfficerId, setEditingOfficerId] = useState(null);
+
+  if (hasCustomRole && (!currentUser.departments || currentUser.departments.length === 0)) {
+    return (
+      <div className="animate-fadeIn" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 100px)' }}>
+        <div style={{ textAlign: 'center', background: 'white', padding: '40px', borderRadius: '16px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', maxWidth: '400px' }}>
+          <ShieldAlert size={48} color="#ef4444" style={{ marginBottom: '16px' }} />
+          <h2 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--gray-900)', marginBottom: '8px' }}>Access Restricted</h2>
+          <p style={{ color: 'var(--gray-600)', lineHeight: '1.5' }}>
+            You have not been assigned any department. Please contact the administrator.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     fetchInitialData();
@@ -205,7 +221,7 @@ export default function AdminGrievance({ viewMode }) {
   // --- Complaint Status Update ---
   const handleOpenGrievanceModal = (comp) => {
     setSelectedComplaint(comp);
-    setUpdateDepartment(comp.department_id || '');
+    setUpdateDepartment(comp.department_id || currentUser?.department_id || '');
     setUpdateStatus(comp.status);
     setUpdateProgress(comp.progress || 0);
     setUpdateOfficer(comp.assigned_officer_id || '');
@@ -391,7 +407,7 @@ export default function AdminGrievance({ viewMode }) {
           </p>
         </div>
         
-        {viewMode !== 'complaints' && (
+        {viewMode !== 'complaints' && !currentUser?.department_id && (
           <div style={{ display: 'flex', background: 'var(--gray-100)', borderRadius: 12, padding: 4 }}>
             {(viewMode === 'tickets' 
               ? ['dashboard', 'complaints', 'bulk_update'] 
@@ -424,6 +440,37 @@ export default function AdminGrievance({ viewMode }) {
               );
             })}
           </div>
+        )}
+        {viewMode !== 'complaints' && currentUser?.department_id && (
+           <div style={{ display: 'flex', background: 'var(--gray-100)', borderRadius: 12, padding: 4 }}>
+             {['dashboard', 'complaints', 'bulk_update'].map(tab => {
+              let label = tab;
+              if (tab === 'complaints') label = 'Tickets';
+              if (tab === 'bulk_update') label = 'Bulk Update';
+              
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  style={{
+                    border: 'none',
+                    background: activeTab === tab ? 'white' : 'none',
+                    color: activeTab === tab ? 'var(--primary)' : 'var(--gray-600)',
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    boxShadow: activeTab === tab ? '0 4px 10px rgba(0,0,0,0.05)' : 'none',
+                    transition: 'all 0.2s',
+                    textTransform: 'capitalize'
+                  }}
+                >
+                  {label}
+                </button>
+              );
+             })}
+           </div>
         )}
       </div>
 
@@ -479,6 +526,7 @@ export default function AdminGrievance({ viewMode }) {
               {/* Performance and Ward Grid */}
               <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 768 ? '1fr 1fr' : '1fr', gap: 24 }}>
                 {/* Department Performance */}
+                {!currentUser?.department_id && (
                 <div className="card" style={{ padding: 24 }}>
                   <h3 style={{ margin: '0 0 20px', fontSize: 18 }}>Department Performance</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -500,6 +548,7 @@ export default function AdminGrievance({ viewMode }) {
                     ))}
                   </div>
                 </div>
+                )}
 
                 {/* Ward Analysis */}
                 <div className="card" style={{ padding: 24 }}>
@@ -723,7 +772,7 @@ export default function AdminGrievance({ viewMode }) {
                     </div>
                   </div>
                   {/* Department filter */}
-                  {viewMode !== 'complaints' && (
+                  {viewMode !== 'complaints' && !currentUser?.department_id && (
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                       <select
                         value={deptFilter}
@@ -1267,6 +1316,7 @@ export default function AdminGrievance({ viewMode }) {
                     setUpdateOfficer(''); // reset officer when department changes
                   }}
                   required
+                  disabled={!!currentUser?.department_id}
                 >
                   <option value="">Select Department</option>
                   {departments.map(dept => (

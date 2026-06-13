@@ -3,11 +3,15 @@ import { apiFetch } from '../../config/api';
 import Modal from '../../components/Modal';
 import { Shield, Users, Plus, Edit2, Trash2, CheckCircle2 } from 'lucide-react';
 
+import { useAuth } from '../../context/AuthContext';
+
 export default function AdminRoles() {
-  const [activeTab, setActiveTab] = useState('roles');
+  const { isSuperAdmin } = useAuth();
+  const [activeTab, setActiveTab] = useState(isSuperAdmin ? 'roles' : 'assignments');
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [admins, setAdmins] = useState([]);
+  const [departments, setDepartments] = useState([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,7 +24,7 @@ export default function AdminRoles() {
   const [adminModal, setAdminModal] = useState(false);
   const [editAdminMode, setEditAdminMode] = useState(false);
   const [currentAdminId, setCurrentAdminId] = useState(null);
-  const [adminFormData, setAdminFormData] = useState({ name: '', email: '', password: '', designation: '' });
+  const [adminFormData, setAdminFormData] = useState({ name: '', email: '', password: '', designation: '', department_ids: [] });
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -31,14 +35,16 @@ export default function AdminRoles() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [rRes, pRes, aRes] = await Promise.all([
+      const [rRes, pRes, aRes, dRes] = await Promise.all([
         apiFetch('/rbac.php?action=get_roles'),
         apiFetch('/rbac.php?action=get_permissions'),
-        apiFetch('/rbac.php?action=get_users_roles')
+        apiFetch('/rbac.php?action=get_users_roles'),
+        apiFetch('/departments.php')
       ]);
       setRoles(rRes);
       setPermissions(pRes);
       setAdmins(aRes);
+      setDepartments(dRes || []);
     } catch (err) {
       console.error(err);
       setError("Failed to load RBAC data. Make sure setup_rbac_module.php was run in the browser.");
@@ -129,7 +135,7 @@ export default function AdminRoles() {
       setAdminModal(false);
       setEditAdminMode(false);
       setCurrentAdminId(null);
-      setAdminFormData({ name: '', email: '', password: '', designation: '' });
+      setAdminFormData({ name: '', email: '', password: '', designation: '', department_ids: [] });
       await fetchData();
     } catch (err) {
       alert(editAdminMode ? "Failed to update admin" : "Failed to create admin");
@@ -143,7 +149,8 @@ export default function AdminRoles() {
       name: admin.name,
       email: admin.email,
       password: '',
-      designation: admin.designation || ''
+      designation: admin.designation || '',
+      department_ids: admin.department_ids || []
     });
     setEditAdminMode(true);
     setCurrentAdminId(admin.id);
@@ -198,12 +205,14 @@ export default function AdminRoles() {
         </div>
         
         <div style={{ display: 'flex', borderBottom: '1px solid var(--gray-200)', background: '#fafbff' }}>
-          <button 
-            onClick={() => setActiveTab('roles')}
-            style={{ padding: '16px 24px', background: 'transparent', border: 'none', borderBottom: activeTab === 'roles' ? '2px solid var(--primary)' : '2px solid transparent', color: activeTab === 'roles' ? 'var(--primary)' : 'var(--gray-500)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
-          >
-            <Shield size={16} /> Manage Roles
-          </button>
+          {isSuperAdmin && (
+            <button 
+              onClick={() => setActiveTab('roles')}
+              style={{ padding: '16px 24px', background: 'transparent', border: 'none', borderBottom: activeTab === 'roles' ? '2px solid var(--primary)' : '2px solid transparent', color: activeTab === 'roles' ? 'var(--primary)' : 'var(--gray-500)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
+            >
+              <Shield size={16} /> Manage Roles
+            </button>
+          )}
           <button 
             onClick={() => setActiveTab('assignments')}
             style={{ padding: '16px 24px', background: 'transparent', border: 'none', borderBottom: activeTab === 'assignments' ? '2px solid var(--primary)' : '2px solid transparent', color: activeTab === 'assignments' ? 'var(--primary)' : 'var(--gray-500)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
@@ -268,7 +277,7 @@ export default function AdminRoles() {
                   setAdminModal(true);
                   setEditAdminMode(false);
                   setCurrentAdminId(null);
-                  setAdminFormData({ name: '', email: '', password: '', designation: '' });
+                  setAdminFormData({ name: '', email: '', password: '', designation: '', department_ids: [] });
                 }} style={{ padding: '8px 16px', gap: 6 }}>
                   <Plus size={16} /> Add Admin
                 </button>
@@ -279,6 +288,7 @@ export default function AdminRoles() {
                     <th>Admin Name</th>
                     <th>Email</th>
                     <th>Designation</th>
+                    <th>Department</th>
                     <th>Current Role</th>
                     <th>Assign New Role</th>
                     <th>Actions</th>
@@ -290,6 +300,18 @@ export default function AdminRoles() {
                       <td style={{ fontWeight: 600 }}>{admin.name}</td>
                       <td>{admin.email}</td>
                       <td>{admin.designation || '-'}</td>
+                      <td>
+                        {admin.department_ids?.length > 0 ? (
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                            {admin.department_ids.map(id => {
+                              const dept = departments.find(d => d.id == id);
+                              return dept ? <span key={id} style={{ fontSize: 11, background: '#f3f4f6', border: '1px solid #e5e7eb', padding: '2px 6px', borderRadius: 4 }}>{dept.name}</span> : null;
+                            })}
+                          </div>
+                        ) : (
+                          <span style={{ color: '#9ca3af', fontSize: 12 }}>Global Access</span>
+                        )}
+                      </td>
                       <td>
                         {admin.role_name ? (
                           <span style={{ background: '#dcfce7', color: '#059669', padding: '4px 8px', borderRadius: 6, fontSize: 12, fontWeight: 600 }}>
@@ -373,7 +395,7 @@ export default function AdminRoles() {
         </form>
       </Modal>
 
-      <Modal isOpen={adminModal} onClose={() => { setAdminModal(false); setEditAdminMode(false); setCurrentAdminId(null); setAdminFormData({ name: '', email: '', password: '', designation: '' }); }} title={editAdminMode ? "Edit Admin" : "Add Admin"} width={500}>
+      <Modal isOpen={adminModal} onClose={() => { setAdminModal(false); setEditAdminMode(false); setCurrentAdminId(null); setAdminFormData({ name: '', email: '', password: '', designation: '', department_ids: [] }); }} title={editAdminMode ? "Edit Admin" : "Add Admin"} width={500}>
         <form onSubmit={handleCreateAdmin}>
           <div className="form-group">
             <label className="form-label">Name</label>
@@ -391,9 +413,31 @@ export default function AdminRoles() {
             <label className="form-label">Designation</label>
             <input className="form-control" value={adminFormData.designation} onChange={e => setAdminFormData({...adminFormData, designation: e.target.value})} placeholder="e.g. District Coordinator" />
           </div>
+          <div className="form-group">
+            <label className="form-label">Assign Departments</label>
+            <div style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid var(--gray-200)', borderRadius: '8px', padding: '12px', background: '#fff' }}>
+              {departments.map(d => (
+                <label key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, cursor: 'pointer' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={adminFormData.department_ids.includes(d.id.toString()) || adminFormData.department_ids.includes(d.id)}
+                    onChange={(e) => {
+                      const newIds = e.target.checked 
+                        ? [...adminFormData.department_ids, d.id]
+                        : adminFormData.department_ids.filter(id => id != d.id);
+                      setAdminFormData({ ...adminFormData, department_ids: newIds });
+                    }}
+                  />
+                  <span>{d.name}</span>
+                </label>
+              ))}
+              {departments.length === 0 && <span style={{color: 'var(--gray-500)', fontSize: 13}}>No departments found</span>}
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 4 }}>Leave empty to make them a Global user (No department restrictions). Super Admins have global access by default.</div>
+          </div>
           
           <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 24 }}>
-            <button type="button" className="btn btn-secondary" onClick={() => { setAdminModal(false); setEditAdminMode(false); setCurrentAdminId(null); setAdminFormData({ name: '', email: '', password: '', designation: '' }); }}>Cancel</button>
+            <button type="button" className="btn btn-secondary" onClick={() => { setAdminModal(false); setEditAdminMode(false); setCurrentAdminId(null); setAdminFormData({ name: '', email: '', password: '', designation: '', department_ids: [] }); }}>Cancel</button>
             <button type="submit" className="btn btn-primary" disabled={submitting || !adminFormData.name || !adminFormData.email}>
               {submitting ? (editAdminMode ? 'Updating...' : 'Adding...') : (editAdminMode ? 'Update Admin' : 'Add Admin')}
             </button>

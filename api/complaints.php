@@ -62,14 +62,29 @@ if ($method === 'GET') {
     } else {
         // Return list of complaints
         if ($user['role'] === 'admin') {
-            $stmt = $db->query("
-                SELECT c.*, d.name as department_name, o.name as officer_name, o.mobile as officer_mobile
-                FROM grievance_complaints c
-                LEFT JOIN grievance_departments d ON c.department_id = d.id
-                LEFT JOIN grievance_officers o ON c.assigned_officer_id = o.id
-                ORDER BY c.submitted_at DESC
-            ");
-            jsonResponse($stmt->fetchAll());
+            $is_super_admin = $user['is_super_admin'] ?? false;
+            if (!$is_super_admin && !empty($user['departments'])) {
+                $placeholders = implode(',', array_fill(0, count($user['departments']), '?'));
+                $stmt = $db->prepare("
+                    SELECT c.*, d.name as department_name, o.name as officer_name, o.mobile as officer_mobile
+                    FROM grievance_complaints c
+                    LEFT JOIN grievance_departments d ON c.department_id = d.id
+                    LEFT JOIN grievance_officers o ON c.assigned_officer_id = o.id
+                    WHERE c.department_id IN ($placeholders)
+                    ORDER BY c.submitted_at DESC
+                ");
+                $stmt->execute($user['departments']);
+                jsonResponse($stmt->fetchAll());
+            } else {
+                $stmt = $db->query("
+                    SELECT c.*, d.name as department_name, o.name as officer_name, o.mobile as officer_mobile
+                    FROM grievance_complaints c
+                    LEFT JOIN grievance_departments d ON c.department_id = d.id
+                    LEFT JOIN grievance_officers o ON c.assigned_officer_id = o.id
+                    ORDER BY c.submitted_at DESC
+                ");
+                jsonResponse($stmt->fetchAll());
+            }
         } else {
             // Citizen - only their own complaints
             $stmt = $db->prepare("
@@ -100,11 +115,17 @@ if ($method === 'POST') {
         // 1. Initial status is 'submitted' (No ticket ID, no department/officer assigned yet)
         $priority = in_array($data['priority'] ?? '', ['low', 'medium', 'high', 'emergency']) ? $data['priority'] : 'medium';
 
+        // Auto-assign department based on category
+        $deptStmt = $db->prepare("SELECT department_id FROM grievance_complaint_types WHERE name = ? LIMIT 1");
+        $deptStmt->execute([$data['category']]);
+        $typeRow = $deptStmt->fetch();
+        $autoDepartmentId = $typeRow ? $typeRow['department_id'] : null;
+
         // 2. Insert complaint
         $stmt = $db->prepare("
             INSERT INTO grievance_complaints 
             (ticket_id, citizen_id, title, category, sub_category, department_id, priority, location_lat, location_lng, address, description, photo_url, video_url, contact_number, status, assigned_officer_id, expected_completion_date, progress, ward, submitted_at)
-            VALUES (NULL, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, 'submitted', NULL, NULL, 0, ?, NOW())
+            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'submitted', NULL, NULL, 0, ?, NOW())
         ");
         
         $stmt->execute([
@@ -112,6 +133,7 @@ if ($method === 'POST') {
             $data['title'],
             $data['category'],
             $data['sub_category'] ?? '',
+            $autoDepartmentId,
             $priority,
             $data['location_lat'] ?? null,
             $data['location_lng'] ?? null,

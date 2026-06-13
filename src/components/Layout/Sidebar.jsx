@@ -11,26 +11,26 @@ const adminNav = [
     { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
   ]},
   { label: 'Grievance Management', items: [
-    { path: '/admin/complaints', icon: FileText, label: 'Complaints' },
-    { path: '/admin/tickets', icon: Activity, label: 'Complaints Desk' },
+    { path: '/admin/complaints', icon: FileText, label: 'Complaints', perm: 'manage_complaints' },
+    { path: '/admin/tickets', icon: Activity, label: 'Complaints Desk', perm: 'manage_complaints' },
   ]},
   { label: 'Surveys & Reports', items: [
-    { path: '/admin/custom-surveys', icon: ClipboardList, label: 'Custom Surveys' },
-    { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey' },
-    { path: '/migration-reports', icon: BarChart3, label: 'Migrated Reports' },
-    { path: '/admin/reports', icon: BarChart3, label: 'System Reports' },
-    { path: '/admin/records', icon: FileText, label: 'All Records' },
+    { path: '/admin/custom-surveys', icon: ClipboardList, label: 'Custom Surveys', perm: 'manage_surveys' },
+    { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey', perm: 'view_migrated_surveys' },
+    { path: '/migration-reports', icon: BarChart3, label: 'Migrated Reports', perm: 'view_migrated_surveys' },
+    { path: '/admin/reports', icon: BarChart3, label: 'System Reports', perm: 'view_reports' },
+    { path: '/admin/records', icon: FileText, label: 'All Records', perm: 'view_migrated_surveys' },
   ]},
   { label: 'Nearby Finder', items: [
-    { path: '/admin/map-dashboard', icon: MapPin, label: 'Nearby Dashboard' },
+    { path: '/admin/map-dashboard', icon: MapPin, label: 'Nearby Dashboard', perm: 'view_reports' },
   ]},
   { label: 'Engagement & Feedback', items: [
-    { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback' },
-    { path: '/admin/advertisements', icon: Megaphone, label: 'Advertisements' },
+    { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback', perm: 'view_feedback' },
+    { path: '/admin/advertisements', icon: Megaphone, label: 'Advertisements', perm: 'manage_advertisements' },
     { path: '/communication', icon: Phone, label: 'Communication' },
   ]},
   { label: 'System Admin', items: [
-    { path: '/admin/system', icon: Users, label: 'Admin' },
+    { path: '/admin/system', icon: Users, label: 'Admin Hub' },
   ]},
 ];
 
@@ -54,9 +54,20 @@ const citizenNav = [
 ];
 
 export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
-  const { currentUser, isAdmin } = useAuth();
-  const navGroups = isAdmin ? adminNav : citizenNav;
+  const { currentUser, isAdmin, hasPermission } = useAuth();
   const location = useLocation();
+  
+  let navGroups = citizenNav;
+  if (isAdmin) {
+    // Dynamically filter admin groups based on permissions
+    navGroups = adminNav.map(group => {
+      const filteredItems = group.items.filter(item => {
+        if (!item.perm) return true; // Items like Dashboard are always visible to admins
+        return hasPermission(item.perm);
+      });
+      return { ...group, items: filteredItems };
+    }).filter(group => group.items.length > 0);
+  }
 
   const isExactActive = (path) => {
     if (path === '/admin' || path === '/citizen') return location.pathname === path;

@@ -115,69 +115,69 @@ export default function App() {
             {/* Admin Routes */}
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={['admin']}>
-                <AppLayout><AdminDashboard /></AppLayout>
+                <AppLayout><SystemAdmin /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/users" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_users">
                 <AppLayout><ManageUsers /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/records" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_migrated_surveys">
                 <AppLayout><ViewAllRecords /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/reports" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_reports">
                 <AppLayout><Reports /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/advertisements" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_advertisements">
                 <AppLayout><Advertisements /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/custom-surveys" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_surveys">
                 <AppLayout><ManageSurveys /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/build-survey" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_surveys">
                 <AppLayout><BuildSurvey /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/complaints" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_complaints">
                 <AppLayout><AdminGrievance viewMode="complaints" /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/tickets" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_complaints">
                 <AppLayout><AdminGrievance viewMode="tickets" /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/ticket-admin" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} superAdminOnly>
                 <AppLayout><AdminGrievance viewMode="ticket_admin" /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/facilities" element={
-              <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminFacilities /></AppLayout></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_facilities"><AppLayout><AdminFacilities /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/roles" element={
               <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminRoles /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/system" element={
-              <ProtectedRoute allowedRoles={['admin']}><AppLayout><SystemAdmin /></AppLayout></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']} superAdminOnly><AppLayout><SystemAdmin /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/map-dashboard" element={
-              <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminGisDashboard /></AppLayout></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_reports"><AppLayout><AdminGisDashboard /></AppLayout></ProtectedRoute>
             } />
             
             <Route path="/admin/feedback" element={
-              <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminFeedback /></AppLayout></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_feedback"><AppLayout><AdminFeedback /></AppLayout></ProtectedRoute>
             } />
 
             {/* Citizen Routes */}

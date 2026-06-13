@@ -51,7 +51,11 @@ export default function LoginPage() {
       
       if (result && result.success) {
         console.log('Login successful! Hard redirecting to dashboard...');
-        window.location.href = role === 'admin' ? '/admin' : '/citizen';
+        let redirectUrl = role === 'admin' ? '/admin' : '/citizen';
+        if (role === 'admin' && result.user?.department_id) {
+          redirectUrl = '/admin/complaints';
+        }
+        window.location.href = redirectUrl;
       } else {
         console.log('Login failed, setting error:', result?.message);
         setError(result?.message || 'Login failed completely. Result was undefined.');

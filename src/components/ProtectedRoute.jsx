@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-export default function ProtectedRoute({ children, allowedRoles }) {
-  const { currentUser, loading } = useAuth();
+export default function ProtectedRoute({ children, allowedRoles, superAdminOnly, requiredPermission }) {
+  const { currentUser, loading, isSuperAdmin, hasPermission } = useAuth();
 
   if (loading) {
     return (
@@ -19,6 +19,16 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   if (allowedRoles && !allowedRoles.includes(currentUser.role)) {
     return <Navigate to={currentUser.role === 'admin' ? '/admin' : '/surveyor'} replace />;
+  }
+
+  // Restrict Super Admin only pages
+  if (superAdminOnly && !isSuperAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  // Dynamic Module Permission Check
+  if (requiredPermission && !hasPermission(requiredPermission)) {
+    return <Navigate to="/admin" replace />;
   }
 
   return children;

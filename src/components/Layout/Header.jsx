@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bell, Menu, LogOut, User, Settings, ChevronDown } from 'lucide-react';
+import { Bell, Menu, LogOut, User, Settings, ChevronDown, Check } from 'lucide-react';
+import { apiFetch } from '../../config/api';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import packageJson from '../../../package.json';
@@ -21,16 +22,39 @@ const pageTitles = {
 export default function Header({ collapsed, setCollapsed, setMobileOpen, pageTitle }) {
   const { currentUser, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const menuRef = useRef(null);
+  const notifRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const handler = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+      if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      apiFetch('/notifications.php')
+        .then(data => setNotifications(data || []))
+        .catch(err => console.error('Failed to fetch notifications:', err));
+    }
+  }, [currentUser]);
+
+  const markAllAsRead = async () => {
+    try {
+      await apiFetch('/notifications.php', { method: 'PUT' });
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: 1 })));
+    } catch (e) {
+      console.error('Failed to mark notifications as read', e);
+    }
+  };
+
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   const handleLogout = () => {
     logout();
@@ -61,10 +85,50 @@ export default function Header({ collapsed, setCollapsed, setMobileOpen, pageTit
 
       <div className="header-right">
 
-        <button className="header-icon-btn" title="Notifications">
-          <Bell size={16} />
-          <span className="badge">3</span>
-        </button>
+        <div style={{ position: 'relative' }} ref={notifRef}>
+          <button 
+            className="header-icon-btn" 
+            title="Notifications"
+            onClick={() => setNotifOpen(!notifOpen)}
+          >
+            <Bell size={16} />
+            {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
+          </button>
+
+          {notifOpen && (
+            <div className="user-menu animate-slideUp" style={{ width: 320, right: 0, padding: 0, overflow: 'hidden' }}>
+              <div style={{ padding: '16px', borderBottom: '1px solid var(--gray-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--gray-50)' }}>
+                <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--gray-800)' }}>Notifications</h4>
+                {unreadCount > 0 && (
+                  <button 
+                    onClick={markAllAsRead}
+                    style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                  >
+                    <Check size={14} /> Mark all read
+                  </button>
+                )}
+              </div>
+              <div style={{ maxHeight: 360, overflowY: 'auto' }}>
+                {notifications.length === 0 ? (
+                  <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--gray-500)', fontSize: 13 }}>
+                    No notifications yet
+                  </div>
+                ) : (
+                  notifications.map(notif => (
+                    <div key={notif.id} style={{ padding: '16px', borderBottom: '1px solid var(--gray-100)', background: notif.is_read ? '#fff' : '#f0f9ff', transition: 'background 0.2s', cursor: 'pointer' }}>
+                      <div style={{ fontSize: 13, color: 'var(--gray-800)', lineHeight: 1.5, fontWeight: notif.is_read ? 500 : 600 }}>
+                        {notif.message}
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 8 }}>
+                        {new Date(notif.created_at).toLocaleString()}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* User menu */}
         <div style={{ position: 'relative' }} ref={menuRef}>

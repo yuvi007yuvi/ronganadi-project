@@ -46,7 +46,7 @@ export function AuthProvider({ children }) {
       localStorage.setItem('ronganadi_user', JSON.stringify(user));
       localStorage.setItem('ronganadi_token', token);
       
-      return { success: true };
+      return { success: true, user };
     } catch (error) {
       return { success: false, message: 'Network error or server unavailable' };
     }
@@ -91,9 +91,18 @@ export function AuthProvider({ children }) {
 
   const isAdmin = currentUser?.role === 'admin';
   const isSurveyor = currentUser?.role === 'surveyor';
+  const isSuperAdmin = currentUser?.is_super_admin === true;
+  const hasCustomRole = currentUser?.has_custom_role === true;
+
+  const hasPermission = (permission) => {
+    if (!isAdmin) return false;
+    if (isSuperAdmin) return true;
+    if (!hasCustomRole) return true; // Global Admin gets everything
+    return currentUser?.permissions?.includes(permission);
+  };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, updateProfile, isAdmin, isSurveyor, loading }}>
+    <AuthContext.Provider value={{ currentUser, login, logout, updateProfile, isAdmin, isSuperAdmin, hasCustomRole, isSurveyor, loading, hasPermission }}>
       {children}
     </AuthContext.Provider>
   );
