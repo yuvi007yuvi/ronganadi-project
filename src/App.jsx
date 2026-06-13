@@ -114,7 +114,7 @@ export default function App() {
 
             {/* Admin Routes */}
             <Route path="/admin" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_main_dashboard">
                 <AppLayout><SystemAdmin /></AppLayout>
               </ProtectedRoute>
             } />
@@ -149,12 +149,12 @@ export default function App() {
               </ProtectedRoute>
             } />
             <Route path="/admin/complaints" element={
-              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_complaints">
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_raw_complaints">
                 <AppLayout><AdminGrievance viewMode="complaints" /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/tickets" element={
-              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_complaints">
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_complaints_desk">
                 <AppLayout><AdminGrievance viewMode="tickets" /></AppLayout>
               </ProtectedRoute>
             } />

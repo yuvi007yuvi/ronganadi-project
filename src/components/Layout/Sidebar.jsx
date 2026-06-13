@@ -8,11 +8,11 @@ import { useAuth } from '../../context/AuthContext';
 
 const adminNav = [
   { label: 'Overview', items: [
-    { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+    { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', perm: 'view_main_dashboard' },
   ]},
   { label: 'Grievance Management', items: [
-    { path: '/admin/complaints', icon: FileText, label: 'Complaints', perm: 'manage_complaints' },
-    { path: '/admin/tickets', icon: Activity, label: 'Complaints Desk', perm: 'manage_complaints' },
+    { path: '/admin/complaints', icon: FileText, label: 'Complaints', perm: 'view_raw_complaints' },
+    { path: '/admin/tickets', icon: Activity, label: 'Complaints Desk', perm: 'manage_complaints_desk' },
   ]},
   { label: 'Surveys & Reports', items: [
     { path: '/admin/custom-surveys', icon: ClipboardList, label: 'Custom Surveys', perm: 'manage_surveys' },

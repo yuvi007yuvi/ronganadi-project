@@ -34,7 +34,10 @@ try {
 
     // 3. Define all core modules/permissions
     $permissions = [
-        ['name' => 'manage_complaints', 'description' => 'Access and manage the Complaints Desk', 'module' => 'Grievances'],
+        ['name' => 'view_main_dashboard', 'description' => 'View the Main System Dashboard', 'module' => 'System'],
+        ['name' => 'view_raw_complaints', 'description' => 'View raw unassigned complaints', 'module' => 'Grievances'],
+        ['name' => 'manage_complaints_desk', 'description' => 'Access and manage the Complaints Desk (Tickets)', 'module' => 'Grievances'],
+        ['name' => 'manage_complaints', 'description' => 'Legacy Complaints Access (Full)', 'module' => 'Grievances'],
         ['name' => 'view_reports', 'description' => 'View system reports and analytics', 'module' => 'Reports'],
         ['name' => 'manage_surveys', 'description' => 'Create and manage custom surveys', 'module' => 'Surveys'],
         ['name' => 'manage_users', 'description' => 'Manage system users and citizens', 'module' => 'Users'],
