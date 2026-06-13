@@ -124,12 +124,12 @@ export default function App() {
               </ProtectedRoute>
             } />
             <Route path="/admin/records" element={
-              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_migrated_surveys">
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_all_records">
                 <AppLayout><ViewAllRecords /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/reports" element={
-              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_reports">
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_system_reports">
                 <AppLayout><Reports /></AppLayout>
               </ProtectedRoute>
             } />
@@ -139,12 +139,12 @@ export default function App() {
               </ProtectedRoute>
             } />
             <Route path="/admin/custom-surveys" element={
-              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_surveys">
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_custom_surveys">
                 <AppLayout><ManageSurveys /></AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/build-survey" element={
-              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_surveys">
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_custom_surveys">
                 <AppLayout><BuildSurvey /></AppLayout>
               </ProtectedRoute>
             } />
@@ -159,7 +159,7 @@ export default function App() {
               </ProtectedRoute>
             } />
             <Route path="/admin/ticket-admin" element={
-              <ProtectedRoute allowedRoles={['admin']} superAdminOnly>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_complaints_admin">
                 <AppLayout><AdminGrievance viewMode="ticket_admin" /></AppLayout>
               </ProtectedRoute>
             } />
@@ -170,14 +170,14 @@ export default function App() {
               <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminRoles /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/system" element={
-              <ProtectedRoute allowedRoles={['admin']} superAdminOnly><AppLayout><SystemAdmin /></AppLayout></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_admin_hub"><AppLayout><SystemAdmin /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/map-dashboard" element={
-              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_reports"><AppLayout><AdminGisDashboard /></AppLayout></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_nearby_dashboard"><AppLayout><AdminGisDashboard /></AppLayout></ProtectedRoute>
             } />
             
             <Route path="/admin/feedback" element={
-              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_feedback"><AppLayout><AdminFeedback /></AppLayout></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_citizen_feedback"><AppLayout><AdminFeedback /></AppLayout></ProtectedRoute>
             } />
 
             {/* Citizen Routes */}

@@ -37,14 +37,20 @@ try {
         ['name' => 'view_main_dashboard', 'description' => 'View the Main System Dashboard', 'module' => 'System'],
         ['name' => 'view_raw_complaints', 'description' => 'View raw unassigned complaints', 'module' => 'Grievances'],
         ['name' => 'manage_complaints_desk', 'description' => 'Access and manage the Complaints Desk (Tickets)', 'module' => 'Grievances'],
-        ['name' => 'manage_complaints', 'description' => 'Legacy Complaints Access (Full)', 'module' => 'Grievances'],
-        ['name' => 'view_reports', 'description' => 'View system reports and analytics', 'module' => 'Reports'],
-        ['name' => 'manage_surveys', 'description' => 'Create and manage custom surveys', 'module' => 'Surveys'],
-        ['name' => 'manage_users', 'description' => 'Manage system users and citizens', 'module' => 'Users'],
-        ['name' => 'manage_advertisements', 'description' => 'Manage banners and advertisements', 'module' => 'Engagement'],
-        ['name' => 'manage_facilities', 'description' => 'Manage nearby facilities and mapping', 'module' => 'Facilities'],
-        ['name' => 'view_migrated_surveys', 'description' => 'View legacy migrated surveys data', 'module' => 'Surveys'],
-        ['name' => 'view_feedback', 'description' => 'View citizen feedback', 'module' => 'Engagement']
+        ['name' => 'manage_complaints_admin', 'description' => 'System grievance settings and oversight', 'module' => 'Grievances'],
+        ['name' => 'manage_custom_surveys', 'description' => 'Create and manage custom surveys', 'module' => 'Surveys'],
+        ['name' => 'view_migrated_survey_form', 'description' => 'Access the Migrated Survey Form', 'module' => 'Surveys'],
+        ['name' => 'view_migrated_reports', 'description' => 'View Migrated Survey Analytics', 'module' => 'Reports'],
+        ['name' => 'view_system_reports', 'description' => 'View System & Grievance Reports', 'module' => 'Reports'],
+        ['name' => 'view_all_records', 'description' => 'View all submitted survey records', 'module' => 'Reports'],
+        ['name' => 'view_nearby_dashboard', 'description' => 'View Nearby Facilities Map & Dashboard', 'module' => 'Facilities'],
+        ['name' => 'manage_facilities', 'description' => 'Add/Edit Nearby City Facilities', 'module' => 'Facilities'],
+        ['name' => 'view_citizen_feedback', 'description' => 'View citizen feedback', 'module' => 'Engagement'],
+        ['name' => 'manage_advertisements', 'description' => 'Manage system banners and advertisements', 'module' => 'Engagement'],
+        ['name' => 'manage_communication', 'description' => 'Access Communication tools', 'module' => 'Engagement'],
+        ['name' => 'manage_users', 'description' => 'Manage citizens and staff assignments', 'module' => 'System'],
+        ['name' => 'manage_roles', 'description' => 'Manage Access Roles and Permissions', 'module' => 'System'],
+        ['name' => 'view_admin_hub', 'description' => 'Access the Admin Settings Hub', 'module' => 'System']
     ];
 
     $insertPerm = $db->prepare("INSERT IGNORE INTO rbac_permissions (name, description, module) VALUES (?, ?, ?)");

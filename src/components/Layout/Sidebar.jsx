@@ -15,22 +15,22 @@ const adminNav = [
     { path: '/admin/tickets', icon: Activity, label: 'Complaints Desk', perm: 'manage_complaints_desk' },
   ]},
   { label: 'Surveys & Reports', items: [
-    { path: '/admin/custom-surveys', icon: ClipboardList, label: 'Custom Surveys', perm: 'manage_surveys' },
-    { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey', perm: 'view_migrated_surveys' },
-    { path: '/migration-reports', icon: BarChart3, label: 'Migrated Reports', perm: 'view_migrated_surveys' },
-    { path: '/admin/reports', icon: BarChart3, label: 'System Reports', perm: 'view_reports' },
-    { path: '/admin/records', icon: FileText, label: 'All Records', perm: 'view_migrated_surveys' },
+    { path: '/admin/custom-surveys', icon: ClipboardList, label: 'Custom Surveys', perm: 'manage_custom_surveys' },
+    { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey', perm: 'view_migrated_survey_form' },
+    { path: '/migration-reports', icon: BarChart3, label: 'Migrated Reports', perm: 'view_migrated_reports' },
+    { path: '/admin/reports', icon: BarChart3, label: 'System Reports', perm: 'view_system_reports' },
+    { path: '/admin/records', icon: FileText, label: 'All Records', perm: 'view_all_records' },
   ]},
   { label: 'Nearby Finder', items: [
-    { path: '/admin/map-dashboard', icon: MapPin, label: 'Nearby Dashboard', perm: 'view_reports' },
+    { path: '/admin/map-dashboard', icon: MapPin, label: 'Nearby Dashboard', perm: 'view_nearby_dashboard' },
   ]},
   { label: 'Engagement & Feedback', items: [
-    { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback', perm: 'view_feedback' },
+    { path: '/admin/feedback', icon: MessageSquare, label: 'Citizen Feedback', perm: 'view_citizen_feedback' },
     { path: '/admin/advertisements', icon: Megaphone, label: 'Advertisements', perm: 'manage_advertisements' },
-    { path: '/communication', icon: Phone, label: 'Communication' },
+    { path: '/communication', icon: Phone, label: 'Communication', perm: 'manage_communication' },
   ]},
   { label: 'System Admin', items: [
-    { path: '/admin/system', icon: Users, label: 'Admin Hub' },
+    { path: '/admin/system', icon: Users, label: 'Admin Hub', perm: 'view_admin_hub' },
   ]},
 ];
 
