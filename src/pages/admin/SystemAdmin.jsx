@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Users, Clipboard, Shield, MapPin, Settings } from 'lucide-react';
+import { Users, Clipboard, Shield, MapPin, Settings, FileSpreadsheet } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function SystemAdmin() {
@@ -57,6 +57,14 @@ export default function SystemAdmin() {
                 <div style={{ fontSize: 13, color: 'var(--gray-500)', marginTop: 6 }}>City locator facilities</div>
               </Link>
             )}
+
+            <Link to="/admin/citizen-reports" className="glass-card stat-showcase" style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', textDecoration: 'none', transition: 'all 0.3s' }}>
+              <div style={{ width: 64, height: 64, borderRadius: '18px', background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                <FileSpreadsheet size={32} />
+              </div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>Citizen Reports</div>
+              <div style={{ fontSize: 13, color: 'var(--gray-500)', marginTop: 6 }}>Bulk upload and manage records</div>
+            </Link>
 
           </div>
         </div>

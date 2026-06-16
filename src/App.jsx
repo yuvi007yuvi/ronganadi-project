@@ -27,6 +27,7 @@ import AdminRoles from './pages/admin/AdminRoles';
 import AdminFeedback from './pages/admin/AdminFeedback';
 import AdminGisDashboard from './pages/admin/AdminGisDashboard';
 import SystemAdmin from './pages/admin/SystemAdmin';
+import CitizenReports from './pages/admin/CitizenReports';
 import CitizenGrievance from './pages/citizen/CitizenGrievance';
 import CitizenTracking from './pages/citizen/CitizenTracking';
 import CitizenLocator from './pages/citizen/CitizenLocator';
@@ -50,6 +51,7 @@ const pageTitles = {
   '/admin/facilities': 'Manage Facilities',
   '/admin/system': 'System Administration',
   '/admin/map-dashboard': 'Nearby Dashboard',
+  '/admin/citizen-reports': 'Citizen Reports',
   '/citizen': 'Citizen Dashboard',
   '/citizen/surveys': 'Available Surveys',
   '/citizen/fill-survey': 'Fill Survey',
@@ -171,6 +173,9 @@ export default function App() {
             } />
             <Route path="/admin/system" element={
               <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_admin_hub"><AppLayout><SystemAdmin /></AppLayout></ProtectedRoute>
+            } />
+            <Route path="/admin/citizen-reports" element={
+              <ProtectedRoute allowedRoles={['admin']}><AppLayout><CitizenReports /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/map-dashboard" element={
               <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_nearby_dashboard"><AppLayout><AdminGisDashboard /></AppLayout></ProtectedRoute>
