@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { apiFetch } from '../../config/api';
 import { 
   Search, ShieldAlert, FileText, Clock, MapPin, 
@@ -10,6 +10,23 @@ export default function CitizenTracking() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [ticket, setTicket] = useState(null);
+  const [myComplaints, setMyComplaints] = useState([]);
+  const [loadingList, setLoadingList] = useState(true);
+
+  useEffect(() => {
+    fetchMyComplaints();
+  }, []);
+
+  const fetchMyComplaints = async () => {
+    try {
+      const data = await apiFetch('/complaints.php');
+      setMyComplaints(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to fetch user complaints:", err);
+    } finally {
+      setLoadingList(false);
+    }
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -102,6 +119,42 @@ export default function CitizenTracking() {
           <ShieldAlert size={40} color="var(--danger)" />
           <h3 style={{ margin: 0, color: 'var(--danger)' }}>Ticket Not Found</h3>
           <p style={{ margin: 0, color: 'var(--gray-600)', fontSize: 14 }}>{error}</p>
+        </div>
+      )}
+
+      {/* My Complaints List (Shown when no specific ticket is searched) */}
+      {!ticket && !error && (
+        <div className="animate-fadeIn">
+          <h3 style={{ margin: '0 0 16px', fontSize: 18, color: 'var(--gray-900)' }}>My Recent Complaints</h3>
+          {loadingList ? (
+            <div style={{ textAlign: 'center', padding: 40, color: 'var(--gray-500)' }}>Loading your complaints...</div>
+          ) : myComplaints.length === 0 ? (
+            <div className="card" style={{ padding: 40, textAlign: 'center', color: 'var(--gray-500)' }}>
+              <FileText size={40} color="var(--gray-300)" style={{ margin: '0 auto 16px' }} />
+              <p style={{ margin: 0, fontSize: 16 }}>You have not submitted any complaints yet.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {myComplaints.map(comp => (
+                <div key={comp.id} className="card" style={{ padding: 20, cursor: 'pointer', transition: 'all 0.2s', borderLeft: `4px solid ${getStatusColor(comp.status).bg}` }} onClick={() => setTicket(comp)}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                    <div>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', letterSpacing: 0.5 }}>{comp.ticket_id || 'AWAITING TICKET ID'}</span>
+                      <h4 style={{ margin: '4px 0 0', fontSize: 16, fontWeight: 700, color: 'var(--gray-900)' }}>{comp.title}</h4>
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 600, padding: '4px 10px', borderRadius: 12, backgroundColor: getStatusColor(comp.status).bg, color: getStatusColor(comp.status).text, whiteSpace: 'nowrap' }}>
+                      {getStatusLabel(comp.status)}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--gray-600)', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={14} /> {new Date(comp.submitted_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={14} /> {comp.ward}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--primary)', fontWeight: 600, marginLeft: 'auto' }}>View Details <ArrowRight size={14} /></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
