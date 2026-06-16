@@ -30,15 +30,16 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(String loginId, String password) async {
+  Future<bool> login(String loginId, String password, String role) async {
     _isLoading = true;
     notifyListeners();
 
     try {
       final response = await _api.post('/auth.php', {
         'action': 'login',
-        'login_id': loginId,
+        'email': loginId, // web app uses 'email' for both email and mobile
         'password': password,
+        'role': role,
       });
 
       if (response != null && response['token'] != null) {
