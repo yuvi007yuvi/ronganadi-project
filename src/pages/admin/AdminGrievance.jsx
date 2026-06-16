@@ -106,19 +106,8 @@ export default function AdminGrievance({ viewMode }) {
   const [officerStatus, setOfficerStatus] = useState('active');
   const [editingOfficerId, setEditingOfficerId] = useState(null);
 
-  if (hasCustomRole && (!currentUser.departments || currentUser.departments.length === 0)) {
-    return (
-      <div className="animate-fadeIn" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 100px)' }}>
-        <div style={{ textAlign: 'center', background: 'white', padding: '40px', borderRadius: '16px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', maxWidth: '400px' }}>
-          <ShieldAlert size={48} color="#ef4444" style={{ marginBottom: '16px' }} />
-          <h2 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--gray-900)', marginBottom: '8px' }}>Access Restricted</h2>
-          <p style={{ color: 'var(--gray-600)', lineHeight: '1.5' }}>
-            You have not been assigned any department. Please contact the administrator.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Access restricted block removed: Users who reach this page already have the required permissions via ProtectedRoute.
+  // If they have no department assigned, they should be able to see all departments if their permission allows it.
 
   useEffect(() => {
     fetchInitialData();
