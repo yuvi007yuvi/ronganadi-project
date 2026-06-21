@@ -128,7 +128,6 @@ export function AuthProvider({ children }) {
   const hasPermission = (permission) => {
     if (!isAdmin) return false;
     if (isSuperAdmin) return true;
-    if (!hasCustomRole) return true; // Global Admin gets everything
     return currentUser?.permissions?.includes(permission);
   };
 

@@ -19,7 +19,9 @@ export default function SignupPage() {
     address: '',
     area: '',
     panchayat: '',
-    is_migrated: 'no'
+    is_migrated: 'no',
+    id_type: '',
+    id_number: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -163,6 +165,46 @@ export default function SignupPage() {
               <option value="yes">Yes, I have migrated from here</option>
             </select>
           </div>
+
+          <div className="form-group" style={{ padding: '16px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '12px', border: '1px dashed rgba(59, 130, 246, 0.3)', marginBottom: '16px' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary)', marginBottom: 12 }}>
+              Optional: Quick KYC Verification
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div>
+                <label className="form-label" style={{ fontSize: 11 }}>ID Type</label>
+                <select
+                  name="id_type"
+                  className="form-control"
+                  value={formData.id_type}
+                  onChange={handleChange}
+                  style={{ fontSize: 13 }}
+                >
+                  <option value="">Select ID...</option>
+                  <option value="Voter ID">Voter ID</option>
+                  <option value="Aadhaar No.">Aadhaar No.</option>
+                  <option value="PAN">PAN</option>
+                  <option value="Ration Card No">Ration Card No</option>
+                </select>
+              </div>
+              <div>
+                <label className="form-label" style={{ fontSize: 11 }}>ID Number</label>
+                <input
+                  type="text"
+                  name="id_number"
+                  className="form-control"
+                  placeholder="Enter ID..."
+                  value={formData.id_number}
+                  onChange={handleChange}
+                  style={{ fontSize: 13 }}
+                />
+              </div>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 8 }}>
+              Providing this helps us verify your account instantly.
+            </div>
+          </div>
+
           <div className="form-group" style={{ marginBottom: 12 }}>
             <label className="form-label">Password</label>
             <div style={{ position: 'relative' }}>

@@ -123,11 +123,35 @@ if ($method === 'POST' && $action === 'delete_role') {
 if ($method === 'POST' && $action === 'assign_role') {
     $user_id = $input['user_id'] ?? null;
     $role_id = $input['role_id'] ?? null;
+    $source = $input['source'] ?? 'admin';
     
     if (!$user_id || !$role_id) jsonError(400, 'User ID and Role ID required');
     
     try {
         $db->beginTransaction();
+        
+        if ($source === 'citizen') {
+            // Promote citizen to admin
+            $stmt = $db->prepare("SELECT full_name, mobile, password_hash FROM citizens WHERE id = ?");
+            $stmt->execute([$user_id]);
+            $citizen = $stmt->fetch();
+            if (!$citizen) throw new Exception("Citizen not found");
+            
+            // Check if already an admin
+            $chk = $db->prepare("SELECT id FROM admins WHERE email = ?");
+            $chk->execute([$citizen['mobile']]);
+            $existing_admin_id = $chk->fetchColumn();
+            
+            if ($existing_admin_id) {
+                $user_id = $existing_admin_id;
+            } else {
+                // Insert into admins
+                $stmt = $db->prepare("INSERT INTO admins (name, email, password_hash, designation) VALUES (?, ?, ?, 'Promoted Citizen')");
+                $stmt->execute([$citizen['full_name'], $citizen['mobile'], $citizen['password_hash']]);
+                $user_id = $db->lastInsertId(); // Use the new admin ID for role assignment
+            }
+        }
+        
         // Delete old roles
         $stmt = $db->prepare("DELETE FROM rbac_admin_roles WHERE admin_id = ?");
         $stmt->execute([$user_id]);
@@ -142,7 +166,7 @@ if ($method === 'POST' && $action === 'assign_role') {
         if ($db->inTransaction()) {
             $db->rollBack();
         }
-        jsonError(500, 'Failed to assign role');
+        jsonError(500, 'Failed to assign role: ' . $e->getMessage());
     }
 }
 
@@ -152,11 +176,19 @@ if ($method === 'GET' && $action === 'get_users_roles') {
         $stmt = $db->query("
             SELECT a.id, a.name, a.email, a.designation, 
                    (SELECT GROUP_CONCAT(department_id) FROM admin_departments WHERE admin_id = a.id) as department_ids,
-                   r.id as role_id, r.name as role_name 
+                   r.id as role_id, r.name as role_name, 'admin' as source
             FROM admins a 
             LEFT JOIN rbac_admin_roles ar ON a.id = ar.admin_id
             LEFT JOIN rbac_roles r ON ar.role_id = r.id
             GROUP BY a.id, a.name, a.email, a.designation, r.id, r.name
+            
+            UNION ALL
+            
+            SELECT c.id, c.full_name as name, c.mobile as email, 'Citizen' as designation,
+                   NULL as department_ids,
+                   NULL as role_id, NULL as role_name, 'citizen' as source
+            FROM citizens c
+            WHERE NOT EXISTS (SELECT 1 FROM admins a WHERE a.email = c.mobile)
         ");
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($users as &$u) {

@@ -5,6 +5,8 @@ import { DataProvider } from './context/DataContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Layout/Sidebar';
 import Header from './components/Layout/Header';
+import KycPromptModal from './components/citizen/KycPromptModal';
+import { useAuth } from './context/AuthContext';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -68,6 +70,8 @@ function AppLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { currentUser } = useAuth();
+  const [showKycPrompt, setShowKycPrompt] = useState(true);
 
   // Find matching title (handle nested routes)
   const pageTitle = Object.entries(pageTitles).reduce((match, [path, title]) => {
@@ -99,6 +103,11 @@ function AppLayout({ children }) {
           {children}
         </main>
       </div>
+      
+      {/* Show KYC Prompt if user is a citizen and KYC is not completed */}
+      {currentUser?.role === 'citizen' && currentUser?.kyc_status !== 'completed' && showKycPrompt && (
+        <KycPromptModal onClose={() => setShowKycPrompt(false)} />
+      )}
     </div>
   );
 }
@@ -120,6 +129,19 @@ export default function App() {
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_main_dashboard">
                 <AppLayout><AdminDashboard /></AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/unauthorized" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AppLayout>
+                  <div style={{ padding: '60px 24px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 64, marginBottom: 24 }}>🛡️</div>
+                    <h2 style={{ fontSize: 24, color: 'var(--gray-900)', marginBottom: 12 }}>Access Denied</h2>
+                    <p style={{ color: 'var(--gray-500)', maxWidth: 400, margin: '0 auto', lineHeight: 1.6 }}>
+                      You do not have permission to view the main dashboard. Please select a module from the sidebar that you have access to.
+                    </p>
+                  </div>
+                </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/admin/users" element={
