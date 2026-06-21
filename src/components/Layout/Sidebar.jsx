@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, FileText, BarChart3, Megaphone,
   ClipboardList, PlusCircle, Phone, BookOpen, ChevronLeft,
-  ChevronRight, Activity, Shield, Search, MapPin, MessageSquare
+  ChevronRight, Activity, Shield, Search, MapPin, MessageSquare, Check
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -133,8 +133,11 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 11, color: 'var(--gray-500)', marginBottom: 2 }}>Logged in as</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-800)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-800)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: 4 }}>
                       {currentUser?.name}
+                      {currentUser?.role === 'citizen' && currentUser?.kyc_status === 'completed' && (
+                        <Check size={14} color="white" style={{ background: '#3b82f6', borderRadius: '50%', padding: 2, flexShrink: 0 }} title="Verified Citizen" />
+                      )}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--primary)', fontWeight: 600, textTransform: 'capitalize', marginTop: 2 }}>
                       {currentUser?.role}

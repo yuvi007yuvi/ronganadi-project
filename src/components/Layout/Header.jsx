@@ -140,7 +140,10 @@ export default function Header({ collapsed, setCollapsed, setMobileOpen, pageTit
               {!currentUser?.profile_photo && initials}
             </div>
             <div style={{ textAlign: 'left', display: window.innerWidth > 640 ? 'block' : 'none' }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--gray-800)', lineHeight: 1.2 }}>{currentUser?.name}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--gray-800)', lineHeight: 1.2, display: 'flex', alignItems: 'center', gap: 4 }}>
+                {currentUser?.name}
+                {currentUser?.kyc_status === 'completed' && <Check size={14} color="white" style={{ background: '#3b82f6', borderRadius: '50%', padding: 2 }} title="Verified Citizen" />}
+              </div>
               <div style={{ fontSize: 10, color: 'var(--primary)', fontWeight: 600, textTransform: 'capitalize' }}>{currentUser?.role}</div>
             </div>
             <ChevronDown size={14} color="var(--gray-500)" />
@@ -149,7 +152,10 @@ export default function Header({ collapsed, setCollapsed, setMobileOpen, pageTit
           {menuOpen && (
             <div className="user-menu animate-slideUp">
               <div className="user-menu-header">
-                <div className="user-menu-name">{currentUser?.name}</div>
+                <div className="user-menu-name" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  {currentUser?.name}
+                  {currentUser?.kyc_status === 'completed' && <Check size={16} color="white" style={{ background: '#3b82f6', borderRadius: '50%', padding: 2 }} title="Verified Citizen" />}
+                </div>
                 <div className="user-menu-role">{currentUser?.role}</div>
                 <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 4 }}>{currentUser?.email}</div>
               </div>

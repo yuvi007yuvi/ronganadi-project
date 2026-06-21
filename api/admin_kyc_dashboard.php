@@ -65,7 +65,7 @@ if ($method === 'GET') {
                 r.schemes_included,
                 r.help_done
             FROM citizens c
-            LEFT JOIN citizen_reports r ON c.kyc_number COLLATE utf8mb4_unicode_ci = r.kyc_number COLLATE utf8mb4_unicode_ci
+            LEFT JOIN citizen_reports r ON c.mobile COLLATE utf8mb4_unicode_ci = r.mobile_no COLLATE utf8mb4_unicode_ci
             WHERE c.role = 'citizen'
             ORDER BY c.id DESC
         ";

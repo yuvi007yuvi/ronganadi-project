@@ -26,7 +26,7 @@ if ($method === 'POST') {
         }
         $permissions = [];
         $departments = [];
-        $is_super_admin = ($user['id'] == 1);
+        $is_super_admin = ($user['id'] == 1); // We will override this after fetching role_id
 
         // Fetch permissions
         try {
@@ -44,7 +44,10 @@ if ($method === 'POST') {
         // Fetch custom role
         $roleStmt = $db->prepare("SELECT role_id FROM rbac_admin_roles WHERE admin_id = ?");
         $roleStmt->execute([$user['id']]);
-        $has_custom_role = (bool)$roleStmt->fetchColumn();
+        $role_id = $roleStmt->fetchColumn();
+        $has_custom_role = (bool)$role_id;
+        
+        $is_super_admin = ($user['id'] == 1 || $role_id == 1);
 
         // Fetch multiple departments
         try {

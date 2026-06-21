@@ -28,7 +28,7 @@ export default function ProtectedRoute({ children, allowedRoles, superAdminOnly,
 
   // Dynamic Module Permission Check
   if (requiredPermission && !hasPermission(requiredPermission)) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to="/admin/unauthorized" replace />;
   }
 
   return children;

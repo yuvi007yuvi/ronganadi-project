@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { apiFetch } from '../../config/api';
 import Modal from '../../components/Modal';
 import { Shield, Users, Plus, Edit2, Trash2, CheckCircle2 } from 'lucide-react';
+import SearchBar from '../../components/SearchBar';
 
 import { useAuth } from '../../context/AuthContext';
 
@@ -11,6 +12,7 @@ export default function AdminRoles() {
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [admins, setAdmins] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [departments, setDepartments] = useState([]);
   
   const [loading, setLoading] = useState(true);
@@ -170,17 +172,25 @@ export default function AdminRoles() {
     }
   };
 
-  const assignAdminRole = async (userId, roleId) => {
+  const assignAdminRole = async (userId, roleId, source) => {
     try {
       await apiFetch('/rbac.php?action=assign_role', {
         method: 'POST',
-        body: { user_id: userId, role_id: roleId }
+        body: { user_id: userId, role_id: roleId, source }
       });
       await fetchData();
     } catch (err) {
       alert("Failed to assign role");
     }
   };
+
+  const filteredAdmins = admins.filter(admin => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (admin.name && admin.name.toLowerCase().includes(q)) ||
+           (admin.email && admin.email.toLowerCase().includes(q)) ||
+           (admin.designation && admin.designation.toLowerCase().includes(q));
+  });
 
   if (loading) return <div style={{ padding: 40, textAlign: 'center' }}>Loading RBAC data...</div>;
   if (error) return (
@@ -282,6 +292,9 @@ export default function AdminRoles() {
                   <Plus size={16} /> Add Admin
                 </button>
               </div>
+              <div style={{ padding: '0 0 16px 0' }}>
+                <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search users by name, email, or designation..." />
+              </div>
               <table className="data-table">
                 <thead>
                   <tr>
@@ -295,9 +308,12 @@ export default function AdminRoles() {
                   </tr>
                 </thead>
                 <tbody>
-                  {admins.map(admin => (
-                    <tr key={admin.id}>
-                      <td style={{ fontWeight: 600 }}>{admin.name}</td>
+                  {filteredAdmins.map(admin => (
+                    <tr key={`${admin.source}-${admin.id}`}>
+                      <td style={{ fontWeight: 600 }}>
+                        {admin.name}
+                        {admin.source === 'citizen' && <span style={{ marginLeft: 8, fontSize: 10, background: '#fef08a', color: '#854d0e', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>CITIZEN</span>}
+                      </td>
                       <td>{admin.email}</td>
                       <td>{admin.designation || '-'}</td>
                       <td>
@@ -326,7 +342,7 @@ export default function AdminRoles() {
                           className="form-control" 
                           style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
                           value={admin.role_id || ''}
-                          onChange={(e) => assignAdminRole(admin.id, e.target.value)}
+                          onChange={(e) => assignAdminRole(admin.id, e.target.value, admin.source)}
                         >
                           <option value="">-- Select Role --</option>
                           {roles.map(r => (
@@ -336,13 +352,17 @@ export default function AdminRoles() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: 8 }}>
-                          <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4 }} onClick={() => openEditAdminModal(admin)} title="Edit Admin">
-                            <Edit2 size={16} color="var(--gray-500)" />
-                          </button>
-                          {admin.id !== 1 && (
-                            <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4 }} onClick={() => handleDeleteAdmin(admin.id)} title="Delete Admin">
-                              <Trash2 size={16} color="#ef4444" />
-                            </button>
+                          {admin.source !== 'citizen' && (
+                            <>
+                              <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4 }} onClick={() => openEditAdminModal(admin)} title="Edit Admin">
+                                <Edit2 size={16} color="var(--gray-500)" />
+                              </button>
+                              {admin.id !== 1 && (
+                                <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4 }} onClick={() => handleDeleteAdmin(admin.id)} title="Delete Admin">
+                                  <Trash2 size={16} color="#ef4444" />
+                                </button>
+                              )}
+                            </>
                           )}
                         </div>
                       </td>

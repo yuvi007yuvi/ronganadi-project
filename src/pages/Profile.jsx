@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getApiBaseUrl } from '../config/api';
-import { User, Mail, Shield, MapPin, Phone, Edit2, Save, X, Eye, EyeOff, Camera, Upload } from 'lucide-react';
+import { User, Mail, Shield, MapPin, Phone, Edit2, Save, X, Eye, EyeOff, Camera, Upload, Check } from 'lucide-react';
 
 export default function Profile() {
   const { currentUser, updateProfile, completeKyc } = useAuth();
@@ -198,7 +198,12 @@ export default function Profile() {
               )}
             </div>
             
-            <h2 style={{ margin: 0, fontSize: 22, color: 'var(--gray-900)', textAlign: 'center' }}>{name || currentUser.name}</h2>
+            <h2 style={{ margin: 0, fontSize: 22, color: 'var(--gray-900)', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              {name || currentUser.name}
+              {currentUser.role === 'citizen' && currentUser.kyc_status === 'completed' && (
+                <Check size={20} color="white" style={{ background: '#3b82f6', borderRadius: '50%', padding: 3 }} title="Verified Citizen" />
+              )}
+            </h2>
             <div className="pill pill-orange" style={{ marginTop: 12, padding: '6px 16px', fontSize: 13 }}>
               {currentUser.role}
             </div>
