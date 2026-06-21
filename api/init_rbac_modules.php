@@ -60,7 +60,7 @@ try {
 
     // 4. Create "Grievance Manager" default role if it doesn't exist
     $stmt = $db->query("SELECT id FROM rbac_roles WHERE name = 'Grievance Manager' LIMIT 1");
-    $roleRow = $stmt->fetch();
+    $roleRow = $stmt ? $stmt->fetch() : null;
     
     if (!$roleRow) {
         $db->exec("INSERT INTO rbac_roles (name, description, is_system) VALUES ('Grievance Manager', 'Handles department specific complaints and tickets', 0)");
@@ -71,8 +71,12 @@ try {
 
     // Assign 'manage_complaints' to 'Grievance Manager'
     $stmt = $db->prepare("SELECT id FROM rbac_permissions WHERE name = 'manage_complaints' LIMIT 1");
-    $stmt->execute();
-    $permId = $stmt->fetchColumn();
+    if ($stmt) {
+        $stmt->execute();
+        $permId = $stmt->fetchColumn();
+    } else {
+        $permId = null;
+    }
 
     if ($permId) {
         $db->prepare("INSERT IGNORE INTO rbac_role_permissions (role_id, permission_id) VALUES (?, ?)")
@@ -82,7 +86,7 @@ try {
     $db->commit();
     echo "<h1>Success!</h1><p>MBAC tables, permissions, and Grievance Manager role initialized.</p>";
     
-} catch (Exception $e) {
+} catch (Throwable $e) {
     if (isset($db)) $db->rollBack();
     echo "<h1>Error</h1><p>" . $e->getMessage() . "</p>";
 }

@@ -166,7 +166,7 @@ export default function AdminDashboard() {
           <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(236, 253, 245, 0.95), rgba(209, 250, 229, 0.8))', borderColor: 'rgba(167, 243, 208, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Total Citizen</div>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Total Citizen in Database</div>
                 <div className="premium-stat-value text-gradient text-gradient-emerald" style={{ fontSize: '28px', marginTop: '2px' }}>
                   {kycStats?.total_reports || 0}
                 </div>
