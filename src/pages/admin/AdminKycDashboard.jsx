@@ -17,9 +17,11 @@ export default function AdminKycDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const data = await apiFetch('/admin_kyc_dashboard.php');
-      if (data) {
-        setStats(data);
+      const responseData = await apiFetch('/admin_kyc_dashboard.php');
+      if (responseData) {
+        // Handle double-wrapped response safely
+        const actualData = responseData.data ? responseData.data : responseData;
+        setStats(actualData);
       }
     } catch (err) {
       setError(err.message || 'Failed to fetch KYC data');

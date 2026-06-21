@@ -16,10 +16,20 @@ export default function AdminDashboard() {
   const { getStats, citizens, announcements } = useData();
   const stats = getStats();
   const [complaints, setComplaints] = useState([]);
+  const [kycStats, setKycStats] = useState(null);
 
   useEffect(() => {
     apiFetch('/complaints.php')
       .then(data => setComplaints(data || []))
+      .catch(console.error);
+
+    apiFetch('/admin_kyc_dashboard.php')
+      .then(data => {
+        if (data) {
+          const actualData = data.data ? data.data : data;
+          setKycStats(actualData);
+        }
+      })
       .catch(console.error);
   }, []);
 
@@ -156,31 +166,31 @@ export default function AdminDashboard() {
           <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(236, 253, 245, 0.95), rgba(209, 250, 229, 0.8))', borderColor: 'rgba(167, 243, 208, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Custom Forms</div>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Total Citizen</div>
                 <div className="premium-stat-value text-gradient text-gradient-emerald" style={{ fontSize: '28px', marginTop: '2px' }}>
-                  {stats.customSurveysCount || 0}
+                  {kycStats?.total_reports || 0}
                 </div>
               </div>
               <div className="stat-icon-glass" style={{ color: '#10b981', width: 36, height: 36, borderRadius: 10 }}>
-                <Grid size={18} />
+                <Users size={18} />
               </div>
             </div>
-            <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Active survey templates</div>
+            <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Overall records available</div>
           </div>
 
           <div className="bento-col-3 glass-card stagger-1 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(250, 245, 255, 0.95), rgba(243, 232, 255, 0.8))', borderColor: 'rgba(233, 213, 255, 0.8)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Beneficiaries</div>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Completed KYC</div>
                 <div className="premium-stat-value text-gradient text-gradient-purple" style={{ fontSize: '28px', marginTop: '2px' }}>
-                  {stats.schemeBeneficiaries}
+                  {kycStats?.kyc_completed || 0}
                 </div>
               </div>
               <div className="stat-icon-glass" style={{ color: '#8b5cf6', width: 36, height: 36, borderRadius: 10 }}>
-                <CheckCircle size={18} />
+                <Shield size={18} />
               </div>
             </div>
-            <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>{awarenessRate}% awareness rate</div>
+            <div style={{ fontSize: 11, color: 'var(--gray-500)', fontWeight: 600, marginTop: 'auto' }}>Citizens verified</div>
           </div>
 
           <div className="bento-col-3 glass-card stagger-2 stat-showcase" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(254, 242, 242, 0.95), rgba(254, 226, 226, 0.8))', borderColor: 'rgba(254, 202, 202, 0.8)' }}>
@@ -347,15 +357,26 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* KYC Placeholder Card */}
-            <div className="glass-card stagger-4" style={{ border: '1px dashed rgba(59, 130, 246, 0.4)', background: 'rgba(239, 246, 255, 0.3)' }}>
+            {/* Recent KYC Data Card */}
+            <div className="glass-card stagger-4" style={{ background: 'rgba(239, 246, 255, 0.3)' }}>
               <div className="glass-header">
-                <div className="card-title">Citizen KYC Status</div>
+                <div className="card-title">Recent KYC Completions</div>
                 <Shield size={18} color="#3b82f6" />
               </div>
-              <div className="card-body" style={{ padding: '24px', textAlign: 'center' }}>
-                <div style={{ color: 'var(--gray-500)', fontSize: 13, fontStyle: 'italic' }}>
-                  KYC Dashboard Content (To be updated later)
+              <div className="card-body" style={{ padding: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {kycStats?.records?.filter(r => r.kyc_status === 'completed').slice(0, 5).map(r => (
+                    <div key={r.citizen_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12, background: 'rgba(255,255,255,0.6)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.8)', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--gray-900)' }}>{r.full_name}</div>
+                        <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 4, fontFamily: 'monospace', fontWeight: 600 }}>{r.kyc_number}</div>
+                      </div>
+                      <span className="pill" style={{ background: '#dcfce7', color: '#16a34a', fontSize: 11, padding: '4px 10px', fontWeight: 700, border: '1px solid #bbf7d0' }}>Verified</span>
+                    </div>
+                  ))}
+                  {(!kycStats?.records || kycStats.records.filter(r => r.kyc_status === 'completed').length === 0) && (
+                    <div className="empty-state" style={{ padding: 20 }}><p>No recent KYC data</p></div>
+                  )}
                 </div>
               </div>
             </div>

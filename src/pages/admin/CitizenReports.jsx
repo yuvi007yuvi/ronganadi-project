@@ -41,6 +41,11 @@ export default function CitizenReports() {
   const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({});
   const [notification, setNotification] = useState(null);
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
+  
   const fileInputRef = useRef(null);
 
   const fetchReports = async () => {
@@ -146,6 +151,16 @@ export default function CitizenReports() {
     (r.mobile_no && r.mobile_no.includes(searchTerm))
   );
 
+  // Reset to first page when searching
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredReports.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <div className="animate-fadeIn">
       {notification && (
@@ -209,32 +224,67 @@ export default function CitizenReports() {
           {loading ? (
             <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray-500)' }}>Loading records...</div>
           ) : (
-            <table className="data-table" style={{ whiteSpace: 'nowrap' }}>
-              <thead>
-                <tr>
-                  {COLUMNS.map(col => (
-                    <th key={col.key}>{col.header}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredReports.length > 0 ? (
-                  filteredReports.map((row, idx) => (
-                    <tr key={idx}>
-                      {COLUMNS.map(col => (
-                        <td key={col.key}>{row[col.key] || '-'}</td>
-                      ))}
-                    </tr>
-                  ))
-                ) : (
+            <>
+              <table className="data-table" style={{ whiteSpace: 'nowrap' }}>
+                <thead>
                   <tr>
-                    <td colSpan={COLUMNS.length} style={{ textAlign: 'center', padding: 30, color: 'var(--gray-500)' }}>
-                      No records found.
-                    </td>
+                    <th style={{ width: 60 }}>Sr. No.</th>
+                    {COLUMNS.map(col => (
+                      <th key={col.key}>{col.header}</th>
+                    ))}
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {currentItems.length > 0 ? (
+                    currentItems.map((row, idx) => (
+                      <tr key={idx}>
+                        <td style={{ fontWeight: 600, color: 'var(--gray-500)' }}>{indexOfFirstItem + idx + 1}</td>
+                        {COLUMNS.map(col => (
+                          <td key={col.key}>{row[col.key] || '-'}</td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={COLUMNS.length + 1} style={{ textAlign: 'center', padding: 30, color: 'var(--gray-500)' }}>
+                        No records found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderTop: '1px solid var(--gray-200)', background: 'var(--gray-50)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ fontSize: 13, color: 'var(--gray-600)', fontWeight: 600 }}>Rows per page:</span>
+                  <select 
+                    value={itemsPerPage} 
+                    onChange={e => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                    style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid var(--gray-300)', background: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                    <option value={500}>500</option>
+                    <option value={1000}>1000</option>
+                    <option value={5000}>5000</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: 'var(--gray-600)', fontWeight: 500 }}>Page {currentPage} of {totalPages || 1}</span>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button 
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid var(--gray-300)', background: currentPage === 1 ? 'var(--gray-100)' : 'white', cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontSize: 13, fontWeight: 600, color: currentPage === 1 ? 'var(--gray-400)' : 'var(--gray-700)' }}
+                    >Previous</button>
+                    <button 
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages || totalPages === 0}
+                      style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid var(--gray-300)', background: currentPage === totalPages || totalPages === 0 ? 'var(--gray-100)' : 'white', cursor: currentPage === totalPages || totalPages === 0 ? 'not-allowed' : 'pointer', fontSize: 13, fontWeight: 600, color: currentPage === totalPages || totalPages === 0 ? 'var(--gray-400)' : 'var(--gray-700)' }}
+                    >Next</button>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
