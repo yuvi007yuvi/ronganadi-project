@@ -35,7 +35,7 @@ import CitizenGrievance from './pages/citizen/CitizenGrievance';
 import CitizenTracking from './pages/citizen/CitizenTracking';
 import CitizenLocator from './pages/citizen/CitizenLocator';
 import CitizenFeedback from './pages/citizen/CitizenFeedback';
-
+import ReportsHub from './pages/admin/ReportsHub';
 
 import Communication from './pages/Communication';
 
@@ -54,6 +54,7 @@ const pageTitles = {
   '/admin/facilities': 'Manage Facilities',
   '/admin/system': 'System Administration',
   '/admin/map-dashboard': 'Nearby Dashboard',
+  '/admin/reports-hub': 'Reports Hub',
   '/admin/citizen-reports': 'Citizen Reports',
   '/admin/kyc-dashboard': 'Citizen KYC Status',
   '/citizen': 'Citizen Dashboard',
@@ -158,6 +159,9 @@ export default function App() {
               <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_system_reports">
                 <AppLayout><Reports /></AppLayout>
               </ProtectedRoute>
+            } />
+            <Route path="/admin/reports-hub" element={
+              <ProtectedRoute allowedRoles={['admin']}><AppLayout><ReportsHub /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/advertisements" element={
               <ProtectedRoute allowedRoles={['admin']} requiredPermission="manage_advertisements">

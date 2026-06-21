@@ -14,12 +14,12 @@ const adminNav = [
     { path: '/admin/complaints', icon: FileText, label: 'Complaints', perm: 'view_raw_complaints' },
     { path: '/admin/tickets', icon: Activity, label: 'Complaints Desk', perm: 'manage_complaints_desk' },
   ]},
-  { label: 'Surveys & Reports', items: [
+  { label: 'Surveys Management', items: [
     { path: '/admin/custom-surveys', icon: ClipboardList, label: 'Custom Surveys', perm: 'manage_custom_surveys' },
     { path: '/migrated-survey', icon: FileText, label: 'Migrated Survey', perm: 'view_migrated_survey_form' },
-    { path: '/migration-reports', icon: BarChart3, label: 'Migrated Reports', perm: 'view_migrated_reports' },
-    { path: '/admin/reports', icon: BarChart3, label: 'System Reports', perm: 'view_system_reports' },
-    { path: '/admin/records', icon: FileText, label: 'All Records', perm: 'view_all_records' },
+  ]},
+  { label: 'Analytics & Reports', items: [
+    { path: '/admin/reports-hub', icon: BarChart3, label: 'Reports Hub' },
   ]},
   { label: 'Nearby Finder', items: [
     { path: '/admin/map-dashboard', icon: MapPin, label: 'Nearby Dashboard', perm: 'view_nearby_dashboard' },
