@@ -28,7 +28,7 @@ export default function AdminKycDashboard() {
     }
   };
 
-  const verifiedRecords = stats.records.filter(r => r.kyc_status === 'completed');
+  const verifiedRecords = (stats?.records || []).filter(r => r.kyc_status === 'completed');
   
   const filteredVerified = verifiedRecords.filter(r => 
     r.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -37,7 +37,7 @@ export default function AdminKycDashboard() {
     r.kyc_id_number?.includes(searchTerm)
   );
 
-  const pending_kyc = stats.total_users - stats.kyc_completed;
+  const pending_kyc = (stats?.total_users || 0) - (stats?.kyc_completed || 0);
 
   const exportToExcel = () => {
     const exportData = filteredVerified.map(r => ({

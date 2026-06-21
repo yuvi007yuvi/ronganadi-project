@@ -10,11 +10,7 @@ if ($method === 'OPTIONS') {
 }
 
 // Authenticate Admin
-$user = authenticateUser();
-
-if (!$user || $user['role'] !== 'admin') {
-    jsonError(401, 'Unauthorized access. Admins only.');
-}
+$user = requireAdmin();
 
 if ($method === 'GET') {
     $db = getDB();
@@ -78,13 +74,10 @@ if ($method === 'GET') {
         $records = $stmtRecords->fetchAll(PDO::FETCH_ASSOC);
 
         jsonResponse([
-            'success' => true,
-            'data' => [
-                'total_users' => (int)$total_users,
-                'kyc_completed' => (int)$kyc_completed,
-                'total_reports' => (int)$total_reports,
-                'records' => $records
-            ]
+            'total_users' => (int)$total_users,
+            'kyc_completed' => (int)$kyc_completed,
+            'total_reports' => (int)$total_reports,
+            'records' => $records ?: []
         ]);
 
     } catch (PDOException $e) {

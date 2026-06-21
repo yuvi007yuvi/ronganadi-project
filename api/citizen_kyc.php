@@ -10,7 +10,7 @@ if ($method === 'OPTIONS') {
 }
 
 // Authenticate request
-$user = authenticateUser();
+$user = requireAuth();
 
 if (!$user || $user['role'] !== 'citizen') {
     jsonError(401, 'Unauthorized access');
