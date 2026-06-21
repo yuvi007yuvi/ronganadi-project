@@ -21,7 +21,7 @@ if ($method === 'GET') {
         $total_users = $stmtTotal->fetchColumn();
 
         // 2. Total KYC Completed
-        $stmtCompleted = $db->query("SELECT COUNT(*) FROM citizens WHERE kyc_status = 'completed' AND role = 'citizen'");
+        $stmtCompleted = $db->query("SELECT COUNT(*) FROM citizens WHERE kyc_status = 'completed'");
         $kyc_completed = $stmtCompleted->fetchColumn();
 
         // 3. Total Data Available in citizen_reports
@@ -66,7 +66,6 @@ if ($method === 'GET') {
                 r.help_done
             FROM citizens c
             LEFT JOIN citizen_reports r ON c.kyc_number COLLATE utf8mb4_unicode_ci = r.kyc_number COLLATE utf8mb4_unicode_ci
-            WHERE c.role = 'citizen'
             ORDER BY c.id DESC
         ";
 
