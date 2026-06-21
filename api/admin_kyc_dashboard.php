@@ -65,9 +65,9 @@ if ($method === 'GET') {
                 r.schemes_included,
                 r.help_done
             FROM citizens c
-            LEFT JOIN citizen_reports r ON c.kyc_number = r.kyc_number
+            LEFT JOIN citizen_reports r ON c.kyc_number COLLATE utf8mb4_unicode_ci = r.kyc_number COLLATE utf8mb4_unicode_ci
             WHERE c.role = 'citizen'
-            ORDER BY c.updated_at DESC
+            ORDER BY c.id DESC
         ";
 
         $stmtRecords = $db->query($sql);

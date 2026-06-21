@@ -132,9 +132,6 @@ export default function HomePage() {
               <Link to="/signup" className="btn btn-primary pulse-btn" style={{ backgroundColor: '#111827', color: 'white', padding: '18px 40px', fontSize: '18px', borderRadius: '40px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', border: 'none', display: 'inline-flex', alignItems: 'center', gap: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' }}>
                 Join the Movement <ArrowRight size={20} />
               </Link>
-              <Link to="/migrated-survey" className="btn" style={{ backgroundColor: 'white', color: '#ea580c', padding: '18px 40px', fontSize: '18px', borderRadius: '40px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', border: '2px solid white', display: 'inline-flex', alignItems: 'center', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
-                Migrated Survey
-              </Link>
             </div>
           </div>
 
