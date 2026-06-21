@@ -66,6 +66,14 @@ export default function SystemAdmin() {
               <div style={{ fontSize: 13, color: 'var(--gray-500)', marginTop: 6 }}>Bulk upload and manage records</div>
             </Link>
 
+            <Link to="/admin/kyc-dashboard" className="glass-card stat-showcase" style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', textDecoration: 'none', transition: 'all 0.3s', border: '1px dashed #3b82f6' }}>
+              <div style={{ width: 64, height: 64, borderRadius: '18px', background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                <Shield size={32} />
+              </div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>Citizen KYC Status</div>
+              <div style={{ fontSize: 13, color: 'var(--gray-500)', marginTop: 6 }}>Manage verified citizen KYCs</div>
+            </Link>
+
           </div>
         </div>
       </div>

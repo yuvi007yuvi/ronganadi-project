@@ -4,7 +4,7 @@ import { getApiBaseUrl } from '../config/api';
 import { User, Mail, Shield, MapPin, Phone, Edit2, Save, X, Eye, EyeOff, Camera, Upload } from 'lucide-react';
 
 export default function Profile() {
-  const { currentUser, updateProfile } = useAuth();
+  const { currentUser, updateProfile, completeKyc } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(currentUser?.name || '');
   const [phone, setPhone] = useState(currentUser?.phone || '');
@@ -15,6 +15,14 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  
+  // KYC State
+  const [showKycModal, setShowKycModal] = useState(false);
+  const [kycIdType, setKycIdType] = useState('Voter ID');
+  const [kycIdNumber, setKycIdNumber] = useState('');
+  const [kycLoading, setKycLoading] = useState(false);
+  const [kycError, setKycError] = useState('');
+  
   const fileInputRef = useRef(null);
 
   if (!currentUser) return null;
@@ -99,6 +107,28 @@ export default function Profile() {
     setPassword('');
     setError('');
     setSuccess('');
+  };
+
+  const handleKycSubmit = async (e) => {
+    e.preventDefault();
+    if (!kycIdNumber.trim()) {
+      setKycError('Please enter your ID Number.');
+      return;
+    }
+    setKycLoading(true);
+    setKycError('');
+    
+    const res = await completeKyc(kycIdType, kycIdNumber);
+    setKycLoading(false);
+    
+    if (res.success) {
+      setSuccess('KYC Completed Successfully!');
+      setShowKycModal(false);
+      setKycIdNumber('');
+      setTimeout(() => setSuccess(''), 4000);
+    } else {
+      setKycError(res.message || 'Failed to complete KYC.');
+    }
   };
 
   return (
@@ -269,7 +299,107 @@ export default function Profile() {
             </div>
           </div>
         </div>
+
+        {/* Citizen KYC Card */}
+        {currentUser.role === 'citizen' && (
+          <div className="card bento-item" style={{ gridColumn: window.innerWidth > 768 ? '1 / -1' : '1' }}>
+            <div className="card-header" style={{ padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: 18 }}>Citizen KYC Details</h3>
+              {currentUser.kyc_status === 'completed' ? (
+                <div className="pill" style={{ background: 'var(--success-bg)', color: 'var(--success)', padding: '6px 12px', fontSize: 13, fontWeight: 600 }}>
+                  ✓ KYC Verified
+                </div>
+              ) : (
+                <button className="btn btn-primary" onClick={() => setShowKycModal(true)}>
+                  Complete KYC
+                </button>
+              )}
+            </div>
+            <div className="card-body" style={{ padding: '32px' }}>
+              {currentUser.kyc_status === 'completed' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                  <div style={{ padding: '16px', background: 'var(--orange-50)', borderRadius: 12, border: '1px solid var(--orange-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--orange-700)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Your Unique KYC Number</div>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--gray-900)', fontFamily: 'monospace', letterSpacing: 1 }}>{currentUser.kyc_number || 'N/A'}</div>
+                    </div>
+                    <div style={{ padding: '8px 16px', background: 'white', borderRadius: 8, fontSize: 12, fontWeight: 600, color: 'var(--gray-500)', boxShadow: 'var(--shadow-sm)' }}>
+                      Keep this number safe
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 24 }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Panchayat</div>
+                      <div style={{ fontSize: 16, fontWeight: 500, color: 'var(--gray-900)' }}>{currentUser.panchayat || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Booth No & Name</div>
+                      <div style={{ fontSize: 16, fontWeight: 500, color: 'var(--gray-900)' }}>{currentUser.booth_no_name || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Police Station</div>
+                      <div style={{ fontSize: 16, fontWeight: 500, color: 'var(--gray-900)' }}>{currentUser.police_station || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>District</div>
+                      <div style={{ fontSize: 16, fontWeight: 500, color: 'var(--gray-900)' }}>{currentUser.district || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>PIN Code</div>
+                      <div style={{ fontSize: 16, fontWeight: 500, color: 'var(--gray-900)' }}>{currentUser.pin_code || 'N/A'}</div>
+                    </div>
+                  </div>
+                </div>
+
+              ) : (
+                <div style={{ textAlign: 'center', color: 'var(--gray-500)' }}>
+                  Your KYC is pending. Please complete it to unlock full features.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* KYC Modal */}
+      {showKycModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+          <div className="card" style={{ width: '100%', maxWidth: 400, animation: 'fadeIn 0.2s' }}>
+            <div className="card-header" style={{ padding: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0 }}>Complete KYC</h3>
+              <button onClick={() => setShowKycModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-500)' }}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="card-body" style={{ padding: 24 }}>
+              {kycError && (
+                <div style={{ padding: '12px 16px', background: 'var(--danger-bg)', color: 'var(--danger)', borderRadius: 8, marginBottom: 24, fontSize: 14 }}>
+                  {kycError}
+                </div>
+              )}
+              <form onSubmit={handleKycSubmit}>
+                <div className="form-group" style={{ marginBottom: 16 }}>
+                  <label className="form-label">ID Type</label>
+                  <select className="form-control" value={kycIdType} onChange={e => setKycIdType(e.target.value)}>
+                    <option value="Voter ID">Voter ID</option>
+                    <option value="Aadhaar No.">Aadhaar No.</option>
+                    <option value="PAN">PAN</option>
+                    <option value="Ration Card No">Ration Card No</option>
+                  </select>
+                </div>
+                <div className="form-group" style={{ marginBottom: 24 }}>
+                  <label className="form-label">{kycIdType} Number</label>
+                  <input type="text" className="form-control" placeholder={`Enter ${kycIdType} Number`} value={kycIdNumber} onChange={e => setKycIdNumber(e.target.value)} required />
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={kycLoading}>
+                  {kycLoading ? 'Verifying...' : 'Verify ID'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>

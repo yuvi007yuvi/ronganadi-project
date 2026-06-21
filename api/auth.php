@@ -96,6 +96,13 @@ if ($method === 'POST') {
             'mobile' => $user['mobile'],
             'role' => 'citizen',
             'area' => $user['area'],
+            'kyc_status' => $user['kyc_status'] ?? 'pending',
+            'kyc_number' => $user['kyc_number'] ?? null,
+            'panchayat' => $user['panchayat'] ?? '',
+            'booth_no_name' => $user['booth_no_name'] ?? '',
+            'police_station' => $user['police_station'] ?? '',
+            'district' => $user['district'] ?? '',
+            'pin_code' => $user['pin_code'] ?? '',
         ]);
         jsonResponse([
             'token' => $token,
@@ -105,6 +112,13 @@ if ($method === 'POST') {
                 'mobile' => $user['mobile'],
                 'role' => 'citizen',
                 'area' => $user['area'],
+                'kyc_status' => $user['kyc_status'] ?? 'pending',
+                'kyc_number' => $user['kyc_number'] ?? null,
+                'panchayat' => $user['panchayat'] ?? '',
+                'booth_no_name' => $user['booth_no_name'] ?? '',
+                'police_station' => $user['police_station'] ?? '',
+                'district' => $user['district'] ?? '',
+                'pin_code' => $user['pin_code'] ?? '',
             ]
         ]);
     }

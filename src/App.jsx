@@ -28,6 +28,7 @@ import AdminFeedback from './pages/admin/AdminFeedback';
 import AdminGisDashboard from './pages/admin/AdminGisDashboard';
 import SystemAdmin from './pages/admin/SystemAdmin';
 import CitizenReports from './pages/admin/CitizenReports';
+import AdminKycDashboard from './pages/admin/AdminKycDashboard';
 import CitizenGrievance from './pages/citizen/CitizenGrievance';
 import CitizenTracking from './pages/citizen/CitizenTracking';
 import CitizenLocator from './pages/citizen/CitizenLocator';
@@ -52,6 +53,7 @@ const pageTitles = {
   '/admin/system': 'System Administration',
   '/admin/map-dashboard': 'Nearby Dashboard',
   '/admin/citizen-reports': 'Citizen Reports',
+  '/admin/kyc-dashboard': 'Citizen KYC Status',
   '/citizen': 'Citizen Dashboard',
   '/citizen/surveys': 'Available Surveys',
   '/citizen/fill-survey': 'Fill Survey',
@@ -176,6 +178,9 @@ export default function App() {
             } />
             <Route path="/admin/citizen-reports" element={
               <ProtectedRoute allowedRoles={['admin']}><AppLayout><CitizenReports /></AppLayout></ProtectedRoute>
+            } />
+            <Route path="/admin/kyc-dashboard" element={
+              <ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminKycDashboard /></AppLayout></ProtectedRoute>
             } />
             <Route path="/admin/map-dashboard" element={
               <ProtectedRoute allowedRoles={['admin']} requiredPermission="view_nearby_dashboard"><AppLayout><AdminGisDashboard /></AppLayout></ProtectedRoute>

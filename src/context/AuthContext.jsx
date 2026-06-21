@@ -89,7 +89,38 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const isAdmin = currentUser?.role === 'admin';
+    const completeKyc = async (idType, idNumber) => {
+      try {
+        const token = localStorage.getItem('ronganadi_token');
+        const response = await fetch(`${getApiBaseUrl()}/citizen_kyc.php`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ id_type: idType, id_number: idNumber })
+        });
+        const data = await response.json();
+        
+        if (!response.ok || !data.success) {
+          return { success: false, message: data.message || data.error || 'KYC Failed' };
+        }
+
+        const { user, token: newToken } = data.data || data;
+        
+        setCurrentUser(user);
+        localStorage.setItem('ronganadi_user', JSON.stringify(user));
+        if (newToken) {
+          localStorage.setItem('ronganadi_token', newToken);
+        }
+        
+        return { success: true };
+      } catch (error) {
+        return { success: false, message: 'Network error or server unavailable' };
+      }
+    };
+
+    const isAdmin = currentUser?.role === 'admin';
   const isSurveyor = currentUser?.role === 'surveyor';
   const isSuperAdmin = currentUser?.is_super_admin === true || currentUser?.email === 'admin@ronganadi.gov.in';
   const hasCustomRole = currentUser?.has_custom_role === true;
@@ -102,7 +133,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, updateProfile, isAdmin, isSuperAdmin, hasCustomRole, isSurveyor, loading, hasPermission }}>
+    <AuthContext.Provider value={{ currentUser, login, logout, updateProfile, completeKyc, isAdmin, isSuperAdmin, hasCustomRole, isSurveyor, loading, hasPermission }}>
       {children}
     </AuthContext.Provider>
   );

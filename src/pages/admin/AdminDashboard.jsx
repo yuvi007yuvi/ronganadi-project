@@ -347,6 +347,19 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            {/* KYC Placeholder Card */}
+            <div className="glass-card stagger-4" style={{ border: '1px dashed rgba(59, 130, 246, 0.4)', background: 'rgba(239, 246, 255, 0.3)' }}>
+              <div className="glass-header">
+                <div className="card-title">Citizen KYC Status</div>
+                <Shield size={18} color="#3b82f6" />
+              </div>
+              <div className="card-body" style={{ padding: '24px', textAlign: 'center' }}>
+                <div style={{ color: 'var(--gray-500)', fontSize: 13, fontStyle: 'italic' }}>
+                  KYC Dashboard Content (To be updated later)
+                </div>
+              </div>
+            </div>
+
             <div className="glass-card stagger-4">
               <div className="glass-header">
                 <div className="card-title">Top Schemes Availed</div>

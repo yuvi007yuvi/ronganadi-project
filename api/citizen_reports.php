@@ -10,7 +10,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method === 'GET') {
     // Fetch all records
     try {
-        $stmt = $db->query("SELECT * FROM citizen_reports ORDER BY created_at DESC");
+        $stmt = $db->query("SELECT * FROM citizen_reports ORDER BY timestamp DESC");
         $records = $stmt->fetchAll();
         jsonResponse($records);
     } catch (PDOException $e) {
