@@ -37,10 +37,16 @@ export default function AdminGrievance({ viewMode }) {
   const [officers, setOfficers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(() => {
-    if (viewMode === 'complaints') return 'complaints';
+    if (viewMode === 'complaints') return 'dashboard';
     if (viewMode === 'ticket_admin') return 'departments';
-    return 'dashboard';
+    return 'complaints';
   });
+
+  useEffect(() => {
+    if (viewMode === 'complaints') setActiveTab('dashboard');
+    else if (viewMode === 'ticket_admin') setActiveTab('departments');
+    else setActiveTab('complaints');
+  }, [viewMode]);
   const [deptFilter, setDeptFilter] = useState('all');
   
   // Ticket Admin Module States
@@ -229,7 +235,7 @@ export default function AdminGrievance({ viewMode }) {
         assigned_officer_id: updateOfficer || null,
         department_id: updateDepartment || null,
         expected_completion_date: updateExpectedDate,
-        remark: updateRemark || null
+        admin_remark: updateRemark || null
       };
       await apiFetch(`/complaints.php?id=${selectedComplaint.id}`, {
         method: 'PUT',
@@ -396,13 +402,16 @@ export default function AdminGrievance({ viewMode }) {
           </p>
         </div>
         
-        {viewMode !== 'complaints' && !currentUser?.department_id && (
+        {!currentUser?.department_id && (
           <div style={{ display: 'flex', background: 'var(--gray-100)', borderRadius: 12, padding: 4 }}>
-            {(viewMode === 'tickets' 
-              ? ['dashboard', 'complaints', 'bulk_update'] 
+            {(viewMode === 'complaints' 
+              ? ['dashboard', 'complaints']
+              : viewMode === 'tickets' 
+              ? ['complaints', 'bulk_update'] 
               : ['departments', 'officers', 'complaint_types']).map(tab => {
               let label = tab;
-              if (tab === 'complaints') label = 'Tickets';
+              if (tab === 'dashboard') label = 'Dashboard';
+              if (tab === 'complaints') label = viewMode === 'complaints' ? 'Raw Complaints' : 'Tickets';
               if (tab === 'bulk_update') label = 'Bulk Update';
               if (tab === 'complaint_types') label = 'Complaint Types';
               
@@ -430,11 +439,14 @@ export default function AdminGrievance({ viewMode }) {
             })}
           </div>
         )}
-        {viewMode !== 'complaints' && currentUser?.department_id && (
+        {currentUser?.department_id && (
            <div style={{ display: 'flex', background: 'var(--gray-100)', borderRadius: 12, padding: 4 }}>
-             {['dashboard', 'complaints', 'bulk_update'].map(tab => {
+             {(viewMode === 'complaints'
+               ? ['dashboard', 'complaints']
+               : ['complaints', 'bulk_update']).map(tab => {
               let label = tab;
-              if (tab === 'complaints') label = 'Tickets';
+              if (tab === 'dashboard') label = 'Dashboard';
+              if (tab === 'complaints') label = viewMode === 'complaints' ? 'Raw Complaints' : 'Tickets';
               if (tab === 'bulk_update') label = 'Bulk Update';
               
               return (
@@ -1288,13 +1300,24 @@ export default function AdminGrievance({ viewMode }) {
 
       {/* UPDATE COMPLAINT MODAL */}
       {selectedComplaint && (
-        <div className="modal-overlay" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-          <div className="card animate-slideUp" style={{ width: '100%', maxWidth: 500, padding: 32, position: 'relative' }}>
-            <h3 style={{ margin: '0 0 20px' }}>
-              {selectedComplaint.ticket_id ? `Manage Ticket: ${selectedComplaint.ticket_id}` : 'Raise Ticket for Complaint'}
-            </h3>
+        <div 
+          className="modal-overlay" 
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: 20 }}
+          onClick={() => setSelectedComplaint(null)}
+        >
+          <div 
+            className="card animate-slideUp" 
+            style={{ width: '100%', maxWidth: 650, maxHeight: '90vh', padding: 0, position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--gray-200)', background: '#fafcff', flexShrink: 0 }}>
+              <h3 style={{ margin: 0, fontSize: 20 }}>
+                {selectedComplaint.ticket_id ? `Manage Ticket: ${selectedComplaint.ticket_id}` : 'Raise Ticket for Complaint'}
+              </h3>
+            </div>
             
-            <form onSubmit={handleUpdateGrievance} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ padding: '24px 32px', overflowY: 'auto', flex: 1 }}>
+              <form onSubmit={handleUpdateGrievance} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div className="form-group">
                 <label className="form-label">Assign Department *</label>
                 <select 
@@ -1322,7 +1345,7 @@ export default function AdminGrievance({ viewMode }) {
                   onChange={e => setUpdateOfficer(e.target.value)}
                 >
                   <option value="">Select Officer (Awaiting Officer Assignment)</option>
-                  {officers.filter(o => o.department_id === parseInt(updateDepartment)).map(off => (
+                  {officers.filter(o => o.department_id == updateDepartment).map(off => (
                     <option key={off.id} value={off.id}>{off.name} ({off.designation})</option>
                   ))}
                 </select>
@@ -1383,7 +1406,7 @@ export default function AdminGrievance({ viewMode }) {
                 <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>This remark will be visible to the citizen on their timeline.</span>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 10 }}>
                 <button type="button" className="btn btn-secondary" onClick={() => setSelectedComplaint(null)} disabled={updatingGrievance}>
                   Cancel
                 </button>
@@ -1400,6 +1423,7 @@ export default function AdminGrievance({ viewMode }) {
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}
