@@ -134,25 +134,64 @@ export default function CitizenTracking() {
               <p style={{ margin: 0, fontSize: 16 }}>You have not submitted any complaints yet.</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {myComplaints.map(comp => (
-                <div key={comp.id} className="card" style={{ padding: 20, cursor: 'pointer', transition: 'all 0.2s', borderLeft: `4px solid ${getStatusColor(comp.status).bg}` }} onClick={() => setTicket(comp)}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                    <div>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', letterSpacing: 0.5 }}>{comp.ticket_id || 'AWAITING TICKET ID'}</span>
-                      <h4 style={{ margin: '4px 0 0', fontSize: 16, fontWeight: 700, color: 'var(--gray-900)' }}>{comp.title}</h4>
-                    </div>
-                    <span style={{ fontSize: 12, fontWeight: 600, padding: '4px 10px', borderRadius: 12, backgroundColor: getStatusColor(comp.status).bg, color: getStatusColor(comp.status).text, whiteSpace: 'nowrap' }}>
-                      {getStatusLabel(comp.status)}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 13, color: 'var(--gray-600)', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={14} /> {new Date(comp.submitted_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={14} /> {comp.ward}</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--primary)', fontWeight: 600, marginLeft: 'auto' }}>View Details <ArrowRight size={14} /></span>
-                  </div>
-                </div>
-              ))}
+            <div style={{ background: 'white', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', border: '1px solid var(--gray-200)', overflow: 'hidden' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: 'linear-gradient(to right, #f8fafc, #f1f5f9)' }}>
+                      {['Ticket ID', 'Complaint Info', 'Location / Ward', 'Status', 'Actions'].map(h => (
+                        <th key={h} style={{ padding: '13px 16px', fontSize: 11, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.6px', textAlign: 'left', borderBottom: '2px solid var(--gray-200)', whiteSpace: 'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {myComplaints.map((comp, idx) => {
+                      const stat = getStatusColor(comp.status);
+                      return (
+                        <tr key={comp.id}
+                          style={{ borderBottom: '1px solid var(--gray-100)', transition: 'background 0.15s', cursor: 'pointer' }}
+                          onMouseEnter={e => e.currentTarget.style.background = '#f8faff'}
+                          onMouseLeave={e => e.currentTarget.style.background = idx % 2 === 0 ? 'white' : '#fafbfc'}
+                          onClick={() => setTicket(comp)}
+                        >
+                          <td style={{ padding: '14px 16px', fontWeight: 700 }}>
+                            {comp.ticket_id ? (
+                              <span style={{ fontFamily: 'monospace', background: 'var(--gray-100)', color: 'var(--gray-600)', padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 800 }}>
+                                {comp.ticket_id}
+                              </span>
+                            ) : (
+                              <span style={{ color: '#c2410c', background: '#ffedd5', padding: '4px 10px', borderRadius: 8, fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>
+                                AWAITING ID
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ padding: '14px 16px', maxWidth: 220 }}>
+                            <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--gray-800)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={comp.title}>{comp.title}</div>
+                            <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <Clock size={10} /> {new Date(comp.submitted_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                            </div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--gray-700)' }}>
+                              <MapPin size={12} color="var(--primary)" /> {comp.ward}
+                            </div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <span style={{ fontSize: 12, fontWeight: 700, padding: '4px 10px', borderRadius: 8, backgroundColor: stat.bg, color: stat.text, whiteSpace: 'nowrap' }}>
+                              {getStatusLabel(comp.status)}
+                            </span>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--primary)', fontWeight: 600, fontSize: 12 }}>
+                              View <ArrowRight size={14} />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

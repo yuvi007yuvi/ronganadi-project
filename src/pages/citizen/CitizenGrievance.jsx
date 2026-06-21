@@ -435,59 +435,69 @@ export default function CitizenGrievance() {
               </button>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {complaints.map(item => {
-                const prio = getPriorityColor(item.priority);
-                const stat = getStatusColor(item.status);
-                return (
-                  <div 
-                    key={item.id} 
-                    className="card bento-item"
-                    style={{ padding: 20, cursor: 'pointer', transition: 'all 0.2s', border: '1px solid var(--gray-200)' }}
-                    onClick={() => { setSelectedComplaint(item); fetchSingleComplaint(item.id); }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, alignItems: 'center', marginBottom: 14 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: item.ticket_id ? 'var(--gray-500)' : '#f97316', background: item.ticket_id ? 'var(--gray-100)' : '#ffedd5', padding: '4px 10px', borderRadius: 8 }}>
-                          {item.ticket_id || 'Awaiting Review (No Ticket yet)'}
-                        </span>
-                        <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 8, textTransform: 'uppercase', backgroundColor: prio.bg, color: prio.text, border: `1.5px solid ${prio.border}` }}>
-                          {item.priority}
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--gray-500)' }}>
-                        <Clock size={14} /> Submitted on {new Date(item.submitted_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                    
-                    <h3 style={{ margin: '0 0 8px', fontSize: 18, color: 'var(--gray-900)' }}>{item.title}</h3>
-                    <p style={{ margin: '0 0 16px', fontSize: 14, color: 'var(--gray-600)' }}>{item.description}</p>
-                    
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--gray-100)', paddingTop: 14 }}>
-                      <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 13, color: 'var(--gray-500)' }}>
-                          Category: <strong style={{ color: 'var(--gray-800)' }}>{item.category}</strong>
-                        </span>
-                        <span style={{ fontSize: 13, color: 'var(--gray-500)' }}>
-                          Dept: <strong style={{ color: 'var(--gray-800)' }}>{item.department_name || 'Unassigned'}</strong>
-                        </span>
-                        {item.officer_name && (
-                          <span style={{ fontSize: 13, color: 'var(--gray-500)' }}>
-                            Officer: <strong style={{ color: 'var(--gray-800)' }}>{item.officer_name}</strong>
-                          </span>
-                        )}
-                      </div>
-                      
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, padding: '6px 12px', borderRadius: 20, backgroundColor: stat.bg, color: stat.text }}>
-                          {getStatusLabel(item.status)}
-                        </span>
-                        <ChevronRight size={18} color="var(--gray-400)" />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div style={{ background: 'white', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', border: '1px solid var(--gray-200)', overflow: 'hidden' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: 'linear-gradient(to right, #f8fafc, #f1f5f9)' }}>
+                      {['Ticket ID', 'Complaint Info', 'Priority', 'Department / Category', 'Status', 'Actions'].map(h => (
+                        <th key={h} style={{ padding: '13px 16px', fontSize: 11, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.6px', textAlign: 'left', borderBottom: '2px solid var(--gray-200)', whiteSpace: 'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {complaints.map((item, idx) => {
+                      const prio = getPriorityColor(item.priority);
+                      const stat = getStatusColor(item.status);
+                      return (
+                        <tr key={item.id}
+                          style={{ borderBottom: '1px solid var(--gray-100)', transition: 'background 0.15s', cursor: 'pointer' }}
+                          onMouseEnter={e => e.currentTarget.style.background = '#f8faff'}
+                          onMouseLeave={e => e.currentTarget.style.background = idx % 2 === 0 ? 'white' : '#fafbfc'}
+                          onClick={() => { setSelectedComplaint(item); fetchSingleComplaint(item.id); }}
+                        >
+                          <td style={{ padding: '14px 16px', fontWeight: 700 }}>
+                            {item.ticket_id ? (
+                              <span style={{ fontFamily: 'monospace', background: 'var(--gray-100)', color: 'var(--gray-600)', padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 800 }}>
+                                {item.ticket_id}
+                              </span>
+                            ) : (
+                              <span style={{ color: '#c2410c', background: '#ffedd5', padding: '4px 10px', borderRadius: 8, fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>
+                                No Ticket yet
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ padding: '14px 16px', maxWidth: 220 }}>
+                            <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--gray-800)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.title}>{item.title}</div>
+                            <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <Clock size={10} /> {new Date(item.submitted_at).toLocaleDateString()}
+                            </div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 8, textTransform: 'uppercase', backgroundColor: prio.bg, color: prio.text, border: `1.5px solid ${prio.border}` }}>
+                              {item.priority}
+                            </span>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ fontWeight: 700, fontSize: 12, color: 'var(--gray-800)' }}>
+                              {item.department_name || 'Unassigned'}
+                            </div>
+                            <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 3 }}>{item.category}</div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <span style={{ fontSize: 12, fontWeight: 700, padding: '4px 10px', borderRadius: 8, backgroundColor: stat.bg, color: stat.text, whiteSpace: 'nowrap' }}>
+                              {getStatusLabel(item.status)}
+                            </span>
+                          </td>
+                          <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                            <ChevronRight size={18} color="var(--gray-400)" />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

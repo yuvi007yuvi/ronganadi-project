@@ -604,6 +604,56 @@ export default function AdminGrievance({ viewMode }) {
                   ))}
                 </div>
               </div>
+
+              {/* Recent Complaints Table (Added based on user request) */}
+              <div className="card" style={{ padding: 28 }}>
+                <h3 style={{ margin: '0 0 24px', fontSize: 18 }}>Recent Complaints</h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: 'linear-gradient(to right, #f8fafc, #f1f5f9)' }}>
+                        {['Ticket ID', 'Complaint Info', 'Priority', 'Department / Category', 'Status', 'Date'].map(h => (
+                          <th key={h} style={{ padding: '13px 16px', fontSize: 11, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.6px', textAlign: 'left', borderBottom: '2px solid var(--gray-200)', whiteSpace: 'nowrap' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...complaints].sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at)).slice(0, 5).map((item, idx) => (
+                        <tr key={item.id} style={{ borderBottom: '1px solid var(--gray-100)', transition: 'background 0.15s' }}>
+                          <td style={{ padding: '14px 16px', fontWeight: 700 }}>
+                            {item.ticket_id ? (
+                              <span style={{ fontFamily: 'monospace', background: 'var(--gray-100)', color: 'var(--gray-600)', padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 800 }}>
+                                {item.ticket_id}
+                              </span>
+                            ) : (
+                              <span style={{ color: '#c2410c', background: '#ffedd5', padding: '4px 10px', borderRadius: 8, fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap' }}>
+                                No Ticket yet
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ padding: '14px 16px', maxWidth: 220 }}>
+                            <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--gray-800)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.title}>{item.title}</div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>{getPriorityBadge(item.priority)}</td>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ fontWeight: 700, fontSize: 12, color: 'var(--gray-800)' }}>
+                              {item.department_name || 'Unassigned'}
+                            </div>
+                            <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 3 }}>{item.category}</div>
+                          </td>
+                          <td style={{ padding: '14px 16px' }}>{getStatusBadge(item.status)}</td>
+                          <td style={{ padding: '14px 16px', fontSize: 12, color: 'var(--gray-500)' }}>
+                            {new Date(item.submitted_at).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))}
+                      {complaints.length === 0 && (
+                        <tr><td colSpan={6} style={{ textAlign: 'center', padding: 24, color: 'var(--gray-500)' }}>No complaints yet</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           )}
 

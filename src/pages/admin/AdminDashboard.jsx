@@ -340,6 +340,58 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            {/* Recent Complaints Table */}
+            <div className="glass-card stagger-5">
+              <div className="glass-header">
+                <div className="card-title">Recent Complaints</div>
+                <Activity size={18} color="var(--gray-400)" />
+              </div>
+              <div className="table-wrapper">
+                <table className="data-table" style={{ background: 'transparent' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ background: 'rgba(255,255,255,0.4)' }}>Ticket ID</th>
+                      <th style={{ background: 'rgba(255,255,255,0.4)' }}>Complaint</th>
+                      <th style={{ background: 'rgba(255,255,255,0.4)' }}>Status</th>
+                      <th style={{ background: 'rgba(255,255,255,0.4)' }}>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...complaints].sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at)).slice(0, 5).map(c => (
+                      <tr key={c.id}>
+                        <td>
+                          {c.ticket_id ? (
+                            <span style={{ fontFamily: 'monospace', background: 'var(--gray-100)', color: 'var(--gray-600)', padding: '4px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+                              {c.ticket_id}
+                            </span>
+                          ) : (
+                            <span style={{ color: '#c2410c', fontSize: 11, fontWeight: 700 }}>No Ticket</span>
+                          )}
+                        </td>
+                        <td>
+                          <div style={{ fontWeight: 700, color: 'var(--gray-900)', fontSize: 13, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.title}</div>
+                          <div style={{ fontSize: 11, color: 'var(--gray-500)' }}>{c.category}</div>
+                        </td>
+                        <td>
+                          <span className="pill" style={{ 
+                            background: c.status === 'completed' ? '#dcfce7' : (c.ticket_id ? '#eff6ff' : '#ffedd5'), 
+                            color: c.status === 'completed' ? '#16a34a' : (c.ticket_id ? '#3b82f6' : '#ea580c'), 
+                            border: '1px solid rgba(0,0,0,0.05)', fontSize: 10 
+                          }}>
+                            {c.status === 'completed' ? 'Completed' : (c.ticket_id ? 'In Progress' : 'Pending')}
+                          </span>
+                        </td>
+                        <td><span style={{ fontSize: 12, color: 'var(--gray-500)', fontWeight: 500 }}>{new Date(c.submitted_at).toLocaleDateString('en-IN')}</span></td>
+                      </tr>
+                    ))}
+                    {complaints.length === 0 && (
+                      <tr><td colSpan={4} style={{ textAlign: 'center', color: 'var(--gray-400)', padding: 32 }}>No complaints yet</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
 
           {/* Side Area: Small Stats, Doughnuts & Actions */}
