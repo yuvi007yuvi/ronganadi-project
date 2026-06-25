@@ -298,6 +298,7 @@ export default function AdminRoles() {
               <table className="data-table">
                 <thead>
                   <tr>
+                    <th style={{ width: 60 }}>S.No.</th>
                     <th>Admin Name</th>
                     <th>Email</th>
                     <th>Designation</th>
@@ -308,8 +309,9 @@ export default function AdminRoles() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredAdmins.map(admin => (
+                  {filteredAdmins.map((admin, index) => (
                     <tr key={`${admin.source}-${admin.id}`}>
+                      <td style={{ color: 'var(--gray-500)', fontWeight: 600, fontSize: 13 }}>{index + 1}</td>
                       <td style={{ fontWeight: 600 }}>
                         {admin.name}
                         {admin.source === 'citizen' && <span style={{ marginLeft: 8, fontSize: 10, background: '#fef08a', color: '#854d0e', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>CITIZEN</span>}

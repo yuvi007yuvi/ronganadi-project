@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 import { apiFetch } from '../../config/api';
-import { Bar, Pie, Doughnut } from 'react-chartjs-2';
+import { Bar, Pie, Doughnut, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement,
-  ArcElement, Tooltip, Legend, Title
+  ArcElement, LineElement, PointElement, Tooltip, Legend, Title, Filler
 } from 'chart.js';
 import { Users, FileText, CheckCircle, Activity, TrendingUp, Clock, Megaphone, Briefcase, PieChart, Clipboard, ShieldAlert, Grid, Shield, MapPin } from 'lucide-react';
 import { allSchemes } from '../../data/schemes.js';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend, Title);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, LineElement, PointElement, Tooltip, Legend, Title, Filler);
 
 export default function AdminDashboard() {
   const { getStats, citizens, announcements } = useData();
@@ -115,8 +115,55 @@ export default function AdminDashboard() {
     cutout: '65%',
   };
 
+  // Registrations over time for Line Chart
+  const dateCounts = {};
+  citizens.forEach(c => {
+    const d = new Date(c.submittedAt || c.submitted_at);
+    if (!isNaN(d.getTime())) {
+      const dateStr = d.toISOString().split('T')[0];
+      dateCounts[dateStr] = (dateCounts[dateStr] || 0) + 1;
+    }
+  });
+  
+  const sortedDates = Object.keys(dateCounts).sort();
+  const last7Dates = sortedDates.slice(-7);
+  
+  const lineChartData = {
+    labels: last7Dates.map(d => new Date(d).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })),
+    datasets: [{
+      label: 'Registrations',
+      data: last7Dates.map(d => dateCounts[d]),
+      borderColor: '#f97316',
+      backgroundColor: 'rgba(249, 115, 22, 0.1)',
+      borderWidth: 2,
+      tension: 0.4,
+      fill: true,
+      pointBackgroundColor: '#ffffff',
+      pointBorderColor: '#f97316',
+      pointBorderWidth: 2,
+      pointRadius: 4,
+    }]
+  };
+
+  const lineChartOptions = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { stepSize: 1 } },
+      x: { grid: { display: false } },
+    },
+  };
+
   const recentCitizens = [...citizens].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, 5);
   const activeAnnouncements = announcements.filter(a => a.published).slice(0, 3);
+
+  const complaintAreaCounts = {};
+  complaints.forEach(c => {
+    const area = c.ward || 'Unknown';
+    complaintAreaCounts[area] = (complaintAreaCounts[area] || 0) + 1;
+  });
+  const complaintAreaLabels = Object.keys(complaintAreaCounts);
+  const complaintAreaData = Object.values(complaintAreaCounts);
 
   const awarenessRate = stats.totalCitizens > 0 ? Math.round((stats.schemeBeneficiaries / stats.totalCitizens) * 100) : 0;
 
@@ -259,42 +306,54 @@ export default function AdminDashboard() {
           {/* Main Charts Area */}
           <div className="bento-col-8 flex flex-col gap-6">
             
-            {/* Area Chart */}
-            <div className="glass-card stagger-3">
-              <div className="glass-header">
-                <div>
-                  <div className="card-title">Area-wise Survey Count</div>
-                  <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>Citizen records by area/ward</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              {/* Area Pie Chart */}
+              <div className="glass-card stagger-3">
+                <div className="glass-header">
+                  <div>
+                    <div className="card-title">Complaints by Area</div>
+                    <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>Complaints distribution by ward (Pie)</div>
+                  </div>
+                  <PieChart size={20} color="var(--primary)" />
                 </div>
-                <Activity size={20} color="var(--primary)" />
-              </div>
-              <div className="card-body">
-                <div className="chart-container" style={{ height: '320px' }}>
-                  {areaLabels.length > 0 ? (
-                    <Bar data={barData} options={chartOptions} />
-                  ) : (
-                    <div className="empty-state"><p>No survey data yet</p></div>
-                  )}
+                <div className="card-body">
+                  <div className="chart-container" style={{ height: '280px' }}>
+                    {complaintAreaLabels.length > 0 ? (
+                      <Pie 
+                        data={{
+                          labels: complaintAreaLabels,
+                          datasets: [{
+                            data: complaintAreaData,
+                            backgroundColor: ['#f97316', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#f59e0b', '#06b6d4', '#64748b'],
+                            borderWidth: 0
+                          }]
+                        }} 
+                        options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }} 
+                      />
+                    ) : (
+                      <div className="empty-state"><p>No area data yet</p></div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Demographics Chart */}
-            <div className="glass-card stagger-4">
-              <div className="glass-header">
-                <div>
-                  <div className="card-title">Demographics (Caste Breakdown)</div>
-                  <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>Citizen distribution by caste category</div>
+              {/* Registration Trends Line Chart */}
+              <div className="glass-card stagger-4">
+                <div className="glass-header">
+                  <div>
+                    <div className="card-title">Registration Trends</div>
+                    <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>New citizens over time</div>
+                  </div>
+                  <TrendingUp size={20} color="#f97316" />
                 </div>
-                <PieChart size={20} color="#3b82f6" />
-              </div>
-              <div className="card-body">
-                <div className="chart-container" style={{ height: '320px' }}>
-                  {casteLabels.length > 0 ? (
-                    <Bar data={casteChartData} options={chartOptions} />
-                  ) : (
-                    <div className="empty-state"><p>No demographic data yet</p></div>
-                  )}
+                <div className="card-body">
+                  <div className="chart-container" style={{ height: '280px' }}>
+                    {sortedDates.length > 0 ? (
+                      <Line data={lineChartData} options={lineChartOptions} />
+                    ) : (
+                      <div className="empty-state"><p>No registration data yet</p></div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -397,18 +456,6 @@ export default function AdminDashboard() {
           {/* Side Area: Small Stats, Doughnuts & Actions */}
           <div className="bento-col-4 flex flex-col gap-6">
             
-            {/* Quick Actions */}
-            <div className="glass-card stagger-3" style={{ background: 'linear-gradient(135deg, rgba(255,237,213,0.8), rgba(255,255,255,0.4))', border: '1px solid rgba(249,115,22,0.2)' }}>
-              <div className="glass-header" style={{ borderBottom: 'none', paddingBottom: '12px' }}>
-                <div className="card-title text-gradient text-gradient-primary">Quick Actions</div>
-              </div>
-              <div className="card-body" style={{ padding: '0 24px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <a href="/admin/build-survey" className="btn btn-primary w-full" style={{ justifyContent: 'center', padding: '12px', fontSize: 14 }}>
-                  <FileText size={18} /> Create Custom Survey
-                </a>
-              </div>
-            </div>
-
             {/* Recent KYC Data Card */}
             <div className="glass-card stagger-4" style={{ background: 'rgba(239, 246, 255, 0.3)' }}>
               <div className="glass-header">
@@ -433,37 +480,6 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="glass-card stagger-4">
-              <div className="glass-header">
-                <div className="card-title">Top Schemes Availed</div>
-                <CheckCircle size={18} color="#10b981" />
-              </div>
-              <div className="card-body" style={{ padding: '24px' }}>
-                <div className="chart-container" style={{ height: '240px' }}>
-                  {topSchemes.length > 0 ? (
-                    <Doughnut data={doughnutData} options={doughnutOptions} />
-                  ) : (
-                    <div className="empty-state"><p>No scheme data yet</p></div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="glass-card stagger-5">
-              <div className="glass-header">
-                <div className="card-title">Occupation Breakdown</div>
-                <Briefcase size={18} color="#f97316" />
-              </div>
-              <div className="card-body" style={{ padding: '24px' }}>
-                <div className="chart-container" style={{ height: '240px' }}>
-                  {occLabels.length > 0 ? (
-                    <Doughnut data={occChartData} options={doughnutOptions} />
-                  ) : (
-                    <div className="empty-state"><p>No occupation data yet</p></div>
-                  )}
-                </div>
-              </div>
-            </div>
 
             {/* Recent Announcements */}
             <div className="glass-card stagger-5">

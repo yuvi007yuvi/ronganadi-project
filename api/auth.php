@@ -67,6 +67,7 @@ if ($method === 'POST') {
             'has_custom_role' => $has_custom_role,
             'permissions' => $permissions,
             'departments' => $departments,
+            'profile_photo' => $user['profile_photo'] ?? null,
         ]);
         jsonResponse([
             'token' => $token,
@@ -80,6 +81,7 @@ if ($method === 'POST') {
                 'permissions' => $permissions,
                 'departments' => $departments,
                 'phone' => $user['phone'] ?? null,
+                'profile_photo' => $user['profile_photo'] ?? null,
             ]
         ]);
     }
@@ -106,6 +108,7 @@ if ($method === 'POST') {
             'police_station' => $user['police_station'] ?? '',
             'district' => $user['district'] ?? '',
             'pin_code' => $user['pin_code'] ?? '',
+            'profile_photo' => $user['profile_photo'] ?? null,
         ]);
         jsonResponse([
             'token' => $token,
@@ -122,6 +125,7 @@ if ($method === 'POST') {
                 'police_station' => $user['police_station'] ?? '',
                 'district' => $user['district'] ?? '',
                 'pin_code' => $user['pin_code'] ?? '',
+                'profile_photo' => $user['profile_photo'] ?? null,
             ]
         ]);
     }

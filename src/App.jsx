@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -101,6 +101,11 @@ function AppLayout({ children }) {
           pageTitle={title}
         />
         <main className="page-container">
+          <div style={{ paddingBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
+            <Link to={currentUser?.role === 'citizen' ? '/citizen' : '/admin'} style={{ color: 'var(--primary)', textDecoration: 'none' }}>Home</Link>
+            <span style={{ color: 'var(--gray-400)' }}>/</span>
+            <span style={{ color: 'var(--gray-600)' }}>{title}</span>
+          </div>
           {children}
         </main>
       </div>

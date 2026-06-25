@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getApiBaseUrl } from '../config/api';
 import { User, Mail, Shield, MapPin, Phone, Edit2, Save, X, Eye, EyeOff, Camera, Upload, Check } from 'lucide-react';
+import imageCompression from 'browser-image-compression';
 
 export default function Profile() {
   const { currentUser, updateProfile, completeKyc } = useAuth();
@@ -31,18 +32,25 @@ export default function Profile() {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Photo exceeds maximum size of 5MB.');
+    if (file.size > 20 * 1024 * 1024) {
+      setError('Photo exceeds maximum size of 20MB.');
       return;
     }
 
     setUploadingPhoto(true);
     setError('');
     
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1024,
+        useWebWorker: true
+      };
+      
+      const compressedFile = await imageCompression(file, options);
+      const formData = new FormData();
+      formData.append('file', compressedFile, compressedFile.name);
+
       const token = localStorage.getItem('ronganadi_token');
       const response = await fetch(`${getApiBaseUrl()}/upload_image.php?folder=profiles`, {
         method: 'POST',
@@ -52,6 +60,16 @@ export default function Profile() {
       const data = await response.json();
       if (response.ok && data.success) {
         setProfilePhoto(data.data.url);
+        
+        // Auto-save immediately so they don't have to click "Save All Changes"
+        await updateProfile({
+          name: currentUser.name || '',
+          phone: currentUser.phone || '',
+          profile_photo: data.data.url
+        });
+        
+        setSuccess('Profile photo updated successfully!');
+        setTimeout(() => setSuccess(''), 3000);
       } else {
         setError(data.message || 'Failed to upload photo.');
       }

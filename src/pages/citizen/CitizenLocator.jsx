@@ -136,7 +136,7 @@ export default function CitizenLocator() {
         setInitialCenter(prev => prev || [27.2415, 94.1032]);
         if (isManual) alert("Unable to fetch location. Please check your permissions.");
       },
-      { enableHighAccuracy: true, timeout: 5000 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
   };
 
@@ -231,8 +231,9 @@ export default function CitizenLocator() {
         {initialCenter && (
         <MapContainer center={initialCenter} zoom={14} style={{ height: '100%', width: '100%', zIndex: 0 }}>
           <TileLayer 
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+            subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
+            attribution='&copy; Google Maps'
           />
           
           {userLocation && !focusPosition && (

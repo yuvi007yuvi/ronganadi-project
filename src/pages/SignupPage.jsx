@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Shield, Eye, EyeOff, ArrowRight, Camera, X } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 import { areas } from '../data/schemes';
+import imageCompression from 'browser-image-compression';
 
 const PANCHAYATS = [
   "BAGALIJAN", "DAKHIN LALUK", "DEEJO", "DIKRONG", "DOOLOHAT SONAPUR", 
@@ -21,8 +22,11 @@ export default function SignupPage() {
     panchayat: '',
     is_migrated: 'no',
     id_type: '',
-    id_number: ''
+    id_type: '',
+    id_number: '',
+    profile_photo_base64: ''
   });
+  const [photoPreview, setPhotoPreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,6 +34,35 @@ export default function SignupPage() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 20 * 1024 * 1024) {
+      setError('Photo exceeds maximum size of 20MB.');
+      return;
+    }
+
+    try {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1024,
+        useWebWorker: true
+      };
+      
+      const compressedFile = await imageCompression(file, options);
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+        setFormData({ ...formData, profile_photo_base64: reader.result });
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (err) {
+      setError('Failed to compress image.');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -92,6 +125,27 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSubmit} autoComplete="off" style={{ marginTop: 24 }}>
+          
+          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
+            <label className="form-label" style={{ alignSelf: 'flex-start' }}>Profile Photo (Optional)</label>
+            <div style={{ position: 'relative', width: 100, height: 100, borderRadius: '50%', background: 'var(--gray-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '2px dashed var(--gray-300)' }}>
+              {photoPreview ? (
+                <>
+                  <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <button type="button" onClick={() => { setPhotoPreview(null); setFormData({...formData, profile_photo_base64: ''}); }} style={{ position: 'absolute', top: 0, right: 0, background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', padding: 4, cursor: 'pointer' }}>
+                    <X size={14} />
+                  </button>
+                </>
+              ) : (
+                <label style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--gray-500)' }}>
+                  <Camera size={24} style={{ marginBottom: 4 }} />
+                  <span style={{ fontSize: 10, fontWeight: 600 }}>Upload</span>
+                  <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoChange} />
+                </label>
+              )}
+            </div>
+          </div>
+
           <div className="form-group">
             <label className="form-label">Full Name</label>
             <input

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../../config/api';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { 
@@ -45,12 +45,23 @@ const createCustomIcon = (typeObj) => {
   });
 };
 
+const MapCenterUpdater = ({ position }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (position && position[0] && position[1]) {
+      map.flyTo(position, map.getZoom());
+    }
+  }, [position, map]);
+  return null;
+};
+
 export default function AdminGisDashboard() {
   const [facilities, setFacilities] = useState([]);
   const [facilityTypes, setFacilityTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState('all');
   const [initialCenter, setInitialCenter] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -63,13 +74,15 @@ export default function AdminGisDashboard() {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           clearTimeout(timer);
-          setInitialCenter([pos.coords.latitude, pos.coords.longitude]);
+          const coords = [pos.coords.latitude, pos.coords.longitude];
+          setUserLocation(coords);
+          setInitialCenter(coords);
         },
         (err) => {
           clearTimeout(timer);
           setInitialCenter(prev => prev || [27.2415, 94.1032]);
         },
-        { enableHighAccuracy: true, timeout: 5000 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       );
     } else {
       setInitialCenter([27.2415, 94.1032]);
@@ -195,10 +208,23 @@ export default function AdminGisDashboard() {
           )}
           {initialCenter && (
           <MapContainer center={initialCenter} zoom={13} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+            <MapCenterUpdater position={initialCenter} />
             <TileLayer 
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-              attribution='&copy; OpenStreetMap'
+              url="https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+              subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
+              attribution='&copy; Google Maps'
             />
+
+            {userLocation && (
+               <Marker position={userLocation} icon={L.divIcon({
+                   className: 'user-location-marker',
+                   html: '<div style="background:#3b82f6; width:16px; height:16px; border-radius:50%; border:3px solid white; box-shadow:0 0 10px rgba(0,0,0,0.3);"></div>',
+                   iconSize: [22, 22],
+                   iconAnchor: [11, 11]
+               })}>
+                 <Popup><strong>You are here</strong></Popup>
+               </Marker>
+            )}
             
             {filteredFacilities.map(fac => {
               const typeDetails = facilityTypes.find(t => t.id == fac.type_id) || {};

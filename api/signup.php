@@ -65,9 +65,34 @@ if ($method === 'POST') {
 
         $final_panchayat = $panchayat_from_report ?: ($data['panchayat'] ?? '');
 
+        // Handle profile photo upload
+        $profile_photo_url = null;
+        if (!empty($data['profile_photo_base64'])) {
+            $base64_string = $data['profile_photo_base64'];
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64_string, $type)) {
+                $base64_string = substr($base64_string, strpos($base64_string, ',') + 1);
+                $type = strtolower($type[1]);
+                if (in_array($type, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                    $decoded_image = base64_decode($base64_string);
+                    if ($decoded_image !== false) {
+                        $extension = $type === 'jpeg' ? 'jpg' : $type;
+                        $filename = uniqid('signup_') . '_' . time() . '.' . $extension;
+                        $upload_dir = __DIR__ . '/uploads/profiles/';
+                        if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
+                        if (file_put_contents($upload_dir . $filename, $decoded_image)) {
+                            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
+                            $host = $_SERVER['HTTP_HOST'];
+                            $base_dir = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+                            $profile_photo_url = $protocol . $host . $base_dir . 'uploads/profiles/' . $filename;
+                        }
+                    }
+                }
+            }
+        }
+
         $stmt = $db->prepare('
-            INSERT INTO citizens (full_name, mobile, password_hash, address, area, panchayat, is_migrated, kyc_status, kyc_id_type, kyc_id_number, kyc_number, booth_no_name, police_station, district, pin_code, submitted_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            INSERT INTO citizens (full_name, mobile, password_hash, address, area, panchayat, is_migrated, kyc_status, kyc_id_type, kyc_id_number, kyc_number, booth_no_name, police_station, district, pin_code, profile_photo, submitted_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         ');
         
         $stmt->execute([
@@ -85,7 +110,8 @@ if ($method === 'POST') {
             $booth_no_name,
             $police_station,
             $district,
-            $pin_code
+            $pin_code,
+            $profile_photo_url
         ]);
         
         $citizenId = $db->lastInsertId();
@@ -110,7 +136,8 @@ if ($method === 'POST') {
         'booth_no_name' => $booth_no_name,
         'police_station' => $police_station,
         'district' => $district,
-        'pin_code' => $pin_code
+        'pin_code' => $pin_code,
+        'profile_photo' => $profile_photo_url
     ]);
 
     jsonResponse([
@@ -130,7 +157,8 @@ if ($method === 'POST') {
             'booth_no_name' => $booth_no_name,
             'police_station' => $police_station,
             'district' => $district,
-            'pin_code' => $pin_code
+            'pin_code' => $pin_code,
+            'profile_photo' => $profile_photo_url
         ]
     ], 201);
 }
