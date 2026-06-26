@@ -1,12 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { apiFetch } from '../../config/api';
-import { 
-  Plus, Trash2, Edit, MapPin, Search, Server, 
-  Layers, ShieldAlert, Activity, Navigation, Settings
-} from 'lucide-react';
+import { Search, Plus, Filter, Edit, Edit2, Trash2, X, Upload, MapPin, Building2, Save, ArrowLeft, MoreVertical, Globe, Layers, Server, ShieldAlert, Activity, Navigation, Settings } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import * as XLSX from 'xlsx';
+
+const makeIcon = (color, emoji) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="36" height="48" viewBox="0 0 36 48"><path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 30 18 30s18-16.5 18-30C36 8.06 27.94 0 18 0z" fill="${color}" stroke="white" stroke-width="2"/><circle cx="18" cy="18" r="12" fill="white"/><text x="18" y="24" font-family="sans-serif" font-size="16" text-anchor="middle">${emoji}</text></svg>`)}`;
+
+const DEFAULT_ICONS = [
+  { label: 'Auto Generated (Initials)', value: '' },
+  { label: 'Hospital 🏥', value: makeIcon('#ef4444', '🏥') },
+  { label: 'Gov Hospital 🏛️', value: makeIcon('#dc2626', '🏛️') },
+  { label: 'Workplace / Office 🏢', value: makeIcon('#3b82f6', '🏢') },
+  { label: 'Police Station 🚓', value: makeIcon('#1d4ed8', '🚓') },
+  { label: 'School / College 🏫', value: makeIcon('#f59e0b', '🏫') },
+  { label: 'Park / Public Space 🌳', value: makeIcon('#10b981', '🌳') },
+  { label: 'Public Toilet 🚻', value: makeIcon('#8b5cf6', '🚻') },
+  { label: 'Water Source 🚰', value: makeIcon('#06b6d4', '🚰') },
+  { label: 'Generic Blue Marker', value: makeIcon('#3b82f6', '📍') },
+  { label: 'Generic Red Marker', value: makeIcon('#ef4444', '📍') }
+];
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -47,6 +61,9 @@ export default function AdminFacilities() {
     type_id: '', name: '', latitude: 27.2415, longitude: 94.1032,
     address: '', ward_number: '', zone_number: '', status: 'active', custom_fields_data: {}
   });
+
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [editingTypeId, setEditingTypeId] = useState(null);
@@ -112,6 +129,86 @@ export default function AdminFacilities() {
     }
   };
 
+  const handleDownloadTemplate = () => {
+    const ws = XLSX.utils.json_to_sheet([]);
+    const columns = ['Type Name', 'Facility Name', 'Latitude', 'Longitude', 'Address', 'Ward Number', 'Zone Number'];
+    XLSX.utils.sheet_add_aoa(ws, [columns], { origin: 'A1' });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "FacilitiesTemplate");
+    XLSX.writeFile(wb, "Facilities_Upload_Template.xlsx");
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
+
+        if (jsonData.length === 0) {
+          alert('The uploaded file is empty.');
+          setUploading(false);
+          return;
+        }
+
+        // Map names to ids
+        const typeNameToId = {};
+        facilityTypes.forEach(t => {
+          typeNameToId[t.name.toLowerCase().trim()] = t.id;
+        });
+
+        const mappedData = [];
+        for (const row of jsonData) {
+          const typeName = (row['Type Name'] || '').toLowerCase().trim();
+          if (!typeName) continue;
+          
+          let type_id = typeNameToId[typeName];
+          // If type doesn't exist, we skip or could theoretically create it (but skipping for now)
+          if (!type_id) {
+            console.warn('Facility type not found:', typeName);
+            continue;
+          }
+
+          mappedData.push({
+            type_id: type_id,
+            name: row['Facility Name'] || '',
+            latitude: row['Latitude'] || '',
+            longitude: row['Longitude'] || '',
+            address: row['Address'] || '',
+            ward_number: row['Ward Number'] || '',
+            zone_number: row['Zone Number'] || ''
+          });
+        }
+
+        if (mappedData.length === 0) {
+          alert('No valid records found in file. Ensure Type Name matches exactly with existing Facility Types.');
+          setUploading(false);
+          return;
+        }
+
+        await apiFetch('/facilities.php', {
+          method: 'POST',
+          body: { bulk: true, records: mappedData }
+        });
+
+        alert(`Successfully uploaded ${mappedData.length} facilities!`);
+        fetchData();
+      } catch (error) {
+        console.error('Upload failed:', error);
+        alert('Failed to upload facilities. Please check the file format.');
+      }
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   const handleDeleteFacility = async (id) => {
     if (!confirm('Delete this facility?')) return;
     try {
@@ -143,20 +240,8 @@ export default function AdminFacilities() {
     setShowTypeModal(true);
   };
 
-  const handleIconUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    if (file.size > 2 * 1024 * 1024) {
-      alert("Icon file must be less than 2MB.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setTypeFormData(prev => ({ ...prev, icon_url: reader.result }));
-    };
-    reader.readAsDataURL(file);
+  const handleIconChange = (e) => {
+    setTypeFormData(prev => ({ ...prev, icon_url: e.target.value }));
   };
 
   const handleSaveType = async (e) => {
@@ -259,9 +344,24 @@ export default function AdminFacilities() {
             <div className="animate-fadeIn">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <h3 style={{ margin: 0, fontSize: 20, color: 'var(--gray-800)' }}>Mapped Facilities</h3>
-                <button className="btn btn-primary" onClick={() => openFacModal()} style={{ borderRadius: 20, padding: '10px 24px', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>
-                  <MapPin size={16} /> Add New Facility
-                </button>
+                <div style={{ display: 'flex', gap: 12 }}>
+                  <button className="btn" onClick={handleDownloadTemplate} style={{ background: 'white', color: 'var(--gray-700)', border: '1px solid var(--gray-300)', padding: '10px 16px', borderRadius: 20 }}>
+                    Download Template
+                  </button>
+                  <input 
+                    type="file" 
+                    accept=".xlsx, .xls, .csv" 
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    style={{ display: 'none' }}
+                  />
+                  <button className="btn" onClick={() => fileInputRef.current?.click()} disabled={uploading} style={{ background: 'white', color: 'var(--gray-700)', border: '1px solid var(--gray-300)', padding: '10px 16px', borderRadius: 20 }}>
+                    {uploading ? 'Uploading...' : 'Bulk Upload'}
+                  </button>
+                  <button className="btn btn-primary" onClick={() => openFacModal()} style={{ borderRadius: 20, padding: '10px 24px', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>
+                    <MapPin size={16} /> Add New Facility
+                  </button>
+                </div>
               </div>
 
               <div style={{ background: 'white', borderRadius: 16, border: '1px solid var(--gray-200)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', overflow: 'hidden' }}>
@@ -564,9 +664,13 @@ export default function AdminFacilities() {
                   </div>
                 )}
                 <div style={{ flex: 1 }}>
-                  <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Custom Map Icon (Optional)</label>
-                  <input type="file" accept="image/*" className="form-control" onChange={handleIconUpload} style={{ padding: 8, background: 'white', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 14 }} />
-                  <p style={{ margin: '6px 0 0', fontSize: 12, color: '#64748b' }}>Upload a transparent PNG/SVG for best map results (Max 2MB).</p>
+                  <label className="form-label" style={{ fontWeight: 600, color: '#334155', marginBottom: 8, display: 'block' }}>Map Marker Logo</label>
+                  <select className="form-control" value={typeFormData.icon_url} onChange={handleIconChange} style={{ padding: '8px 12px', background: 'white', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 14, width: '100%' }}>
+                    {DEFAULT_ICONS.map((icon, idx) => (
+                      <option key={idx} value={icon.value}>{icon.label}</option>
+                    ))}
+                  </select>
+                  <p style={{ margin: '6px 0 0', fontSize: 12, color: '#64748b' }}>Select a pre-defined color marker or auto-generate.</p>
                 </div>
                 {typeFormData.icon_url && (
                   <button type="button" className="btn btn-secondary btn-sm" onClick={() => setTypeFormData(prev => ({ ...prev, icon_url: '' }))} style={{ color: '#ef4444', backgroundColor: '#fef2f2', borderColor: '#fecaca', padding: '8px 16px', borderRadius: 8, fontWeight: 600 }}>

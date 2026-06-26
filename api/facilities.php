@@ -39,6 +39,36 @@ if ($method === 'POST') {
     requireAdmin();
     $data = getInput();
     
+    if (!empty($data['bulk']) && is_array($data['records'])) {
+        try {
+            $db->beginTransaction();
+            $stmt = $db->prepare("
+                INSERT INTO gis_facilities 
+                (type_id, name, latitude, longitude, address, ward_number, zone_number, status, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'active', NOW())
+            ");
+            foreach ($data['records'] as $record) {
+                if (empty($record['type_id']) || empty($record['name']) || empty($record['latitude']) || empty($record['longitude'])) {
+                    continue;
+                }
+                $stmt->execute([
+                    $record['type_id'],
+                    $record['name'],
+                    $record['latitude'],
+                    $record['longitude'],
+                    $record['address'] ?? '',
+                    $record['ward_number'] ?? '',
+                    $record['zone_number'] ?? null
+                ]);
+            }
+            $db->commit();
+            jsonResponse(['message' => 'Bulk facilities added successfully'], 201);
+        } catch (Exception $e) {
+            $db->rollBack();
+            jsonError(500, 'Failed to bulk add facilities: ' . $e->getMessage());
+        }
+    }
+
     if (empty($data['type_id']) || empty($data['name']) || empty($data['latitude']) || empty($data['longitude']) || empty($data['address']) || empty($data['ward_number'])) {
         jsonError(400, 'Required fixed fields missing');
     }
