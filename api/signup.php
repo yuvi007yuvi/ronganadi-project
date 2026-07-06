@@ -35,10 +35,7 @@ if ($method === 'POST') {
         // Attempt KYC Verification if ID details are provided
         if (!empty($id_type) && !empty($id_number)) {
             $column_map = [
-                'Voter ID' => 'voter_id',
-                'Aadhaar No.' => 'aadhaar_no',
-                'PAN' => 'pan',
-                'Ration Card No' => 'ration_card_no'
+                'Voter ID' => 'voter_id'
             ];
             
             if (array_key_exists($id_type, $column_map)) {
@@ -77,13 +74,15 @@ if ($method === 'POST') {
                     if ($decoded_image !== false) {
                         $extension = $type === 'jpeg' ? 'jpg' : $type;
                         $filename = uniqid('signup_') . '_' . time() . '.' . $extension;
-                        $upload_dir = __DIR__ . '/uploads/profiles/';
+                        $upload_dir = __DIR__ . '/../public/uploads/profiles/';
                         if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
                         if (file_put_contents($upload_dir . $filename, $decoded_image)) {
+                            chmod($upload_dir . $filename, 0644);
                             $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
                             $host = $_SERVER['HTTP_HOST'];
                             $base_dir = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
-                            $profile_photo_url = $protocol . $host . $base_dir . 'uploads/profiles/' . $filename;
+                            $clean_base = preg_replace('/api\/$/', '', $base_dir);
+                            $profile_photo_url = $protocol . $host . $clean_base . 'public/uploads/profiles/' . $filename;
                         }
                     }
                 }

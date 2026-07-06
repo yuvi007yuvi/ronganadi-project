@@ -22,6 +22,12 @@ const DEFAULT_ICONS = [
   { label: 'Generic Red Marker', value: makeIcon('#ef4444', '📍') }
 ];
 
+const getFullIconUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http') || url.startsWith('data:')) return url;
+  return 'https://ranganadibeta.com/public' + url;
+};
+
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -454,7 +460,7 @@ export default function AdminFacilities() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         {type.icon_url ? (
-                          <img src={type.icon_url} alt="icon" style={{ width: 40, height: 40, objectFit: 'contain', background: '#f8fafc', borderRadius: 10, padding: 4, border: '1px solid #e2e8f0' }} />
+                          <img src={getFullIconUrl(type.icon_url)} alt="icon" style={{ width: 40, height: 40, objectFit: 'contain', background: '#f8fafc', borderRadius: 10, padding: 4, border: '1px solid #e2e8f0' }} />
                         ) : (
                           <div style={{ width: 40, height: 40, background: '#eff6ff', color: '#3b82f6', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 18 }}>
                             {(type.name || 'F').charAt(0).toUpperCase()}
@@ -655,7 +661,7 @@ export default function AdminFacilities() {
               <div className="form-group" style={{ display: 'flex', gap: 20, alignItems: 'center', background: '#f8fafc', padding: 20, borderRadius: 16, border: '1px solid #e2e8f0', marginBottom: 24 }}>
                 {typeFormData.icon_url ? (
                   <div style={{ padding: 8, background: 'white', borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                    <img src={typeFormData.icon_url} alt="Icon Preview" style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 4 }} />
+                    <img src={getFullIconUrl(typeFormData.icon_url)} alt="Icon Preview" style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 4 }} />
                   </div>
                 ) : (
                   <div style={{ width: 66, height: 66, borderRadius: 12, background: 'white', border: '2px dashed #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: 12, textAlign: 'center', flexDirection: 'column', gap: 4 }}>

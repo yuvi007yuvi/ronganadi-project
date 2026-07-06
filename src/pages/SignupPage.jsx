@@ -21,8 +21,7 @@ export default function SignupPage() {
     area: '',
     panchayat: '',
     is_migrated: 'no',
-    id_type: '',
-    id_type: '',
+    id_type: 'Voter ID',
     id_number: '',
     profile_photo_base64: ''
   });
@@ -224,35 +223,17 @@ export default function SignupPage() {
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary)', marginBottom: 12 }}>
               Optional: Quick KYC Verification
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div>
-                <label className="form-label" style={{ fontSize: 11 }}>ID Type</label>
-                <select
-                  name="id_type"
-                  className="form-control"
-                  value={formData.id_type}
-                  onChange={handleChange}
-                  style={{ fontSize: 13 }}
-                >
-                  <option value="">Select ID...</option>
-                  <option value="Voter ID">Voter ID</option>
-                  <option value="Aadhaar No.">Aadhaar No.</option>
-                  <option value="PAN">PAN</option>
-                  <option value="Ration Card No">Ration Card No</option>
-                </select>
-              </div>
-              <div>
-                <label className="form-label" style={{ fontSize: 11 }}>ID Number</label>
-                <input
-                  type="text"
-                  name="id_number"
-                  className="form-control"
-                  placeholder="Enter ID..."
-                  value={formData.id_number}
-                  onChange={handleChange}
-                  style={{ fontSize: 13 }}
-                />
-              </div>
+            <div>
+              <label className="form-label" style={{ fontSize: 11 }}>Voter ID Number</label>
+              <input
+                type="text"
+                name="id_number"
+                className="form-control"
+                placeholder="Enter Voter ID..."
+                value={formData.id_number}
+                onChange={handleChange}
+                style={{ fontSize: 13 }}
+              />
             </div>
             <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 8 }}>
               Providing this helps us verify your account instantly.

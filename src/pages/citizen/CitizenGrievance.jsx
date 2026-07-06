@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { apiFetch } from '../../config/api';
 import { useAuth } from '../../context/AuthContext';
 import { 
   PlusCircle, FileText, MapPin, Phone, Clock, AlertTriangle, 
-  CheckCircle, ChevronRight, Upload, Video, Navigation, ShieldAlert,
-  ArrowLeft, CheckSquare, Bell
+  CheckCircle, ChevronRight, Upload, Navigation, ShieldAlert,
+  ArrowLeft, CheckSquare, Bell, Trash2
 } from 'lucide-react';
 
 export default function CitizenGrievance() {
@@ -30,6 +30,73 @@ export default function CitizenGrievance() {
   const [lat, setLat] = useState('');
   const [lng, setLng] = useState('');
   const [ward, setWard] = useState('Ward 01');
+  const [photoUrl, setPhotoUrl] = useState('');
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          const MAX_DIM = 1200;
+          if (width > height && width > MAX_DIM) {
+            height *= MAX_DIM / width;
+            width = MAX_DIM;
+          } else if (height > MAX_DIM) {
+            width *= MAX_DIM / height;
+            height = MAX_DIM;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((blob) => {
+            resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+          }, 'image/jpeg', 0.8);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      let processedFile = file;
+      if (file.type.startsWith('image/')) {
+        processedFile = await compressImage(file);
+      }
+      const formData = new FormData();
+      formData.append('file', processedFile);
+
+      const res = await apiFetch('/upload_image.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (res && res.url) {
+        setPhotoUrl(res.url);
+      } else {
+        throw new Error('No URL returned');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Photo upload failed: ' + err.message);
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   const categories = {
     'Water Supply': ['Water Leakage', 'No Water Supply', 'Contaminated Water', 'Low Pressure'],
@@ -127,7 +194,8 @@ export default function CitizenGrievance() {
         contact_number: contactNumber,
         location_lat: lat,
         location_lng: lng,
-        ward
+        ward,
+        photo_url: photoUrl
       };
 
       const result = await apiFetch('/complaints.php', {
@@ -147,6 +215,7 @@ export default function CitizenGrievance() {
         setLat('');
         setLng('');
         setWard('Ward 01');
+        setPhotoUrl('');
         
         fetchComplaints();
         setActiveTab('list');
@@ -385,19 +454,72 @@ export default function CitizenGrievance() {
                 onChange={e => setDescription(e.target.value)}
                 required
               />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, borderTop: '1px solid var(--gray-200)', paddingTop: 20 }}>
-              <div style={{ padding: '16px', border: '2px dashed var(--gray-300)', borderRadius: 12, textAlign: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                <Upload size={24} color="var(--gray-400)" />
-                <span style={{ fontSize: 13, color: 'var(--gray-600)', fontWeight: 600 }}>Upload Photo</span>
-                <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>Max size 5MB (Optional)</span>
-              </div>
-              <div style={{ padding: '16px', border: '2px dashed var(--gray-300)', borderRadius: 12, textAlign: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                <Video size={24} color="var(--gray-400)" />
-                <span style={{ fontSize: 13, color: 'var(--gray-600)', fontWeight: 600 }}>Upload Video</span>
-                <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>Max size 15MB (Optional)</span>
-              </div>
+            </div>            <div style={{ borderTop: '1px solid var(--gray-200)', paddingTop: 20 }}>
+              <input 
+                type="file" 
+                accept="image/*" 
+                ref={fileInputRef} 
+                onChange={handlePhotoUpload} 
+                style={{ display: 'none' }} 
+              />
+              
+              {!photoUrl ? (
+                <div 
+                  onClick={() => !uploadingPhoto && fileInputRef.current?.click()}
+                  style={{ 
+                    padding: '24px 16px', 
+                    border: '2px dashed var(--gray-300)', 
+                    borderRadius: 12, 
+                    textAlign: 'center', 
+                    cursor: uploadingPhoto ? 'not-allowed' : 'pointer', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    gap: 8,
+                    background: '#f8fafc',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <Upload size={28} color="var(--gray-400)" />
+                  <span style={{ fontSize: 13, color: 'var(--gray-700)', fontWeight: 600 }}>
+                    {uploadingPhoto ? 'Uploading Photo...' : 'Upload Photo'}
+                  </span>
+                  <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>
+                    {uploadingPhoto ? 'Please wait...' : 'PNG, JPG or WEBP (Max 5MB)'}
+                  </span>
+                </div>
+              ) : (
+                <div style={{ position: 'relative', display: 'inline-block', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--gray-300)' }}>
+                  <img 
+                    src={photoUrl} 
+                    alt="Complaint Preview" 
+                    style={{ maxWidth: '100%', maxHeight: 200, display: 'block', borderRadius: 12 }} 
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setPhotoUrl('')}
+                    style={{ 
+                      position: 'absolute', 
+                      top: 8, 
+                      right: 8, 
+                      background: 'rgba(239, 68, 68, 0.9)', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '50%', 
+                      width: 32, 
+                      height: 32, 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }}
+                    title="Remove Photo"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 12 }}>

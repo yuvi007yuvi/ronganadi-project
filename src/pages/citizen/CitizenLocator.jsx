@@ -7,8 +7,12 @@ import { Navigation, Filter, MapPin, Map as MapIcon, Phone, Clock, User, AlertCi
 
 const createCustomIcon = (typeObj) => {
   if (typeObj && typeObj.icon_url) {
+    let iconUrl = typeObj.icon_url;
+    if (iconUrl.startsWith('/')) {
+      iconUrl = 'https://ranganadibeta.com/public' + iconUrl;
+    }
     return L.icon({
-      iconUrl: typeObj.icon_url,
+      iconUrl: iconUrl,
       iconSize: [32, 32],
       iconAnchor: [16, 32],
       popupAnchor: [0, -32]

@@ -51,7 +51,7 @@ else if ($mime_type === 'application/pdf') $extension = 'pdf';
 
 $new_filename = uniqid('upload_') . '_' . time() . '.' . $extension;
 $folder = isset($_GET['folder']) && $_GET['folder'] === 'profiles' ? 'profiles' : 'surveys';
-$upload_dir = __DIR__ . '/uploads/' . $folder . '/';
+$upload_dir = __DIR__ . '/../public/uploads/' . $folder . '/';
 
 if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0755, true);
@@ -60,13 +60,15 @@ if (!is_dir($upload_dir)) {
 $destination = $upload_dir . $new_filename;
 
 if (move_uploaded_file($file['tmp_name'], $destination)) {
+    chmod($destination, 0644);
     // Generate the public URL
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
     $host = $_SERVER['HTTP_HOST'];
     
     // Calculate relative path from document root
     $base_dir = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
-    $url = $protocol . $host . $base_dir . 'uploads/' . $folder . '/' . $new_filename;
+    $clean_base = preg_replace('/api\/$/', '', $base_dir);
+    $url = $protocol . $host . $clean_base . 'public/uploads/' . $folder . '/' . $new_filename;
 
     jsonResponse(['url' => $url, 'filename' => $new_filename], 201);
 } else {

@@ -96,6 +96,17 @@ try {
     ");
     echo "<p>Table 'grievance_notifications' verified/created.</p>";
 
+    // 5b. Create grievance_complaint_types table
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS grievance_complaint_types (
+            id            INT AUTO_INCREMENT PRIMARY KEY,
+            name          VARCHAR(100) NOT NULL UNIQUE,
+            department_id INT,
+            FOREIGN KEY (department_id) REFERENCES grievance_departments(id) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ");
+    echo "<p>Table 'grievance_complaint_types' verified/created.</p>";
+
     // 6. Initial insertions of departments & officers if empty
     $countDepts = $db->query("SELECT COUNT(*) FROM grievance_departments")->fetchColumn();
     if ($countDepts == 0) {
@@ -115,7 +126,15 @@ try {
             ('Ravi Verma', 4, 'Sanitation Inspector', '9876543213', 'active'),
             ('Vijay Das', 5, 'Assistant Engineer', '9876543214', 'active');
         ");
-        echo "<p>Default departments and officers seeded successfully.</p>";
+        $db->exec("
+            INSERT INTO grievance_complaint_types (name, department_id) VALUES
+            ('Water Supply', 1),
+            ('Roads & Infrastructure', 2),
+            ('Electricity', 3),
+            ('Sanitation & Solid Waste', 4),
+            ('Sewer & Drainage', 5);
+        ");
+        echo "<p>Default departments, officers, and complaint types seeded successfully.</p>";
     }
 
     // 7. Alter citizens table columns

@@ -26,10 +26,7 @@ if ($method === 'POST') {
     }
 
     $column_map = [
-        'Voter ID' => 'voter_id',
-        'Aadhaar No.' => 'aadhaar_no',
-        'PAN' => 'pan',
-        'Ration Card No' => 'ration_card_no'
+        'Voter ID' => 'voter_id'
     ];
 
     if (!array_key_exists($id_type, $column_map)) {
